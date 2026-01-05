@@ -1,0 +1,11 @@
+.col_container_data.col_container_form{
+
+
+	padding: 30px;
+}
+.col_container_form label{
+	margin-bottom: 10px;
+}
+.col_container_form .form-group{
+	margin-bottom: 20px !important;
+}

@@ -1,0 +1,45 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Third Party Services
+    |--------------------------------------------------------------------------
+    |
+    | This file is for storing the credentials for third party services such
+    | as Mailgun, Postmark, AWS and more. This file provides the de facto
+    | location for this type of information, allowing packages to have
+    | a conventional file to locate the various service credentials.
+    |
+    */
+
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
+
+    'postmark' => [
+        'token' => env('POSTMARK_TOKEN'),
+    ],
+
+    'ses' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+    'n8n' => [
+        'chat_url' => env('N8N_CHAT_URL'),
+        'webhook_url' => env('N8N_WEBHOOK_URL'),
+    ],
+
+    'sobat' => [
+        'upload_url'   => env('SOBAT_UPLOAD_URL', 'https://apisobat.sdn.id/upload-brand-image'),
+        'delete_url'   => env('SOBAT_DELETE_URL',  'https://apisobat.sdn.id/delete-brand-image.php'),
+        'upload_token' => env('SOBAT_UPLOAD_TOKEN', 'SDNhYAmDK4NHIsge9qzHKeZh2Y6IlNnO3Wy'),
+    ],
+
+];
