@@ -152,8 +152,9 @@ table .kolom_angka{
 
 .btn_tab_indicator.tab_indicator{
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: -30px;
+	right: -30px;
+	font-size: 10px;
 }
 .container_summary .row_title_summary > div{
 	position: relative;

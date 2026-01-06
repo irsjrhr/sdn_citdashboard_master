@@ -34,50 +34,7 @@ class CITDashboardController extends Controller{
     }
 
 
-    private function build_header_table(){
 
-        $result = [];
-        $result['maps_header_teritory'] = [
-            "territoryname"        => "Territory Name",
-            "ordertype"            => "Order Type",
-            "total_ar"             => "Total AR",
-            "collected_amount"     => "Collected Amount",
-            "confirmed_amount"     => "Confirmed Amount",
-            "unconfirmed_amount"   => "Unconfirmed Amount",
-            "total_difference"     => "Total Difference",
-            "collection_rate_pct"  => "Collection Rate (%)",
-            "trust_gap_pct"        => "Trust Gap (%)"
-        ];
-
-        $result['maps_header_driversales'] = [
-            "salesnameordrivername"   => "Sales / Driver Name",
-            "ordertype"               => "Order Type",
-            "ar_handled"              => "AR Handled",
-            "collected_amount"        => "Collected Amount",
-            "confirmed_amount"        => "Confirmed Amount",
-            "unconfirmed_amount"      => "Unconfirmed Amount",
-            "total_difference"        => "Total Difference",
-            "avg_days_late"           => "Average Days Late",
-            "invoices_with_difference"=> "Invoices With Difference",
-            "missing_evidence_count"  => "Missing Evidence Count"
-        ];
-
-        $result['maps_header_customer'] = [
-            "customercode"        => "Customer Code",
-            "ordertype"           => "Order Type",
-            "customername"        => "Customer Name",
-            "invoice_count"       => "Invoice Count",
-            "total_difference"    => "Total Difference",
-            "total_ar"            => "Total AR",
-            "collected_amount"    => "Collected Amount",
-            "confirmed_amount"    => "Confirmed Amount",
-            "unconfirmed_amount"  => "Unconfirmed Amount"
-        ];
-
-
-        return $result;
-
-    }
 
     private function build_filterData( Request $request ){
 
@@ -130,7 +87,7 @@ class CITDashboardController extends Controller{
 
         // Prepare Datasets with filters
         $pdo = $this->db->getPdo();
-        $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData
+        $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData_test
             @startDate    = :startDate,
             @endDate   = :endDate,
             @branchCode = :branchCode,
@@ -149,61 +106,81 @@ class CITDashboardController extends Controller{
         } while ($stmt->nextRowset());
 
 
-        //Kategori datasets
-        $row_cashier_driver = $datasets[0][0]; //card
-        $row_ar_remaining = $datasets[1][0]; //card
-        $data_teritory = $datasets[2]; //Tabel
-        $data_driversales = $datasets[3]; //Tabel
-        $data_customer = $datasets[4]; //Tabel
-        $data_payment = $datasets[5]; //Tabel
-        $data_uncollectible = $datasets[6]; //Tabel
 
 
+
+
+        //Card Dataset
+        $row_card_dashboard = $datasets[0][0]; 
+        // dd($row_card_dashboard);
+        $row_paymentType_pie = $datasets[1][0];
+
+        // Data Grafik
+        $data_teritory_grafik = $datasets[2]; 
+        $data_overdue_grafik = $datasets[3]; 
+        $data_driversales_grafik = $datasets[4]; 
+        $data_customer_grafik = $datasets[5];
+
+        // Data Tabel
+        $data_view_teritory = $datasets[6];
+        $data_view_driversales = $datasets[7];
+        $data_view_customer = $datasets[8];
         //=========== End Of Build Datasets  ===========
-
 
 
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
 
-        //=========== Build Summary AR Data : branches, driver, customer  ===========
-        $summaryDataTop = $this->build_dashboardTopData($datasets); 
+        //=========== Build  Top 10 Summary AR Data TOP dan COD: branches, driver, customer  ===========
 
 
-        //TOP dan COD summary territory
-        $summary10territory = $summaryDataTop['summary10territory'];
-        $result_territory_TOP = $summary10territory['result_TOP'];
-        $result_territory_COD = $summary10territory['result_COD'];
+        $summary_territory = $this->build_datasetGrafik( $data_teritory_grafik, 'territoryname', [
+            "mapping_key_data" => true,
+            "TOP_data" => false,
+            "COD_data" => true,
+            "sorting_data" => [
+                "TOP_data" => false,
+                "COD_data" => false,
+                "all_data" => false
+            ],
+            "limit_10_data" => [
+                "TOP_data" => false,
+                "COD_data" => false,
+                "all_data" => false
+            ], 
+        ]);
+
+        // ++++ Data Summary territory ++++ 
+        $result_territory_TOP = $summary_territory['result_TOP'];
+        $result_territory_COD = $summary_territory['result_COD'];
 
 
-        //TOP dan COD summary driversales
-        $summary10drivers = $summaryDataTop['summary10drivers'];
-        $result_drivers_TOP = $summary10drivers['result_TOP'];
-        $result_drivers_COD = $summary10drivers['result_COD'];
+        // ++++ Data Summary driver sales ++++ 
+        $summary_drivers = $this->build_datasetGrafik( $data_driversales_grafik,'salesnameordrivername');
+        $result_drivers_TOP = $summary_drivers['result_TOP'];
+        $result_drivers_COD = $summary_drivers['result_COD'];
 
-        //TOP dan COD summary customer
-        $summary10customer = $summaryDataTop['summary10customer'];
-        $result_customer_TOP = $summary10customer['result_TOP'];
-        $result_customer_COD = $summary10customer['result_COD'];
 
-        // $summary10uncollectible = $summaryDataTop['summary10uncollectible'];
-        // $data_summary_view['result_uncollectible_TOP'] = $summary10uncollectible['result_TOP'];
-        // $data_summary_view['result_uncollectible_COD'] = $summary10uncollectible['result_COD'];
 
-        // ========== Mapping Key Untuk Tabel Territory  ========
-        $build_header_table =  $this->build_header_table();
+        // ++++ Data Summary customer ++++ 
+        $summary_customer = $this->build_datasetGrafik( $data_customer_grafik, 'customername');
+        $result_customer_TOP = $summary_customer['result_TOP'];
+        $result_customer_COD = $summary_customer['result_COD'];
+
+
+        // ========== Mapping Key Untuk Tabel View Detail  ========
+        $build_header_table =  $this->build_header_table( $data_view_teritory, $data_view_driversales, $data_view_customer );
         $maps_header_teritory = $build_header_table['maps_header_teritory'];
         $maps_header_driversales = $build_header_table['maps_header_driversales'];
         $maps_header_customer = $build_header_table['maps_header_customer'];
 
 
-        return view('cit.index', array_merge($build_filterData, $summaryDataTop), compact(
-            'row_cashier_driver',
-            'row_ar_remaining',
-            'data_teritory',
-            'data_driversales',
-            'data_customer',
-            'data_payment',
+        return view('cit.index', array_merge($build_filterData), compact(
+            'row_card_dashboard',
+            'row_paymentType_pie',
+            'data_view_teritory',
+            'data_view_driversales',
+            'data_view_customer',
             'result_territory_TOP',
             'result_territory_COD',
             'result_drivers_TOP',
@@ -381,112 +358,209 @@ class CITDashboardController extends Controller{
 
     }
 
-
-
-
     //Method untuk melakukan normalisasi data yang datanya memiliki key confirmed_amount dan unconfirmed amount seperti datasets_driversales, datasets_branch, dan datasets cumstomer
-    private function prepare_dataset_keyordertype( $datasets_grafik = [], $key_label_row ) : array{
-        //Mengambil nilai dan key pada setiap row dataset grafik tapi hanya key dan nilai yang ada di row_param dengan catatan key yang ada di row datasets itu ada di row param
+    // Method ini akan menghasilkan data yang digunakan pada data grafik baru
+    private $option_build_default = [
+        "mapping_key_data" => true,
+        "TOP_data" => true,
+        "COD_data" => true,
+        "sorting_data" => [
+            "TOP_data" => true,
+            "COD_data" => true,
+            "all_data" => true
+        ], 
+        "limit_10_data" => [
+            "TOP_data" => true,
+            "COD_data" => true,
+            "all_data" => true
+        ], 
+    ];
+    private function build_datasetGrafik( $datasets_grafik = [], $key_label_row, $option_build = [] ) : array{
 
+        /*
+        ===== FITUR UTAMA =======
+        => MAPPING 
+        - Melakukan mapping dan normalisasi untuk mengambil nilai dan key pada setiap row dataset grafik tapi hanya key dan nilai yang ada di row_param dengan catatan key yang ada di row datasets itu ada di row param
+        - Akan berjalan ketika $option_build['mapping_key_data'] bernilai true dan berpengatuh untuk semua $result_all, $result_TOP, $result_TOP
+
+        => CLUSTERING by ordertype
+        - Melakukan pemisahan data result berdasarkan kolom ordertype 
+        - Ini hanya akan berjalan ketika row_datasets punya kolom ordertype dan beberapa kondisi :
+        + Kalo $option_build['TOP_data'] maka akan berpengaruh pada $result_TOP
+        + Kalo $option_build['COD_data'] maka akan berpengaruh pada $result_COD
+        - Akan berpengaruh hanya ke $result_TOP dan $result_COD 
+    
+        => SORTING by unconfirmed_amount
+        - Mengurutkan data dari nilai terbesar ke terkecil berdasarkan kolom unconfirmed_amount 
+        - Ini hanya akan berjalan ketika row_datasets punya kolom unconfirmed_amount 
+        - Akan berpengaruh berdasarkan $option_build dari beberapa key :
+        + Kalo $option_build['limit_10_data']['TOP_data'] maka akan berpengaruh pada $result_TOP ( nilai true maka berjalan, nilai false maka tidak berjalan )
+        + Kalo $option_build['limit_10_data']['COD_data'] maka akan berpengaruh pada $result_COD ( nilai true maka berjalan, nilai false maka tidak berjalan )
+        + Kalo $option_build['limit_10_data']['all_data'] maka akan berpengaruh pada $result_all ( nilai true maka berjalan, nilai false maka tidak berjalan )
+
+        => LIMITING 10 Data
+        - Melakukan pengambilan hanya 10 data 
+        - Akan berpengaruh berdasarkan $option_build dari beberapa key :
+        + Kalo $option_build['limit_10_data']['TOP_data'] maka akan berpengaruh pada $result_TOP ( nilai true maka berjalan, nilai false maka tidak berjalan )
+        + Kalo $option_build['limit_10_data']['COD_data'] maka akan berpengaruh pada $result_COD ( nilai true maka berjalan, nilai false maka tidak berjalan )
+        + Kalo $option_build['limit_10_data']['all_data'] maka akan berpengaruh pada $result_all ( nilai true maka berjalan, nilai false maka tidak berjalan ) 
+        =====================================================================
+        */
+
+
+        //============= Handling Format Default Parameter Argument $option_build ========== 
+
+        //Ketika User memasukkan argumen $option_build ke method dengan struktur yang kurang benar dari yang diharapkan (property $option_build_default) sehingga yang diterapkan itu key dan sturktur yang default
+
+        //Handling default key value pada option build nilai default true pada option 
+        $option_build = array_merge($this->option_build_default, $option_build); //Menimpa nilai dari key kalo ada key yang sama dengan denan $this->option_build_default 
+
+        //Handling default format $option_build['sorting_data'] Untuk Sorting Data kalo argumennya gak bener 
+        if ( is_array($option_build['sorting_data']) == true ) {
+            $option_build['sorting_data'] = array_merge( $this->option_build_default['sorting_data'], $option_build['sorting_data']);
+        }else{
+            $option_build['sorting_data'] = $this->option_build_default['sorting_data'];
+        }
+
+         //Handling default format $option_build['limit_10_data'] Untuk Sorting Data
+        if ( is_array($option_build['limit_10_data']) == true ) {
+            $option_build['limit_10_data'] = array_merge( $this->option_build_default['limit_10_data'], $option_build['limit_10_data'] );
+        }else{
+            $option_build['limit_10_data'] = $this->option_build_default['limit_10_data'];
+        }
+
+        
+        $result_TOP = [];  //Kumpulan data hanya row data dengan ordertype dengan nilai TOP
+        $result_COD = []; //Kumpulan data hanya row data dengan ordertype dengan nilai COD
+        $result_all = []; //Kumpulan semua data 
+
+        //===========  NORMALISASI DAN MAPPING =============================
+        // Menyiapkan dan Mengisi $result_TOP, $result_COD, dan $result_all
 
         $row_param = [
-            "label" =>  ( string ) "NAMA LABEL", 
+            "label" =>  ( string ) "NAMA LABEL", // Ini untuk keperluan data name di label 
             "confirmed_amount" => (float) 0.0, //= collected_amount
-            "unconfirmed_amount" => (float) 0.0,  //= ar_amount - collected amount 
+            "unconfirmed_amount" => (float) 0.0,  // key untuk sortar_amount - collected amount 
             'ordertype' => (string) "COD OR TOP",
         ];
-        $result_TOP = [];
-        $result_COD = [];
+        $option_mapping_key_data = ( $option_build['mapping_key_data'] == true ) ? true : false;
+        //Cek apakah di row pada datasets ada kolom order type dan option build TOP data atau COD data
+        $row_cek = $datasets_grafik[0];
+        $option_clustering_data = ( isset( $row_cek['ordertype'] ) && ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) ) ? true : false;
+
+
+        // dd( ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) );
+        // dd( isset( $row_cek['ordertype']) );
+        // dd( $option_clustering_data );
+
+        //Melakukan mapping dan clustring dengan melakukan pengecekan setiap row data dari datasets
         foreach ($datasets_grafik as $row_datasets) {
             $row_result_new = [];
-            //========= NORMALISASI KEY ===========
-            //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
-            //Cek apakah key pada row param ada di row_dataset
-            foreach ($row_param as $key_row_param => $nilai_row_param ) {
-                $param_add = false;
 
-                //Kalo key pada row_param itu pada row_datasets, maka ambil itu key dan nilainya 
-                if ( array_key_exists( $key_row_param, $row_datasets ) ) {
-                    $param_add = true;
-                    $nilai = $row_datasets[ $key_row_param ];
-
-                    //Define tipe data nilainya berdasarkan nilai row paramnya
-                    if ( is_string( $nilai_row_param ) ) {
-                        $nilai = ( string ) $nilai;
-                    }else if ( is_float( $nilai_row_param ) ) {
-                        $nilai = ( float ) $nilai;
-                    }
-
-                    //Menambahkan ke key row_result_new dengan key tersebut
-                    $row_result_new[$key_row_param] = $nilai;
-                }
-            }
-            //Menambahkan key label 
+            //Menambahkan key label untu standarisasi
             $row_result_new['label'] = $row_datasets[$key_label_row];
 
+            //========= ( MAPPING ) MELAKUKAN MAPPING DAN NORMALISASI KEY ===========
+            if ( $option_mapping_key_data == true ) {
+                //Jika Option Build Ingin Mapping Data
+                //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
+                //Cek apakah key pada row param ada di row_dataset
+                foreach ($row_param as $key_row_param => $nilai_row_param ) {
+                    $param_add = false;
 
-            //========= KLASIFIKASI DARI ORDERTYPE UNTUK RESULTNYA ===========
-            $ordertype = $row_result_new['ordertype'];
-            if (  $ordertype == "COD"  ) {
-                //Tambahkan ke result COD
-                $result_COD[] = $row_result_new;
+                    //Kalo key pada row_param itu pada row_datasets, maka ambil itu key dan nilainya 
+                    if ( array_key_exists( $key_row_param, $row_datasets ) ) {
+                        $param_add = true;
+                        $nilai = $row_datasets[ $key_row_param ];
 
-            }else if ( $ordertype == "TOP" ) {
-                //Tambahkan ke result TOP
-                $result_TOP[] = $row_result_new;
+                        //Define tipe data nilainya berdasarkan nilai row paramnya
+                        if ( is_string( $nilai_row_param ) ) {
+                            $nilai = ( string ) $nilai;
+                        }else if ( is_float( $nilai_row_param ) ) {
+                            $nilai = ( float ) $nilai;
+                        }
+
+                        //Menambahkan ke key row_result_new dengan key tersebut
+                        $row_result_new[$key_row_param] = $nilai;
+                    }
+                }
+
             }
+
+            //========= ( CLUSTERING ) PEMBUATAN DAN PEMISAHAN DATA RESULT by ordertype result_TOP dan result_COD ===========
+            //Ini hanta akan bekerja ketika setiap row data itu punya kolom ordertype dan antara option build TOP_data atau COD_data bernilai true
+            //INGATT!! option_build TOP_data atau COD_data hanya akan bekerja ketika row datasets punya kolom ordertype
+            //$result_all tidak terpengaruh clustering
+            if (  $option_clustering_data == true ) {
+
+                //Row Resultnya Punya Order Type dan Option Build Untuk TOP Data Atau COD Data dinyalakan, maka lakukan clustering berdasarkan ordertype
+                $ordertype = $row_result_new['ordertype'];
+                if ( $option_build['TOP_data'] == true && $ordertype == "TOP"  ) {
+                    //Jika option buildnya TOP data diaktifkan dan kolom ordertypenya TOP, row ini akan di tambahkan ke result_TOP
+                    $result_TOP[] = $row_result_new;
+                }else if ( $option_build['COD_data'] == true && $ordertype == "COD"  ) {
+                    //Jika option buildnya COD data diaktifkan dan kolom ordertypenya COD, row ini akan di tambahkan ke result_COD
+                    $result_COD[] = $row_result_new;
+                }
+            }
+
+            //Memasukkan row baru untuk result_all jenis ke result_all 
+            $result_all[] = $row_result_new;
         }
 
 
 
-
-        //Mengurutkan data berdasarkan nilai unclaimed terbersar uuntuk result_TOP
-        usort($result_TOP, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
-        //Mengambil top 10 data
-        $result_TOP = array_slice($result_TOP, 0, 10);
+        //============= FITUR DIBAWAH HANYA AKAN BERJALAN KETIKA DATA $result_TOP, $result_COD, dan $result_all sudah diisi
 
 
-         //Mengurutkan data berdasarkan nilai unclaimed terbersar untuk result_COD
-        usort($result_COD, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
-        //Mengambil top 10 data
-        $result_COD = array_slice($result_COD, 0, 10);
 
-        // dd($result_COD);
-        // dd($result_TOP); 
+        //============= ( SORTING ) PENGURUTAN DATA by unconfirmed_amount ==============
+        //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_TOP dan result_COD dengan syarat punya kolom unconfirmed amount
+        //Pengaturan sortring data kalo true maka pengaruh untuk semua
+
+        //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_TOP 
+        if ( $option_build['sorting_data']['TOP_data'] == true ) {
+            usort($result_TOP, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
+        }
+        //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_COD 
+        if ( $option_build['sorting_data']['COD_data'] == true ) {
+            usort($result_COD, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
+        }
+        //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_all 
+        if ( $option_build['sorting_data']['all_data'] == true ) {
+            usort($result_all, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
+        }
+
+        //============= ( LIMITING ) PENGAMBILAN HANYA 10 DATA  ==============
+        //Mengambil top 10 data untuk result_TOP
+        if ( $option_build['limit_10_data']['TOP_data'] == true ) {
+            $result_TOP = array_slice($result_TOP, 0, 10);
+        }
+        //Mengambil top 10 data untuk result_COD
+        if ( $option_build['limit_10_data']['COD_data'] == true ) {
+            $result_COD = array_slice($result_COD, 0, 10);
+        }
+        //Mengambil top 10 data untuk result_all
+        if ( $option_build['limit_10_data']['all_data'] == true ) {
+            $result_all = array_slice($result_all, 0, 10);
+        }
 
 
+        // Hasilnya
         $result = [
-            'result_COD' => $result_COD,
-            'result_TOP' => $result_TOP
+            'result_COD' => $result_COD, // [ [], [], [] ] - Kumpulan data hanya row data dengan ordertype dengan nilai TOP
+            'result_TOP' => $result_TOP, // [ [], [], [] ] - Kumpulan data hanya row data dengan ordertype dengan nilai COD
+            'result_all' => $result_all // [ [], [], [] ] - Kumpulan semua data
         ];
 
+
         return $result;
-
     }
-    //Method untuk mengembalikan data summary pada dashboard
-    private function build_dashboardTopData(array $data): array{
-
-        /*
-        DATA YANG DISUMMARY :
-        - Dataset branch/territory -> index 2 
-        - Dataset driver -> index 3
-        - Dataset customer -> index 4
-        */
-
-        // =============================== TOP 10 CABANG =============================== 
-        $datasets_territory = $data[2]; //source data_territory
-        $summary10territory = $this->prepare_dataset_keyordertype( $datasets_territory, "territoryname" );
-
-        // =============================== TOP 10 DRIVER =============================== 
-        $datasets_driversales = $data[3];
-        $summary10drivers = $this->prepare_dataset_keyordertype( $datasets_driversales, "salesnameordrivername" );
-
-        //   =============================== TOP 10 CUSTOMER =============================== 
-        $datasets_customer = $data[4];
-        $summary10customer = $this->prepare_dataset_keyordertype( $datasets_customer, "customername" );
 
 
-        // ========================= TOP 10 PAYMENT TYPE BERMASALAH =============================== 
+    // Method ini akan menghasilkan data yang digunakan pada grafik pie
+    public function build_datasetPaymentTop10($datasets_payment){
+        // ======================= TOP 10 PAYMENT TYPE BERMASALAH =========================== 
         $datasets_payment = $data[5];
         $summary10payment = [];
         foreach ($datasets_payment ?? [] as $row) {
@@ -502,41 +576,50 @@ class CITDashboardController extends Controller{
         usort($summary10payment, fn ($a, $b) => $b['total_difference'] <=> $a['total_difference']);
         //Mengambil top 10 data
         $summary10payment = array_slice($summary10payment, 0, 10); 
-
-        //  ============================= TOP 10 ALASAN TIDAK TERTAGIH ===========================
-        $data_uncollectible = $data[6];
-        $summary10uncollectible = [];
-        foreach ($data_uncollectible ?? [] as $row) {
-            $row_reason = [
-                'reason'      => $row['uncollectiblereason'] ?? null,
-                'case_count'  => (int) ($row['case_count'] ?? 0),
-                'amount_risk' => (float) ($row['amount_at_risk'] ?? 0),
-            ];
-            $summary10uncollectible[] = $row_reason;
-        }   
-        //Mengurutkan data
-        usort($summary10uncollectible, fn ($a, $b) => $b['case_count'] <=> $a['case_count']);
-        //Mengambil top 10 data
-        $summary10uncollectible = array_slice($summary10uncollectible, 0, 10); 
-
-
-        // dd( $summary10uncollectible );
+        return $summary10payment;
+    }
+    private function build_header_table( $data_teritory, $data_driversales, $data_customer ){
 
 
 
-        // =============================== FINAL OUTPUT =============================== 
-
-        $result = [
-            'summary10territory'  => $summary10territory, //[ "result_TOP" => [ [], [], [] ], "result_COD" => [], [], [] ]
-            'summary10drivers'   => $summary10drivers, //[ "result_TOP" => [ [], [], [] ], "result_COD" => [], [], [] ]
-            'summary10customer' => $summary10customer, //[ "result_TOP" => [ [], [], [] ], "result_COD" => [], [], [] ]
-            'summary10payment' => $summary10payment, 
-            'summary10uncollectible' => $summary10uncollectible, 
+        $result = [];
+        $result['maps_header_teritory'] = [
+            "territoryid"        => "Territory ID",
+            "territoryname"      => "Territory Name",
+            "invoice_count"      => "Invoice Count",
+            "total_difference"   => "Total Difference",
+            "total_ar"           => "Total AR",
+            "collected_amount"   => "Collected Amount",
+            "confirmed_amount"   => "Confirmed Amount",
+            "unconfirmed_amount" => "Unconfirmed Amount",
         ];
 
-        return $result;
-    }
+        $result['maps_header_driversales'] = [
+            "salesnameordrivername" => "Sales / Driver Name",
+            "ordertype"             => "Order Type",
+            "total_ar"              => "Total AR",
+            "collected_amount"      => "Collected Amount",
+            "confirmed_amount"      => "Confirmed Amount",
+            "unconfirmed_amount"    => "Unconfirmed Amount",
+            "total_difference"      => "Total Difference",
+            "avg_days_late"         => "Average Days Late",
+        ];
 
+        $result['maps_header_customer'] = [
+            "customercode"       => "Customer Code",
+            "customername"       => "Customer Name",
+            "invoice_count"      => "Invoice Count",
+            "total_difference"   => "Total Difference",
+            "total_ar"           => "Total AR",
+            "collected_amount"   => "Collected Amount",
+            "confirmed_amount"   => "Confirmed Amount",
+            "unconfirmed_amount" => "Unconfirmed Amount",
+        ];
+
+
+        return $result;
+
+    }
 
 
 }

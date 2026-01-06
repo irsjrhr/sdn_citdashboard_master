@@ -8,20 +8,20 @@
     <div class="row row_table">
         <div class="col-12">
             <div class="table-responsive">
-                @if ( !empty($data_teritory) )
+                @if ( !empty($data_view_teritory) )
 
                 <table class="table table-bordered table-striped align-middle small">
                     <thead class="table-light">
                         <tr>
-                            @foreach ($data_teritory[0] as $key => $kolom )
+                            @foreach ($data_view_teritory[0] as $key => $kolom )
                             <td>{{ $maps_header_teritory[$key] }}</td>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data_teritory as $row_data)
+                        @foreach ($data_view_teritory as $row_data)
                         <tr>
-                            @foreach ($data_teritory[0] as $key2=>$kolom)
+                            @foreach ($data_view_teritory[0] as $key2=>$kolom)
                             @php
                             $class_kolom_angka = "";
                             $nilai = $row_data[$key2];

@@ -8,15 +8,15 @@
 
         // ==== Data Kategori Row Cashier Driver 
 
-$driver_collected_amount =  formatAbbreviatedNumber($row_cashier_driver['driver_collected_amount']);
-$cashier_confirmed_amount =  formatAbbreviatedNumber($row_cashier_driver['cashier_confirmed_amount']);
-$total_difference =  formatAbbreviatedNumber($row_cashier_driver['total_difference']);
-$confirmation_rate_pct = formatAbbreviatedNumber(number_format($row_cashier_driver['confirmation_rate_pct'], 2, '.', ''));
+// $driver_collected_amount =  formatAbbreviatedNumber($row_cashier_driver['driver_collected_amount']);
+// $cashier_confirmed_amount =  formatAbbreviatedNumber($row_cashier_driver['cashier_confirmed_amount']);
+// $total_difference =  formatAbbreviatedNumber($row_cashier_driver['total_difference']);
+// $confirmation_rate_pct = formatAbbreviatedNumber(number_format($row_cashier_driver['confirmation_rate_pct'], 2, '.', ''));
 
 
-        // ==== Data Kategori Row Ar Remainning 
-$remaining_ar_real = formatAbbreviatedNumber($row_ar_remaining['remaining_ar_real']);
-$overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_pct'], 2, '.', ''));
+//         // ==== Data Kategori Row Ar Remainning 
+// $remaining_ar_real = formatAbbreviatedNumber($row_ar_remaining['remaining_ar_real']);
+// $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_pct'], 2, '.', ''));
 
 
 @endphp
@@ -31,102 +31,59 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
     {{-- Row Box Dashboard  --}}
     <div class="row row_box_dashboard wow animate__animated animate__fadeInUp">
 
+        @foreach ($row_card_dashboard as $key => $value )
 
-        <div class="col-md-3">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Outstanding AR </h6>
-                <div class="h4 fw-bold text-secondary">
-                    Rp {{ $remaining_ar_real }}
+        @php
 
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Collected </h6>
-                <div class="h4 fw-bold text-secondary">
-                    Rp {{ $remaining_ar_real }}
+        //Key untuk Nilai Uang / Nominal
+        $nominal_keys = [
+            "Total Outstanding AR",
+            "Total Collected",
+            "Total Confirmed Payment",
+            "Total Outstanding AR OD",
+            "Total Collected AR OD",
+            "Total Confirmed Payment AR OD",
+        ];
 
-                </div>
-            </div>
-        </div>
+        //Key untuk Persentase / Ratio
+        $percentage_keys = [
+            "% Confirm Payment",
+            "% Confirm Payment AR OD",
+        ];
 
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Confirmed Payment </h6>
-                <div class="h4 fw-bold text-secondary">
-                    Rp {{ $driver_collected_amount }}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> % Payment Percentage </h6>
-                <div class="h4 fw-bold text-secondary">
-                    Rp {{ $cashier_confirmed_amount }}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Confirmed Payment / Total Invoice Document </h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $confirmation_rate_pct }}%
+        //Key untuk Jumlah Dokumen / Count
+        $document_keys = [
+            "Total Invoice Document",
+            "Total Confirmed Invoice Document",
+            "Total Invoice Document AR OD",
+            "Total Confirmed Invoice Document AR OD",
+        ];
 
-                </div>
-            </div>
-        </div>
+        if ( in_array($key, $nominal_keys) ) {
+            $value = "Rp" . formatAbbreviatedNumber($value);
+        }else if ( in_array($key, $percentage_keys) ) {
+            $value =  "%" . formatAbbreviatedNumber(number_format($value, 2, '.', ''));
+        }else if( in_array($key, $document_keys ) ){
+            $value = $value;
+        }
+
+        @endphp
+
 
         {{-- Col Box Dashboard --}}
-        <div class="col-md-3">
+        <div class="col-md-2 mb-2">
             <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Amount AR OD </h6>
+                <h6 class="text-black fw-bold"> {{ $key }} </h6>
                 <div class="h4 fw-bold text-secondary">
-                    {{ $overdue_pct }}%
-                </div>
-            </div>
-        </div>
+                     {{ $value }}
 
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Collected AR OD </h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $confirmation_rate_pct }}%
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Total Confirm Payment AR OD </h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $confirmation_rate_pct }}%
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> % Confirm Payment AR OD </h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $confirmation_rate_pct }}%
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col_box_dashboard">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> Confirm Payment OD / Total Invoice OD</h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $confirmation_rate_pct }}%
                 </div>
             </div>
         </div>
         {{-- End Of Col Box Dashboard --}}
+        @endforeach
+
         
     </div>
     {{-- End Of Row Box Dashboard --}}
@@ -143,7 +100,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
     <div class="row row_main_summary">
 
         {{-- Col Main Grafik - TOP --}}
-        <div class="col-6 col_main_grafik col_grafik_top">
+        <div class="col-12 col_main_grafik col_grafik_top">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
@@ -194,7 +151,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_top_branches" id="chart_top_branches" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_top_branches" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -213,7 +170,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
 
 
         {{-- Col Main Grafik  - COD--}}
-        <div class="col-6 col_main_grafik col_grafik_cod">
+        <div class="col-12 col_main_grafik col_grafik_cod">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
@@ -264,7 +221,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_top_branches" id="chart_cod_branches" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_cod_branches" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -348,7 +305,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_top_drivers" id="chart_top_branches" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_top_drivers" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -418,7 +375,7 @@ $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_cod_drivers" id="chart_cod_branches" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_cod_drivers" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>

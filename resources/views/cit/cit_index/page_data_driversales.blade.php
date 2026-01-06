@@ -8,20 +8,20 @@
     <div class="row row_table">
         <div class="col-12">
             <div class="table-responsive">
-                @if (!empty($data_driversales))
+                @if (!empty($data_view_driversales))
                 <table class="table table-bordered table-striped align-middle small">
                     <thead class="table-light">
                         <tr>
-                            @foreach ($data_driversales[0] as $key => $kolom )
+                            @foreach ($data_view_driversales[0] as $key => $kolom )
                             <td>{{ $maps_header_driversales[$key] }}</td>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data_driversales as $row_data)
+                        @foreach ($data_view_driversales as $row_data)
 
                         <tr>
-                            @foreach ($data_driversales[0] as $key2=>$kolom)
+                            @foreach ($data_view_driversales[0] as $key2=>$kolom)
                             @php
                             $nilai = $row_data[$key2];
                             $class_kolom_angka = "";

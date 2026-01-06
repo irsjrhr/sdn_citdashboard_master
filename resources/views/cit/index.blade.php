@@ -178,7 +178,6 @@ $filterQuery = http_build_query(request()->only([
 <script>
 
     Chart.register(ChartDataLabels);
-
     window.citDashboardData = {
         top_branches: @json( $result_territory_TOP ),
         cod_branches: @json( $result_territory_COD ),
@@ -188,6 +187,7 @@ $filterQuery = http_build_query(request()->only([
         cod_customer: @json( $result_customer_COD ),
     }
 
+
     const {
         top_branches, 
         cod_branches, 
@@ -196,6 +196,10 @@ $filterQuery = http_build_query(request()->only([
         top_customer, 
         cod_customer, 
     } = window.citDashboardData;
+
+
+    console.log( top_branches );
+    console.log( cod_branches );
 
 
     var build_stackbar_section = (  TOP, COD, judul_x = "JUDUL" ) =>{
