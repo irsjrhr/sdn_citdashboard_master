@@ -255,3 +255,36 @@ table .kolom_angka{
 	height: 300px;
 	background: red;
 }
+
+
+
+/* Style untuk chart wrapper */
+.chart-scroll-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.chart-scroll-wrapper::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.chart-scroll-wrapper::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.chart-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+}
+
+.chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Reset untuk canvas */
+canvas {
+    display: block;
+    box-sizing: border-box;
+}

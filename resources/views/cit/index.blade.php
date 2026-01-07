@@ -177,10 +177,11 @@ $filterQuery = http_build_query(request()->only([
 
 <script>
 
-    Chart.register(ChartDataLabels);
+    {{-- Chart.register(ChartDataLabels); --}}
     window.citDashboardData = {
         top_branches: @json( $result_territory_TOP ),
         cod_branches: @json( $result_territory_COD ),
+        all_branches: @json( $result_territory_all ),
         top_drivers: @json( $result_drivers_TOP ),
         cod_drivers: @json( $result_drivers_COD ),
         top_customer: @json( $result_customer_TOP ),
@@ -188,9 +189,10 @@ $filterQuery = http_build_query(request()->only([
     }
 
 
-    const {
+    var {
         top_branches, 
         cod_branches, 
+        all_branches, 
         top_drivers, 
         cod_drivers, 
         top_customer, 
@@ -198,14 +200,11 @@ $filterQuery = http_build_query(request()->only([
     } = window.citDashboardData;
 
 
-    console.log( top_branches );
-    console.log( cod_branches );
 
-
-    var build_stackbar_section = (  TOP, COD, judul_x = "JUDUL" ) =>{
+    var build_stackbar_sectionTOPCODd = (  TOP, COD, judul_x = "JUDUL" ) =>{
 
         {{-- TOP Branches --}}
-        buildStackbarByClass({
+        buildStackbarByClassTOPCOD({
             className: TOP.selector,
             datasets: TOP.datasets,
             ordertype: 'TOP',
@@ -214,7 +213,7 @@ $filterQuery = http_build_query(request()->only([
             yLabel: ''
         });
         {{-- COD Branches --}}
-        buildStackbarByClass({
+        buildStackbarByClassTOPCOD({
             className: COD.selector,
             datasets: COD.datasets,
             ordertype: 'COD',
@@ -225,68 +224,31 @@ $filterQuery = http_build_query(request()->only([
 
     }
 
+    var build_stackbar_section = ( DATA, judul_x = "JUDUL" ) => {
 
-    build_stackbar_section( 
-    {
-
-        selector: "chart_top_branches",
-        datasets: top_branches
-
-    },
-
-
-    {
-
-        selector: "chart_cod_branches",
-        datasets: cod_branches
-
-    },
-
-
-    "BRANCHES"
-
-    );
+        buildStackbarByClass({
+            className: DATA.selector,
+            datasets: DATA.datasets,
+            xLabel: 'Bulan',
+            yLabel: 'Jumlah (Rp)',
+            scrollable: true,
+            horizontal: false,
+            maxWidth: '1200px',
+            maxHeight: '800px',
+            barWidth: 100,      // Lebar bar
+            spacing: 60        // Jarak antar bar - BESAR BANGET!
+        });
 
 
 
-    build_stackbar_section( 
-    {
+    }
 
-        selector: "chart_top_drivers",
-        datasets: top_drivers
-
-    },
-
-    {
-
-        selector: "chart_cod_drivers",
-        datasets: cod_drivers
-
-    },
-    "DRIVERS SALES"
+    build_stackbar_section({
+        selector:"chart_all_branches",
+        datasets : all_branches
+    }, "BRANCHES");
 
 
-    );
-
-
-    build_stackbar_section( 
-    {
-
-        selector: "chart_top_customer",
-        datasets: top_customer
-
-    },
-
-    {
-
-        selector: "chart_cod_customer",
-        datasets: cod_customer
-
-    },
-    "CUSTOMER"
-
-
-    );
 
 
 

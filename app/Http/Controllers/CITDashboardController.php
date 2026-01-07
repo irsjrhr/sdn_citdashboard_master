@@ -108,18 +108,22 @@ class CITDashboardController extends Controller{
 
 
 
-
-
         //Card Dataset
         $row_card_dashboard = $datasets[0][0]; 
+
+        //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
+        $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Invoice Document'] . "/" . $row_card_dashboard['Total Confirmed Invoice Document'];
+        unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
+
+
         // dd($row_card_dashboard);
         $row_paymentType_pie = $datasets[1][0];
 
         // Data Grafik
-        $data_teritory_grafik = $datasets[2]; 
-        $data_overdue_grafik = $datasets[3]; 
-        $data_driversales_grafik = $datasets[4]; 
-        $data_customer_grafik = $datasets[5];
+        $data_teritory_grafik = $datasets[2]; //Success Rate Collection
+        $data_overdue_grafik = $datasets[3]; //Success Rate Collection AR Overdue
+        $data_driversales_grafik = $datasets[4];  //Top Bad Salesman dan Driver 
+        $data_customer_grafik = $datasets[5]; // Top Bad Collection
 
         // Data Tabel
         $data_view_teritory = $datasets[6];
@@ -128,15 +132,19 @@ class CITDashboardController extends Controller{
         //=========== End Of Build Datasets  ===========
 
 
+
+
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
 
         //=========== Build  Top 10 Summary AR Data TOP dan COD: branches, driver, customer  ===========
 
 
+
+        // ++++ Data Summary territory ++++ 
         $summary_territory = $this->build_datasetGrafik( $data_teritory_grafik, 'territoryname', [
             "mapping_key_data" => true,
-            "TOP_data" => false,
+            "TOP_data" => true,
             "COD_data" => true,
             "sorting_data" => [
                 "TOP_data" => false,
@@ -150,9 +158,9 @@ class CITDashboardController extends Controller{
             ], 
         ]);
 
-        // ++++ Data Summary territory ++++ 
         $result_territory_TOP = $summary_territory['result_TOP'];
         $result_territory_COD = $summary_territory['result_COD'];
+        $result_territory_all = $summary_territory['result_all'];
 
 
         // ++++ Data Summary driver sales ++++ 
@@ -183,6 +191,7 @@ class CITDashboardController extends Controller{
             'data_view_customer',
             'result_territory_TOP',
             'result_territory_COD',
+            'result_territory_all',
             'result_drivers_TOP',
             'result_drivers_COD',
             'result_customer_TOP',
@@ -199,16 +208,13 @@ class CITDashboardController extends Controller{
 
 
 
-        //=========== Build Datasets   ===========
-
-
+        //========== Get Datasets From DB ==========
         if ( !isset($_GET['page']) && empty( $pageNumber ) ) {
             //Page pertama, kalo gak ada parameter ?get
             $pageNumber = 1;
         }else{
             $pageNumber = $request->input('page');
         }
-
 
         $pageSize = 100;
         $filters = [
@@ -244,9 +250,8 @@ class CITDashboardController extends Controller{
             $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } while ($stmt->nextRowset());
 
-
-
-
+        //Bentuk datasets [  [], [], [], []   ] 
+        //========== End Of Get Datasets From DB ==========
 
         //Data COH Primer
         $data_coh = $datasets[0]; //Data Pagination atau bagian
@@ -266,9 +271,6 @@ class CITDashboardController extends Controller{
             'pageName' => 'page',
             'query'    => request()->query(),
         ]);
-
-
-
         //Mapping number formating view
         $key_rupiah_data = [
             "Outstanding_AR",
@@ -457,7 +459,7 @@ class CITDashboardController extends Controller{
         foreach ($datasets_grafik as $row_datasets) {
             $row_result_new = [];
 
-            //Menambahkan key label untu standarisasi
+            //Menambahkan key label untuk standarisasi FE
             $row_result_new['label'] = $row_datasets[$key_label_row];
 
             //========= ( MAPPING ) MELAKUKAN MAPPING DAN NORMALISASI KEY ===========
@@ -465,6 +467,7 @@ class CITDashboardController extends Controller{
                 //Jika Option Build Ingin Mapping Data
                 //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
                 //Cek apakah key pada row param ada di row_dataset
+                /*
                 foreach ($row_param as $key_row_param => $nilai_row_param ) {
                     $param_add = false;
 
@@ -482,8 +485,41 @@ class CITDashboardController extends Controller{
 
                         //Menambahkan ke key row_result_new dengan key tersebut
                         $row_result_new[$key_row_param] = $nilai;
-                    }
+                    }                    
+
                 }
+                */
+
+                //Lakukan pengecekan apakah key pada row_datasets ada di key row_param. Kalo dia ada, maka lakukan Cek apakah key pada row datasets ada di key row_param
+                foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
+
+                    $param_add = false;
+                    //Cek apakah key pada row datasets ada di key row_param
+                    if ( array_key_exists( $key_row_dataset, $row_param) == true ) {
+                        //Kalo key pada row datasetsnya ada di row param, maka tambahkan key dan valuenya ke $row_result_new
+                        $param_add = true;
+                        $nilai_add = $value_row_datasets;
+
+                        //Ubah tipe data nilai_add yang akan ditambahkan, berdasarkan tipe data dari nilai degan key yang sama di row_param
+                        $nilai_row_param = $row_param[ $key_row_dataset ];
+                        if ( is_string( $nilai_row_param ) ) {
+                            //Jika pada row param nilai dengan key ini tipe datanya string. Maka ubah ke string
+                            $nilai_add = ( string ) $nilai_add;
+                        }else if ( is_float( $nilai_row_param ) ) {
+                            //Jika pada row param nilai dengan key ini tipe datanya float. Maka ubah ke float
+                            $nilai_add = ( float ) $nilai_add;
+                        }
+
+                        //Menambahkan ke key row_result_new dengan key tersebut
+                        $row_result_new[$key_row_dataset] = $nilai_add;
+
+
+                    }
+
+
+                }
+
+
 
             }
 
@@ -505,6 +541,14 @@ class CITDashboardController extends Controller{
             }
 
             //Memasukkan row baru untuk result_all jenis ke result_all 
+            // Pada result all, untuk row nya punya kolom order type, pada labelnya tambahkan keterangan apakah ini jenis TOP atau COD dengan concat
+
+            if ( isset($row_result_new['ordertype']) ) {
+                $nama_label = $row_result_new['label'] . " - " . $row_result_new['ordertype'];
+                $row_result_new['label'] = $nama_label;
+            }
+
+
             $result_all[] = $row_result_new;
         }
 
@@ -552,6 +596,7 @@ class CITDashboardController extends Controller{
             'result_TOP' => $result_TOP, // [ [], [], [] ] - Kumpulan data hanya row data dengan ordertype dengan nilai COD
             'result_all' => $result_all // [ [], [], [] ] - Kumpulan semua data
         ];
+
 
 
         return $result;
