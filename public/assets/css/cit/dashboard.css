@@ -288,3 +288,19 @@ canvas {
     display: block;
     box-sizing: border-box;
 }
+
+
+.row_tab_data{
+
+}
+.tab_indicator_section{
+	flex : 1;
+	text-align: center;
+}
+.col_section_data{
+	display: none;
+}
+.col_section_data.active{
+	display: block;
+}
+

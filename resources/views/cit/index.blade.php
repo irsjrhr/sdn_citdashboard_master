@@ -177,8 +177,134 @@ $filterQuery = http_build_query(request()->only([
 
 <script>
 
-    {{-- Chart.register(ChartDataLabels); --}}
-    window.citDashboardData = {
+
+
+    //Ubah array associatif multi dimensi yang isinya array index menjadi object yang isinya object 
+
+
+    //Data Success Rate Collection Branch 
+    buildStackbarByClass({
+        className: 'chart_successRateCollectionBranch_all',
+        datasets: @json( $summary_successCollect_branch['result_all'] ),
+        seriesConfig: [
+            {
+                label: 'Collected Rate ( % )',
+                key: 'collection_rate_pct',
+                color: 'rgba(34,197,94,0.7)'
+            },
+            {
+                label: 'Uncollected Rate ( % )',
+                key: 'uncollected_rate_pct',
+                color: 'rgba(239,68,68,0.7)'
+            }
+        ],
+        xLabel: 'Branch',
+        yLabel: 'Rate Percentage ( % )'
+    });
+
+
+    //Data Success Rate Collection Overdue Branch 
+    buildStackbarByClass({
+        className: 'chart_successRateCollectionOverdueBranch_all',
+        datasets: @json( $summary_successCollectOverdue_branch['result_all'] ),
+        seriesConfig: [
+            {
+                label: 'Collected Rate ( % )',
+                key: 'overdue_collection_rate_pct',
+                color: 'rgba(34,197,94,0.7)'
+            },
+            {
+                label: 'Uncollected Rate ( % )',
+                key: 'overdue_uncollected_rate_pct',
+                color: 'rgba(239,68,68,0.7)'
+            }
+        ],
+        xLabel: 'Branch',
+        yLabel: 'Rate Percentage ( % )'
+    });
+
+
+    //Data Bad Collection DriverSales TOP 
+    buildStackbarByClass({
+        className: 'chart_badCollectionDriver_top',
+        datasets: @json( $summary_badCollectionDriver['result_TOP'] ),
+        seriesConfig: [
+            {
+                label: 'Collected Amount ( Rp )',
+                key: 'confirmed_amount',
+                color: 'rgba(34,197,94,0.7)'
+            },
+            {
+                label: 'Uncollected Amount ( Rp )',
+                key: 'unconfirmed_amount',
+                color: 'rgba(239,68,68,0.7)'
+            }
+        ],
+        xLabel: 'Salesman',
+        yLabel: 'Amount ( Rp )'
+    });
+
+    //Data Bad Collection DriverSales COD 
+    buildStackbarByClass({
+        className: 'chart_badCollectSalesDriver_cod',
+        datasets: @json( $summary_badCollectionDriver['result_COD'] ),
+        seriesConfig: [
+            {
+                label: 'Collected Amount ( Rp )',
+                key: 'confirmed_amount',
+                color: 'rgba(34,197,94,0.7)'
+            },
+            {
+                label: 'Uncollected Amount ( Rp )',
+                key: 'unconfirmed_amount',
+                color: 'rgba(239,68,68,0.7)'
+            }
+        ],
+        xLabel: 'Driver',
+        yLabel: 'Amount ( Rp )'
+    });
+
+
+    //Data Bad Collection Customer 
+    buildStackbarByClass({
+        className: 'chart_badCollectCustomer',
+        datasets: @json( $summary_badCollectionCustomer['result_all'] ),
+        seriesConfig: [
+            {
+                label: 'Collected Amount ( Rp )',
+                key: 'confirmed_amount',
+                color: 'rgba(34,197,94,0.7)'
+            },
+            {
+                label: 'Uncollected Amount ( Rp )',
+                key: 'unconfirmed_amount',
+                color: 'rgba(239,68,68,0.7)'
+            }
+        ],
+        xLabel: 'Salesman',
+        yLabel: 'Amount ( Rp )'
+    });
+
+
+
+
+
+
+
+    {{-- chart_badCollectSalesDriver_cod --}}
+
+
+
+</script>
+
+
+
+@endpush
+
+
+
+{{-- Chart.register(ChartDataLabels); --}}
+{{--     window.citDashboardData = {
         top_branches: @json( $result_territory_TOP ),
         cod_branches: @json( $result_territory_COD ),
         all_branches: @json( $result_territory_all ),
@@ -198,33 +324,11 @@ $filterQuery = http_build_query(request()->only([
         top_customer, 
         cod_customer, 
     } = window.citDashboardData;
+    --}}
 
 
 
-    var build_stackbar_sectionTOPCODd = (  TOP, COD, judul_x = "JUDUL" ) =>{
-
-        {{-- TOP Branches --}}
-        buildStackbarByClassTOPCOD({
-            className: TOP.selector,
-            datasets: TOP.datasets,
-            ordertype: 'TOP',
-            horizontal: false,
-            xLabel: judul_x,
-            yLabel: ''
-        });
-        {{-- COD Branches --}}
-        buildStackbarByClassTOPCOD({
-            className: COD.selector,
-            datasets: COD.datasets,
-            ordertype: 'COD',
-            horizontal: false,
-            xLabel: judul_x,
-            yLabel: ''
-        });
-
-    }
-
-    var build_stackbar_section = ( DATA, judul_x = "JUDUL" ) => {
+ {{--     var build_stackbar_section = ( DATA, judul_x = "JUDUL" ) => {
 
         buildStackbarByClass({
             className: DATA.selector,
@@ -238,22 +342,39 @@ $filterQuery = http_build_query(request()->only([
             barWidth: 100,      // Lebar bar
             spacing: 60        // Jarak antar bar - BESAR BANGET!
         });
-
-
-
     }
+    --}}
+
+
+{{--     buildStackbarByClass({
+        className: 'chart-cit',
+        datasets: dataFromAPI,
+        seriesConfig: [
+        {
+            label: 'Collected',
+            key: 'confirmed_amount',
+            color: 'rgba(34,197,94,0.7)'
+        },
+        {
+            label: 'Uncollected',
+            key: 'unconfirmed_amount',
+            color: 'rgba(239,68,68,0.7)'
+        }
+        ],
+        xLabel: 'Branch',
+        yLabel: 'Amount (Rp)'
+    });
+
+
 
     build_stackbar_section({
-        selector:"chart_all_branches",
-        datasets : all_branches
+        selector:"chart_successRateCollectionBranch_all",
+        datasets : data_successRateCollectionBranch_all
     }, "BRANCHES");
 
 
-
-
-
-</script>
-
-
-
-@endpush
+    build_stackbar_section({
+        selector:"chart_successRateCollectionOverdueBranch_all",
+        datasets : data_successRateCollectionOverdueBranch_all
+    }, "BRANCHES");
+ --}}

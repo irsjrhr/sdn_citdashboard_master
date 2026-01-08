@@ -116,36 +116,107 @@ class CITDashboardController extends Controller{
         unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
 
 
-        // dd($row_card_dashboard);
+
+        // Payment Type Pie Chart
         $row_paymentType_pie = $datasets[1][0];
 
         // Data Grafik
-        $data_teritory_grafik = $datasets[2]; //Success Rate Collection
-        $data_overdue_grafik = $datasets[3]; //Success Rate Collection AR Overdue
-        $data_driversales_grafik = $datasets[4];  //Top Bad Salesman dan Driver 
-        $data_customer_grafik = $datasets[5]; // Top Bad Collection
+        $data_successCollect_branch = $datasets[2]; //Success Rate Collection
+        $data_successCollectOverdue_branch = $datasets[3]; //Success Rate Collection AR Overdue
+        $data_badCollectiondriver = $datasets[4]; // Bad Collection by Driver Or Sales
+        $data_badCollectionCustomer = $datasets[5]; // Bad Customer Collection
 
-        // Data Tabel
+
+        // Data View Detail Tabel
         $data_view_teritory = $datasets[6];
         $data_view_driversales = $datasets[7];
         $data_view_customer = $datasets[8];
+
+
         //=========== End Of Build Datasets  ===========
-
-
-
 
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
 
-        //=========== Build  Top 10 Summary AR Data TOP dan COD: branches, driver, customer  ===========
+        //=========== Build Summary Data ================
+
+        // ++++ Data Summary Success Rate Collection Branch/Teritory ++++ 
+        $summary_successCollect_branch = $this->build_datasetGrafik( 
+            $data_successCollect_branch, 
+            'territoryname', 
+            [
+                "mapping_key_data" => false,
+                "TOP_data" => true,
+                "COD_data" => true,
+                "sorting_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ],
+                "limit_10_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => true
+                ], 
+            ]
+        ); 
+        // dd($summary_successCollect_branch);
+        //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
 
 
+        // ++++ Data Summary Success Rate Collection Overdue Branch/Teritory ++++ 
+        $summary_successCollectOverdue_branch = $this->build_datasetGrafik( 
+            $data_successCollectOverdue_branch, 
+            'territoryname', 
+            [
+                "mapping_key_data" => false,
+                "TOP_data" => false,
+                "COD_data" => false,
+                "sorting_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ],
+                "limit_10_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ], 
+            ]
+        );
+        // dd($summary_successCollectOverdue_branch);
+        //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
 
-        // ++++ Data Summary territory ++++ 
-        $summary_territory = $this->build_datasetGrafik( $data_teritory_grafik, 'territoryname', [
-            "mapping_key_data" => true,
-            "TOP_data" => true,
-            "COD_data" => true,
+
+        // ++++ Data Summary Driversales TOP dan COD ++++ 
+        $summary_badCollectionDriver = $this->build_datasetGrafik( 
+            $data_badCollectiondriver, 
+            'salesnameordrivername', 
+            [
+                "mapping_key_data" => false,
+                "TOP_data" => true,
+                "COD_data" => true,
+                "sorting_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ],
+                "limit_10_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ], 
+            ]
+        );
+        // dd(  $summary_badCollectionDriver );
+        //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
+
+
+        // ++++ Data Summary Customers ++++ 
+        $summary_badCollectionCustomer = $this->build_datasetGrafik( $data_badCollectionCustomer, 'customername', [
+            "mapping_key_data" => false,
+            "TOP_data" => false,
+            "COD_data" => false,
             "sorting_data" => [
                 "TOP_data" => false,
                 "COD_data" => false,
@@ -157,23 +228,8 @@ class CITDashboardController extends Controller{
                 "all_data" => false
             ], 
         ]);
-
-        $result_territory_TOP = $summary_territory['result_TOP'];
-        $result_territory_COD = $summary_territory['result_COD'];
-        $result_territory_all = $summary_territory['result_all'];
-
-
-        // ++++ Data Summary driver sales ++++ 
-        $summary_drivers = $this->build_datasetGrafik( $data_driversales_grafik,'salesnameordrivername');
-        $result_drivers_TOP = $summary_drivers['result_TOP'];
-        $result_drivers_COD = $summary_drivers['result_COD'];
-
-
-
-        // ++++ Data Summary customer ++++ 
-        $summary_customer = $this->build_datasetGrafik( $data_customer_grafik, 'customername');
-        $result_customer_TOP = $summary_customer['result_TOP'];
-        $result_customer_COD = $summary_customer['result_COD'];
+        // dd(  $summary_badCollectionCustomer );
+        //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
 
 
         // ========== Mapping Key Untuk Tabel View Detail  ========
@@ -189,17 +245,17 @@ class CITDashboardController extends Controller{
             'data_view_teritory',
             'data_view_driversales',
             'data_view_customer',
-            'result_territory_TOP',
-            'result_territory_COD',
-            'result_territory_all',
-            'result_drivers_TOP',
-            'result_drivers_COD',
-            'result_customer_TOP',
-            'result_customer_COD',
+            'summary_successCollect_branch',
+            'summary_successCollectOverdue_branch',
+            'summary_badCollectionDriver',
+            'summary_badCollectionCustomer',
             'maps_header_teritory',
             'maps_header_driversales',
             'maps_header_customer',
         ));
+
+
+
 
     }
 
@@ -431,6 +487,7 @@ class CITDashboardController extends Controller{
             $option_build['limit_10_data'] = $this->option_build_default['limit_10_data'];
         }
 
+
         
         $result_TOP = [];  //Kumpulan data hanya row data dengan ordertype dengan nilai TOP
         $result_COD = []; //Kumpulan data hanya row data dengan ordertype dengan nilai COD
@@ -453,79 +510,70 @@ class CITDashboardController extends Controller{
 
         // dd( ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) );
         // dd( isset( $row_cek['ordertype']) );
-        // dd( $option_clustering_data );
+
+
+
 
         //Melakukan mapping dan clustring dengan melakukan pengecekan setiap row data dari datasets
-        foreach ($datasets_grafik as $row_datasets) {
+        foreach ($datasets_grafik as $key => $row_datasets) {
+
+
+
+            //++++++ Define row result baru dengan ada key label untuk standarisasi +++
+            // Ubah nilai dengan keynya key_label_row dengan key label
             $row_result_new = [];
-
-            //Menambahkan key label untuk standarisasi FE
             $row_result_new['label'] = $row_datasets[$key_label_row];
+            // unset( $datasets_grafik[$key][$key_label_row] );
 
-            //========= ( MAPPING ) MELAKUKAN MAPPING DAN NORMALISASI KEY ===========
-            if ( $option_mapping_key_data == true ) {
-                //Jika Option Build Ingin Mapping Data
-                //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
-                //Cek apakah key pada row param ada di row_dataset
-                /*
-                foreach ($row_param as $key_row_param => $nilai_row_param ) {
-                    $param_add = false;
+            //========= ( MAPPING ) MELAKUKAN MAPPING DAN NORMALISASI KEY PADA ROW BARU ===========
+            //Jika Option Build Ingin Mapping Data
+            //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
+            //Cek apakah key pada row param ada di row_dataset
+            //Isi key row result new berdasarkan $option_mapping_key_data
+            //Jika option mapping itu treu, Lakukan pengecekan apakah key pada row_datasets ada di key row_param. Kalo dia ada, maka lakukan Cek apakah key pada row datasets ada di key row_param
+            foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
 
-                    //Kalo key pada row_param itu pada row_datasets, maka ambil itu key dan nilainya 
-                    if ( array_key_exists( $key_row_param, $row_datasets ) ) {
-                        $param_add = true;
-                        $nilai = $row_datasets[ $key_row_param ];
 
-                        //Define tipe data nilainya berdasarkan nilai row paramnya
-                        if ( is_string( $nilai_row_param ) ) {
-                            $nilai = ( string ) $nilai;
-                        }else if ( is_float( $nilai_row_param ) ) {
-                            $nilai = ( float ) $nilai;
-                        }
 
-                        //Menambahkan ke key row_result_new dengan key tersebut
-                        $row_result_new[$key_row_param] = $nilai;
-                    }                    
 
-                }
-                */
 
-                //Lakukan pengecekan apakah key pada row_datasets ada di key row_param. Kalo dia ada, maka lakukan Cek apakah key pada row datasets ada di key row_param
-                foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
-
-                    $param_add = false;
-                    //Cek apakah key pada row datasets ada di key row_param
+                //+++ Lakukan Mapping Key Data Berdasarkan Dengan option buildnya
+                if ( $option_mapping_key_data == true ) {
+                    //Jika option_mapping_key_data itu true, maka lakukan clusterting dengan Cek apakah key pada row datasets ada di key row_param. Jika ada maka tambahkan key dan nilai tersebut ke row baru 
                     if ( array_key_exists( $key_row_dataset, $row_param) == true ) {
                         //Kalo key pada row datasetsnya ada di row param, maka tambahkan key dan valuenya ke $row_result_new
-                        $param_add = true;
-                        $nilai_add = $value_row_datasets;
+                        //Menambahkan ke key row_result_new dengan key tersebut
 
-                        //Ubah tipe data nilai_add yang akan ditambahkan, berdasarkan tipe data dari nilai degan key yang sama di row_param
+
+                        //+++ Ubah tipe data nilai_add yang akan ditambahkan, berdasarkan tipe data dari nilai degan key yang sama di row_param +++
                         $nilai_row_param = $row_param[ $key_row_dataset ];
+                        $nilai_baru = $value_row_datasets;
                         if ( is_string( $nilai_row_param ) ) {
                             //Jika pada row param nilai dengan key ini tipe datanya string. Maka ubah ke string
-                            $nilai_add = ( string ) $nilai_add;
+                            $nilai_baru = ( string ) $nilai_baru;
                         }else if ( is_float( $nilai_row_param ) ) {
                             //Jika pada row param nilai dengan key ini tipe datanya float. Maka ubah ke float
-                            $nilai_add = ( float ) $nilai_add;
+                            $nilai_baru = ( float ) $nilai_baru;
                         }
 
-                        //Menambahkan ke key row_result_new dengan key tersebut
-                        $row_result_new[$key_row_dataset] = $nilai_add;
 
-
+                        $row_result_new[$key_row_dataset] = $nilai_baru;
                     }
 
-
+                }else{
+                    // Jika option_mapping_key_data itu false, maka jangan lakukan cluseing dan masukkan semmua key dan nilai pada row datasest tanap adanya pengecekan, kemudian datanya apa adanya tapi ada label untuk kebutuhan FE
+                    $row_result_new = array_merge( $row_result_new, $row_datasets );
                 }
 
-
-
             }
+
+
+
 
             //========= ( CLUSTERING ) PEMBUATAN DAN PEMISAHAN DATA RESULT by ordertype result_TOP dan result_COD ===========
             //Ini hanta akan bekerja ketika setiap row data itu punya kolom ordertype dan antara option build TOP_data atau COD_data bernilai true
             //INGATT!! option_build TOP_data atau COD_data hanya akan bekerja ketika row datasets punya kolom ordertype
+            //Yang di cek dari kolomnya itu dari row_result_new 
             //$result_all tidak terpengaruh clustering
             if (  $option_clustering_data == true ) {
 
@@ -598,7 +646,7 @@ class CITDashboardController extends Controller{
         ];
 
 
-
+        // dd($result);
         return $result;
     }
 

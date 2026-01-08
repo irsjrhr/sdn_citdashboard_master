@@ -102,7 +102,7 @@
 
 
 
-{{-- Top Entities - Branches --}}
+{{-- Top Entities - Branches Success Rate Collection --}}
 <div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
 
     <div class="row row_main_summary">
@@ -113,18 +113,18 @@
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top Most 10 Branches with Uncollected Amount By OrderType
+                        Success Rate Collection By Branch
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
                     </div>
                 </div>
 
-                @if ( !empty($result_territory_all) )
+                @if ( !empty($summary_successCollectOverdue_branch['result_all']) )
                 <div class="row">
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_all_branches"></canvas>
+                        <canvas class="chart_successRateCollectionBranch_all"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -149,66 +149,89 @@
 {{-- End Of Top Entities - Branches --}}
 
 
-
-
-{{-- Top Entities - Drivers --}}
+{{-- Top Entities - Branches Success Rate Collection Overdue By Branches --}}
 <div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
 
     <div class="row row_main_summary">
 
-        {{-- Col Main Grafik - TOP --}}
-        <div class="col-6 col_main_grafik col_grafik_top">
+        {{-- Col Main Grafik - ALL --}}
+        <div class="col-12 col_main_grafik">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top 10 Bad Collection by Salesman (ToP)
+                        Success Rate Collection Overdue By Branches
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
                     </div>
                 </div>
 
-                @if ( !empty($result_customer_TOP) )
+                @if ( !empty($summary_successCollectOverdue_branch['result_all']) )
                 <div class="row">
-                    {{-- col_card_entities --}}
-                    <div class="col-sm-12 col_card_entities">
-                        <div class="container_scroll_x">
-                            <div class="row_scroll">
-                                @foreach ($result_drivers_TOP as $key => $row_entities)
-                                {{-- Card Entities --}}
-                                <div class="card card_entities">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h5> {{$row_entities['label']}} </h5>
-                                            </div>
-                                            <div class="col red_col">
-                                                <p> Uncollected Amount  </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['unconfirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                            <div class="col green_col">
-                                                <p> Confirmed Amount </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['confirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- End Of Card Entities --}}
-                                @endforeach
-
-                            </div>
-                        </div>
-
-                    </div>
-                    {{-- end of col_card_entities --}}
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_top_drivers" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_successRateCollectionOverdueBranch_all"></canvas>
+                    </div>
+                    {{-- end of col grafik --}}
+                </div>
+
+                @else
+
+                <div class="alert alert-danger py-2 mb-3">
+                    <strong> Data not found </strong> 
+                </div>
+
+                @endif
+            </div>   
+        </div>
+        {{-- End Of Col Main Grafik - ALL --}}
+
+
+    </div>
+
+
+
+</div>
+{{-- End Of Top Entities - Branches Success Rate Collection Overdue By Branches --}}
+
+
+
+
+
+
+
+{{-- Top Entities - Drivers --}}
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+
+    <div class="row row_main_summary row_tab_data">
+
+        <div class="col-12 mb-4">
+            <div class="nav_container">
+                <div class="nav_tab">
+                    <div class="tab_el tab_indicator_section text-center" data-target="col_section_top"> Salesman TOP </div>
+                    <div class="tab_el tab_indicator_section text-center" data-target="col_section_cod"> Drivers COD </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Col Main Grafik - TOP --}}
+        <div class="col-12 col_main_grafik col_grafik_top col_section_data" id="col_section_top">
+            <div class="container-fluid">
+                <div class="row row_title_summary">
+                    <div class="col-12">
+
+                        Top 10 Bad Collection by Salesman ( TOP )
+
+                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_driversales"> View Detail Data </button>
+                    </div>
+                </div>
+
+                @if ( !empty($summary_badCollectionDriver['result_TOP']) )
+                <div class="row">
+                    {{-- col grafik --}}
+                    <div class="col-sm-12">
+                        <canvas class="chart_badCollectionDriver_top" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -225,60 +248,23 @@
         {{-- End Of Col Main Grafik - TOP --}}
 
 
-
         {{-- Col Main Grafik  - COD--}}
-        <div class="col-6 col_main_grafik col_grafik_cod">
+        <div class="col-12 col_main_grafik col_grafik_cod col_section_data" id="col_section_cod">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top 10 Bad Collection by Drivers (CoD)
+                        Top 10 Bad Collection by Drivers ( COD )
 
-                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
+                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_driversales"> View Detail Data </button>
                     </div>
                 </div>
 
-                @if ( !empty($result_drivers_COD) )
+                @if ( !empty($summary_badCollectionDriver['result_COD']) )
                 <div class="row">
-                    {{-- col_card_entities --}}
-                    <div class="col-sm-12 col_card_entities">
-                        <div class="container_scroll_x">
-                            <div class="row_scroll">
-                                @foreach ($result_drivers_COD as $key => $row_entities)
-                                {{-- Card Entities --}}
-                                <div class="card card_entities">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h5> {{$row_entities['label']}} </h5>
-                                            </div>
-                                            <div class="col red_col">
-                                                <p> Uncollected Amount  </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['unconfirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                            <div class="col green_col">
-                                                <p> Confirmed Amount </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['confirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- End Of Card Entities --}}
-                                @endforeach
-
-                            </div>
-                        </div>
-
-                    </div>
-                    {{-- end of col_card_entities --}}
-
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_cod_drivers" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_badCollectSalesDriver_cod" style="height: 500px !important; max-height: 500px;"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -304,66 +290,29 @@
 
 
 
-
-
-{{-- Top Entities - Customer --}}
+{{-- Top Entities - Bad Colletion Customer --}}
 <div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
 
     <div class="row row_main_summary">
 
-        {{-- Col Main Grafik - TOP --}}
-        <div class="col-6 col_main_grafik col_grafik_top">
+        {{-- Col Main Grafik - ALL --}}
+        <div class="col-12 col_main_grafik">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top Most 10 Customer with Uncollected Amount By OrderType TOP
+                        Top 20 Bad Collection By Customer
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
                     </div>
                 </div>
 
-                @if ( !empty($result_customer_TOP) )
+                @if ( !empty($summary_badCollectionCustomer['result_all']) )
                 <div class="row">
-                    {{-- col_card_entities --}}
-                    <div class="col-sm-12 col_card_entities">
-                        <div class="container_scroll_x">
-                            <div class="row_scroll">
-                                @foreach ($result_customer_TOP as $key => $row_entities)
-                                {{-- Card Entities --}}
-                                <div class="card card_entities">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h5> {{$row_entities['label']}} </h5>
-                                            </div>
-                                            <div class="col red_col">
-                                                <p> Uncollected Amount  </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['unconfirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                            <div class="col green_col">
-                                                <p> Confirmed Amount </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['confirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- End Of Card Entities --}}
-                                @endforeach
-
-                            </div>
-                        </div>
-
-                    </div>
-                    {{-- end of col_card_entities --}}
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_top_customer" id="chart_top_customer" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <canvas class="chart_badCollectCustomer"></canvas>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -377,77 +326,7 @@
                 @endif
             </div>   
         </div>
-        {{-- End Of Col Main Grafik - TOP --}}
-
-
-
-        {{-- Col Main Grafik  - COD--}}
-        <div class="col-6 col_main_grafik col_grafik_cod">
-            <div class="container-fluid">
-                <div class="row row_title_summary">
-                    <div class="col-12">
-
-                        Top Most 10 Customer with Uncollected Amount By OrderType COD
-
-                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
-                    </div>
-                </div>
-
-                @if ( !empty($result_customer_COD) )
-                <div class="row">
-                    {{-- col_card_entities --}}
-                    <div class="col-sm-12 col_card_entities">
-                        <div class="container_scroll_x">
-                            <div class="row_scroll">
-                                @foreach ($result_customer_COD as $key => $row_entities)
-                                {{-- Card Entities --}}
-                                <div class="card card_entities">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h5> {{$row_entities['label']}} </h5>
-                                            </div>
-                                            <div class="col red_col">
-                                                <p> Uncollected Amount  </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['unconfirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                            <div class="col green_col">
-                                                <p> Confirmed Amount </p>
-                                                <h5> 
-                                                    Rp {{ formatAbbreviatedNumber( $row_entities['confirmed_amount'] ) }} 
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- End Of Card Entities --}}
-                                @endforeach
-
-                            </div>
-                        </div>
-
-                    </div>
-                    {{-- end of col_card_entities --}}
-
-                    {{-- col grafik --}}
-                    <div class="col-sm-12">
-                        <canvas class="chart_cod_customer" id="chart_cod_customer" style="height: 500px !important; max-height: 500px;"></canvas>
-                    </div>
-                    {{-- end of col grafik --}}
-                </div>
-
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
-            </div>   
-        </div>
-        {{-- End Of Col Main Grafik  - COD --}}
+        {{-- End Of Col Main Grafik - ALL --}}
 
 
     </div>
@@ -455,7 +334,12 @@
 
 
 </div>
-{{-- End Of Top Entities - Customer --}}
+{{-- End Of Top Entities - Bad Colletion Customer --}}
+
+
+
+
+
 
 
 
