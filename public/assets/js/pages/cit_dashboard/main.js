@@ -99,7 +99,7 @@ var open_section = ( tab_indicator_section_click ) => {
 		//Memberikan efek ke button
 		tab_indicator_section.removeClass('active');
 		tab_indicator_section_target.addClass('active');
-	}, 500);
+	}, 100);
 
 	console.log("Membuka", col_section_data_target);
 

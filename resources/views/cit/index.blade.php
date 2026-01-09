@@ -24,6 +24,17 @@ $filterQuery = http_build_query(request()->only([
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/cit/dashboard.css')}}">
+<style>
+    .chart_container_scroll canvas {
+        min-height: 500px !important;
+        height: auto !important;
+    }
+
+    .chart_container_scroll {
+        min-height: 550px;
+        position: relative;
+    }
+</style>
 
 
 <div class="row row_container mb-3">
@@ -140,9 +151,126 @@ $filterQuery = http_build_query(request()->only([
     </div>
     {{-- End Of Col_container_data - page_data_customer --}}
 
-
-
 </div>
+
+<div class="modal fade" id="modal_detail_stackbar" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        {{-- container detail stackbar - successRateCollectionBranch_all --}}
+                        <div class="col-12 container_detail_stackbar active" id="successRateCollectionBranch_all">
+
+                            <!-- IDENTITAS -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-1">Cabang / Territory</h6>
+                                <p class="mb-0">
+                                    <span id="detail_label">CIANJUR - COD</span>
+                                </p>
+                                <small class="text-muted">
+                                    Territory: <span id="detail_territory">CIANJUR</span> |
+                                    Order Type: <span id="detail_ordertype">COD</span>
+                                </small>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="text-success fw-bold">Collected Rate</h6>
+                                        <h3 class="mb-0"><span id="detail_collected_rate">94.18%</span></h3>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="border rounded p-3 h-100">
+                                        <h6 class="text-danger fw-bold">Uncollected Rate</h6>
+                                        <h3 class="mb-0"><span id="detail_uncollected_rate">5.82%</span>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- FINANCIAL -->
+                            <div class="border rounded p-3 mb-3">
+                                <h6 class="fw-bold mb-2">Financial Summary</h6>
+                                <table class="table table-sm mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Total AR</td>
+                                            <td class="text-end fw-bold">
+                                                <span id="detail_total_ar">Rp 1.146.475.063</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Collected Amount</td>
+                                            <td class="text-end text-success fw-bold">
+                                                <span id="detail_collected_amount">Rp 983.308.553</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Unconfirmed Amount</td>
+                                            <td class="text-end text-warning fw-bold">
+                                                <span id="detail_unconfirmed_amount">Rp 66.700.251</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Confirmed Amount</td>
+                                            <td class="text-end fw-bold">
+                                                <span id="detail_confirmed_amount">Rp 1.079.774.812</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Total Difference</td>
+                                            <td class="text-end fw-bold">
+                                                <span id="detail_difference" class="text-danger">
+                                                    - Rp 117.106.685
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+
+                        </div>
+
+                        {{-- end of container detail stackbar - successRateCollectionBranch_all --}}
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -177,121 +305,175 @@ $filterQuery = http_build_query(request()->only([
 
 <script>
 
+    function open_modal_detailStackbar( callback = false ){
+        if( callback == false ){
+            callback = function(){
+                return 1;
+            }
+        }
+        const modalEl = document.getElementById('modal_detail_stackbar');
+        const modal = new bootstrap.Modal(modalEl);
 
+        callback( modalEl );
 
-    //Ubah array associatif multi dimensi yang isinya array index menjadi object yang isinya object 
+        //Memunculkan modal
+        modal.show();
+    }
+
 
 
     //Data Success Rate Collection Branch 
-    buildStackbarByClass({
-        className: 'chart_successRateCollectionBranch_all',
-        datasets: @json( $summary_successCollect_branch['result_all'] ),
-        seriesConfig: [
-            {
-                label: 'Collected Rate ( % )',
-                key: 'collection_rate_pct',
-                color: 'rgba(34,197,94,0.7)'
-            },
-            {
-                label: 'Uncollected Rate ( % )',
-                key: 'uncollected_rate_pct',
-                color: 'rgba(239,68,68,0.7)'
+
+    $(document).ready(function(){
+
+        open_modal_detailStackbar(function( modal_el ){ 
+
+            modal_el = $( modal_el );
+
+            //Membuka container detail berdasarkan dataset yang di klik pada bar
+            var id_container_detail_stackbar = "#successRateCollectionOverdueBranch_all";
+            var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
+            var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
+
+            alert( "Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar);
+
+            //Menutup semua container detail stackbar
+            container_detail_stackbar.removeClass('active');
+            //Membuka container detail stacbar target
+            container_detail_stackbarTarget.addClass('active');
+
+        });
+
+
+        var data_successCollect_branchAll = @json( $summary_successCollect_branch['result_all'] ); //[ {},{},{} ]
+        console.log(data_successCollect_branchAll);
+        buildStackedBarChart({
+            el: document.getElementById('chart_successRateCollectionBranch_all'),
+            data: data_successCollect_branchAll,
+            config: {
+                stacks: [
+                    {
+                        key: 'collection_rate_pct',
+                        label: 'Collected Rate ( % )',
+                        backgroundColor: '#4CAF50'
+                    },
+                    {
+                        key: 'uncollected_rate_pct',
+                        label: 'Uncollected Rate ( %  )',
+                        backgroundColor: '#F44336'
+                    }
+                ],
+                heightChart : 300,
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    open_modal_detailStackbar(function( modal_el ){
+                        //Akan membuka modal detail stackbar yang menampilkan detail row data
+
+
+                    });
+                }
             }
-        ],
-        xLabel: 'Branch',
-        yLabel: 'Rate Percentage ( % )'
+        });
+
+
+
+        //Data Success Rate Collection Overdue Branch 
+        var data_successCollectOverdue_branchAll = @json( $summary_successCollectOverdue_branch['result_all'] ); //[ {},{},{} ]
+        buildStackedBarChart({
+            el: document.getElementById('chart_successRateCollectionOverdueBranch_all'),
+            data: data_successCollectOverdue_branchAll,
+            config: {
+                stacks: [
+                    {
+                        key: 'overdue_collection_rate_pct',
+                        label: 'Collected Amount ( % )',
+                        backgroundColor: '#4CAF50'
+                    },
+                    {
+                        key: 'overdue_uncollected_rate_pct',
+                        label: 'Uncollected Amount ( %  )',
+                        backgroundColor: '#F44336'
+                    }
+                ],
+                heightChart : 300
+            }
+        });
+
+
+
+        //Data Bad Collection DriverSales TOP Salesman
+        var data_badCollectionDriverTOP = @json( $summary_badCollectionDriver['result_TOP'] ); //[ {},{},{} ]
+
+        console.log("+++++++++++++");
+        console.log( data_badCollectionDriverTOP );
+        buildStackedBarChart({
+            el: document.getElementById('chart_badCollectionSalesDriver_top'),
+            data: data_badCollectionDriverTOP,
+            config: {
+                stacks: [
+                    {
+                        key: 'confirmed_amount',
+                        label: 'Collected Amount ( Rp )',
+                        backgroundColor: '#4CAF50'
+                    },
+                    {
+                        key: 'unconfirmed_amount',
+                        label: 'Uncollected Amount ( Rp )',
+                        backgroundColor: '#F44336'
+                    }
+                ],
+                heightChart : 300,
+            }
+        });
+
+        //Data Bad Collection DriverSales COD Driver 
+        var data_badCollectionDriverCOD = @json( $summary_badCollectionDriver['result_COD'] ) //[ {},{},{} ]
+        buildStackedBarChart({
+            el: document.getElementById('chart_badCollectSalesDriver_cod'),
+            data: data_badCollectionDriverCOD,
+            config: {
+                stacks: [
+                    {
+                        key: 'confirmed_amount',
+                        label: 'Collected Amount ( Rp )',
+                        backgroundColor: '#4CAF50'
+                    },
+                    {
+                        key: 'unconfirmed_amount',
+                        label: 'Uncollected Amount ( Rp )',
+                        backgroundColor: '#F44336'
+                    }
+                ],
+                heightChart : 300
+            }
+        });
+
+        //Data Bad Collection Customer
+        var data_badCollectionCustomer = @json( $summary_badCollectionCustomer['result_all'] ); //[ {},{},{} ]
+        buildStackedBarChart({
+            el: document.getElementById('chart_badCollectCustomer'),
+            data: data_badCollectionCustomer,
+            config: {
+                stacks: [
+                    {
+                        key: 'confirmed_amount',
+                        label: 'Collected Amount ( Rp )',
+                        backgroundColor: '#4CAF50'
+                    },
+                    {
+                        key: 'unconfirmed_amount',
+                        label: 'Uncollected Amount ( Rp )',
+                        backgroundColor: '#F44336'
+                    }
+                ],
+                heightChart : 300
+            }
+        });
+
     });
 
 
-    //Data Success Rate Collection Overdue Branch 
-    buildStackbarByClass({
-        className: 'chart_successRateCollectionOverdueBranch_all',
-        datasets: @json( $summary_successCollectOverdue_branch['result_all'] ),
-        seriesConfig: [
-            {
-                label: 'Collected Rate ( % )',
-                key: 'overdue_collection_rate_pct',
-                color: 'rgba(34,197,94,0.7)'
-            },
-            {
-                label: 'Uncollected Rate ( % )',
-                key: 'overdue_uncollected_rate_pct',
-                color: 'rgba(239,68,68,0.7)'
-            }
-        ],
-        xLabel: 'Branch',
-        yLabel: 'Rate Percentage ( % )'
-    });
 
-
-    //Data Bad Collection DriverSales TOP 
-    buildStackbarByClass({
-        className: 'chart_badCollectionDriver_top',
-        datasets: @json( $summary_badCollectionDriver['result_TOP'] ),
-        seriesConfig: [
-            {
-                label: 'Collected Amount ( Rp )',
-                key: 'confirmed_amount',
-                color: 'rgba(34,197,94,0.7)'
-            },
-            {
-                label: 'Uncollected Amount ( Rp )',
-                key: 'unconfirmed_amount',
-                color: 'rgba(239,68,68,0.7)'
-            }
-        ],
-        xLabel: 'Salesman',
-        yLabel: 'Amount ( Rp )'
-    });
-
-    //Data Bad Collection DriverSales COD 
-    buildStackbarByClass({
-        className: 'chart_badCollectSalesDriver_cod',
-        datasets: @json( $summary_badCollectionDriver['result_COD'] ),
-        seriesConfig: [
-            {
-                label: 'Collected Amount ( Rp )',
-                key: 'confirmed_amount',
-                color: 'rgba(34,197,94,0.7)'
-            },
-            {
-                label: 'Uncollected Amount ( Rp )',
-                key: 'unconfirmed_amount',
-                color: 'rgba(239,68,68,0.7)'
-            }
-        ],
-        xLabel: 'Driver',
-        yLabel: 'Amount ( Rp )'
-    });
-
-
-    //Data Bad Collection Customer 
-    buildStackbarByClass({
-        className: 'chart_badCollectCustomer',
-        datasets: @json( $summary_badCollectionCustomer['result_all'] ),
-        seriesConfig: [
-            {
-                label: 'Collected Amount ( Rp )',
-                key: 'confirmed_amount',
-                color: 'rgba(34,197,94,0.7)'
-            },
-            {
-                label: 'Uncollected Amount ( Rp )',
-                key: 'unconfirmed_amount',
-                color: 'rgba(239,68,68,0.7)'
-            }
-        ],
-        xLabel: 'Salesman',
-        yLabel: 'Amount ( Rp )'
-    });
-
-
-
-
-
-
-
-    {{-- chart_badCollectSalesDriver_cod --}}
 
 
 
@@ -351,12 +533,12 @@ $filterQuery = http_build_query(request()->only([
         datasets: dataFromAPI,
         seriesConfig: [
         {
-            label: 'Collected',
+            label: 'Collected Amount ( Rp )',
             key: 'confirmed_amount',
             color: 'rgba(34,197,94,0.7)'
         },
         {
-            label: 'Uncollected',
+            label: 'Uncollected Amount ( Rp )',
             key: 'unconfirmed_amount',
             color: 'rgba(239,68,68,0.7)'
         }

@@ -118,19 +118,19 @@ class CITDashboardController extends Controller{
 
 
         // Payment Type Pie Chart
-        $row_paymentType_pie = $datasets[1][0];
+        $row_paymentType_pie = $datasets[1][0]; //[  []  ]
 
         // Data Grafik
-        $data_successCollect_branch = $datasets[2]; //Success Rate Collection
-        $data_successCollectOverdue_branch = $datasets[3]; //Success Rate Collection AR Overdue
-        $data_badCollectiondriver = $datasets[4]; // Bad Collection by Driver Or Sales
-        $data_badCollectionCustomer = $datasets[5]; // Bad Customer Collection
+        $data_successCollect_branch = $datasets[2]; //Success Rate Collection [ [], [], [], ..... ]
+        $data_successCollectOverdue_branch = $datasets[3]; //Success Rate Collection AR Overdue [ [], [], [], ..... ]
+        $data_badCollectiondriver = $datasets[4]; // Bad Collection by Driver Or Sales [ [], [], [], ..... ]
+        $data_badCollectionCustomer = $datasets[5]; // Bad Customer Collection [ [], [], [], ..... ]
 
 
         // Data View Detail Tabel
-        $data_view_teritory = $datasets[6];
-        $data_view_driversales = $datasets[7];
-        $data_view_customer = $datasets[8];
+        $data_view_teritory = $datasets[6];  //[ [], [], [], ..... ]
+        $data_view_driversales = $datasets[7]; // [ [], [], [], ..... ]
+        $data_view_customer = $datasets[8]; // [ [], [], [], ..... ]
 
 
         //=========== End Of Build Datasets  ===========
@@ -156,7 +156,7 @@ class CITDashboardController extends Controller{
                 "limit_10_data" => [
                     "TOP_data" => false,
                     "COD_data" => false,
-                    "all_data" => true
+                    "all_data" => false
                 ], 
             ]
         ); 
@@ -213,21 +213,24 @@ class CITDashboardController extends Controller{
 
 
         // ++++ Data Summary Customers ++++ 
-        $summary_badCollectionCustomer = $this->build_datasetGrafik( $data_badCollectionCustomer, 'customername', [
-            "mapping_key_data" => false,
-            "TOP_data" => false,
-            "COD_data" => false,
-            "sorting_data" => [
+        $summary_badCollectionCustomer = $this->build_datasetGrafik( $data_badCollectionCustomer, 
+            'customername', 
+            [
+                "mapping_key_data" => false,
                 "TOP_data" => false,
                 "COD_data" => false,
-                "all_data" => false
-            ],
-            "limit_10_data" => [
-                "TOP_data" => false,
-                "COD_data" => false,
-                "all_data" => false
-            ], 
-        ]);
+                "sorting_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ],
+                "limit_10_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ], 
+            ]
+        );
         // dd(  $summary_badCollectionCustomer );
         //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
 
@@ -471,21 +474,30 @@ class CITDashboardController extends Controller{
         //Ketika User memasukkan argumen $option_build ke method dengan struktur yang kurang benar dari yang diharapkan (property $option_build_default) sehingga yang diterapkan itu key dan sturktur yang default
 
         //Handling default key value pada option build nilai default true pada option 
-        $option_build = array_merge($this->option_build_default, $option_build); //Menimpa nilai dari key kalo ada key yang sama dengan denan $this->option_build_default 
+        $option_build = array_merge($this->option_build_default, $option_build); //Menimpa nilai dan key kalo ada key yang sama dengan yang ada di $this->option_build_default 
 
-        //Handling default format $option_build['sorting_data'] Untuk Sorting Data kalo argumennya gak bener 
+        //Handling default format $option_build['sorting_data'] Untuk Sorting Data kalo format argumennya gak bene. Jadi bentuk formatnya harus array
         if ( is_array($option_build['sorting_data']) == true ) {
             $option_build['sorting_data'] = array_merge( $this->option_build_default['sorting_data'], $option_build['sorting_data']);
         }else{
             $option_build['sorting_data'] = $this->option_build_default['sorting_data'];
         }
 
-         //Handling default format $option_build['limit_10_data'] Untuk Sorting Data
+        //Handling default format $option_build['limit_10_data'] Untuk Sorting Data, Jadi bentuk formatnya harus array
         if ( is_array($option_build['limit_10_data']) == true ) {
             $option_build['limit_10_data'] = array_merge( $this->option_build_default['limit_10_data'], $option_build['limit_10_data'] );
         }else{
             $option_build['limit_10_data'] = $this->option_build_default['limit_10_data'];
         }
+
+
+        //==== Define option build 
+        $option_mapping_key_data = ( $option_build['mapping_key_data'] == true ) ? true : false;
+        //Cek apakah di row pada datasets ada kolom order type dan option build TOP data atau COD data
+        $row_cek = $datasets_grafik[0];
+        $option_clustering_data = ( isset( $row_cek['ordertype'] ) && ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) ) ? true : false;
+        $option_sorting = $option_build['sorting_data']; //[ "TOP_data" => "", "COD_data" => "all_data" => "" ]
+        $option_limiting = $option_build['limit_10_data']; //[ "TOP_data" => "", "COD_data" => "all_data" => "" ]
 
 
         
@@ -502,11 +514,6 @@ class CITDashboardController extends Controller{
             "unconfirmed_amount" => (float) 0.0,  // key untuk sortar_amount - collected amount 
             'ordertype' => (string) "COD OR TOP",
         ];
-        $option_mapping_key_data = ( $option_build['mapping_key_data'] == true ) ? true : false;
-        //Cek apakah di row pada datasets ada kolom order type dan option build TOP data atau COD data
-        $row_cek = $datasets_grafik[0];
-        $option_clustering_data = ( isset( $row_cek['ordertype'] ) && ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) ) ? true : false;
-
 
         // dd( ( $option_build['TOP_data'] == true || $option_build['COD_data'] == true ) );
         // dd( isset( $row_cek['ordertype']) );
@@ -528,14 +535,10 @@ class CITDashboardController extends Controller{
             //========= ( MAPPING ) MELAKUKAN MAPPING DAN NORMALISASI KEY PADA ROW BARU ===========
             //Jika Option Build Ingin Mapping Data
             //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
-            //Cek apakah key pada row param ada di row_dataset
+            //Cek apakah key pada row_param ada di key setiap row_dataset
             //Isi key row result new berdasarkan $option_mapping_key_data
             //Jika option mapping itu treu, Lakukan pengecekan apakah key pada row_datasets ada di key row_param. Kalo dia ada, maka lakukan Cek apakah key pada row datasets ada di key row_param
             foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
-
-
-
-
 
                 //+++ Lakukan Mapping Key Data Berdasarkan Dengan option buildnya
                 if ( $option_mapping_key_data == true ) {
@@ -576,7 +579,6 @@ class CITDashboardController extends Controller{
             //Yang di cek dari kolomnya itu dari row_result_new 
             //$result_all tidak terpengaruh clustering
             if (  $option_clustering_data == true ) {
-
                 //Row Resultnya Punya Order Type dan Option Build Untuk TOP Data Atau COD Data dinyalakan, maka lakukan clustering berdasarkan ordertype
                 $ordertype = $row_result_new['ordertype'];
                 if ( $option_build['TOP_data'] == true && $ordertype == "TOP"  ) {
@@ -590,50 +592,44 @@ class CITDashboardController extends Controller{
 
             //Memasukkan row baru untuk result_all jenis ke result_all 
             // Pada result all, untuk row nya punya kolom order type, pada labelnya tambahkan keterangan apakah ini jenis TOP atau COD dengan concat
-
             if ( isset($row_result_new['ordertype']) ) {
                 $nama_label = $row_result_new['label'] . " - " . $row_result_new['ordertype'];
                 $row_result_new['label'] = $nama_label;
             }
-
-
             $result_all[] = $row_result_new;
         }
 
 
 
         //============= FITUR DIBAWAH HANYA AKAN BERJALAN KETIKA DATA $result_TOP, $result_COD, dan $result_all sudah diisi
-
-
-
         //============= ( SORTING ) PENGURUTAN DATA by unconfirmed_amount ==============
         //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_TOP dan result_COD dengan syarat punya kolom unconfirmed amount
         //Pengaturan sortring data kalo true maka pengaruh untuk semua
 
         //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_TOP 
-        if ( $option_build['sorting_data']['TOP_data'] == true ) {
+        if ( $option_sorting['TOP_data'] == true ) {
             usort($result_TOP, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
         }
         //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_COD 
-        if ( $option_build['sorting_data']['COD_data'] == true ) {
+        if ( $option_sorting['COD_data'] == true ) {
             usort($result_COD, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
         }
         //Mengurutkan data berdasarkan nilai unconfirmed_amount terbersar untuk result_all 
-        if ( $option_build['sorting_data']['all_data'] == true ) {
+        if ( $option_sorting['all_data'] == true ) {
             usort($result_all, fn ($a, $b) => $b['unconfirmed_amount'] <=> $a['unconfirmed_amount']);
         }
 
         //============= ( LIMITING ) PENGAMBILAN HANYA 10 DATA  ==============
         //Mengambil top 10 data untuk result_TOP
-        if ( $option_build['limit_10_data']['TOP_data'] == true ) {
+        if (  $option_limiting['TOP_data'] == true ) {
             $result_TOP = array_slice($result_TOP, 0, 10);
         }
         //Mengambil top 10 data untuk result_COD
-        if ( $option_build['limit_10_data']['COD_data'] == true ) {
+        if (  $option_limiting['COD_data'] == true ) {
             $result_COD = array_slice($result_COD, 0, 10);
         }
         //Mengambil top 10 data untuk result_all
-        if ( $option_build['limit_10_data']['all_data'] == true ) {
+        if (  $option_limiting['all_data'] == true ) {
             $result_all = array_slice($result_all, 0, 10);
         }
 

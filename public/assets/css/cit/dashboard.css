@@ -260,33 +260,33 @@ table .kolom_angka{
 
 /* Style untuk chart wrapper */
 .chart-scroll-wrapper {
-    scrollbar-width: thin;
-    scrollbar-color: #94a3b8 #f1f5f9;
+	scrollbar-width: thin;
+	scrollbar-color: #94a3b8 #f1f5f9;
 }
 
 .chart-scroll-wrapper::-webkit-scrollbar {
-    height: 8px;
-    width: 8px;
+	height: 8px;
+	width: 8px;
 }
 
 .chart-scroll-wrapper::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
+	background: #f1f5f9;
+	border-radius: 4px;
 }
 
 .chart-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: #94a3b8;
-    border-radius: 4px;
+	background: #94a3b8;
+	border-radius: 4px;
 }
 
 .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+	background: #64748b;
 }
 
 /* Reset untuk canvas */
 canvas {
-    display: block;
-    box-sizing: border-box;
+	display: block;
+	box-sizing: border-box;
 }
 
 
@@ -304,3 +304,83 @@ canvas {
 	display: block;
 }
 
+
+/* ============ KPI CARD ======*/
+.kpi_grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr); /* 5 columns */
+	gap: 15px;
+}
+
+.kpi_card {
+	border-radius: 12px;
+	background: white;
+	padding: 18px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+	margin-bottom: 15px;
+}
+.kpi_title { font-size: 0.9rem; font-weight: 600; color: #555; }
+.kpi_value { font-size: 1.6rem; font-weight: 700; color: #0d6efd; }
+
+/* Subtle variants */
+.kpi_card.kpi_blue {
+	background: #f3f7ff;
+	border-left-color: #4c6ef5;
+}
+
+.kpi_card.kpi_green {
+	background: #f3fbf6;
+	border-left-color: #2f9e44;
+}
+
+.kpi_card.kpi_orange {
+	background: #fff6ec;
+	border-left-color: #f59f00;
+}
+
+.kpi_card.kpi_red {
+	background: #fff5f5;
+	border-left-color: #e03131;
+}
+
+/* Responsive fallback */
+@media (max-width: 1200px) {
+	.kpi_grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.kpi_grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 576px) {
+	.kpi_grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+
+/*Chart Wraper*/
+.chart-wrapper {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.chart-wrapper canvas {
+	min-width: 1200px; /* base width */
+}
+
+/*  modal detail stackbar */
+
+#modal_detail_stackbar{
+
+}
+.container_detail_stackbar{
+	display: none;	
+}
+.container_detail_stackbar.active{
+	display: block;
+}

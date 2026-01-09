@@ -1,7 +1,9 @@
 
+
 <div class="title_type_data">
     Summary AR
 </div>
+
 
 
 @php
@@ -17,7 +19,29 @@
 //         // ==== Data Kategori Row Ar Remainning 
 // $remaining_ar_real = formatAbbreviatedNumber($row_ar_remaining['remaining_ar_real']);
 // $overdue_pct = formatAbbreviatedNumber(number_format($row_ar_remaining['overdue_pct'], 2, '.', ''));
+                //Key untuk Nilai Uang / Nominal
+$nominal_keys = [
+    "Total Outstanding AR",
+    "Total Collected",
+    "Total Confirmed Payment",
+    "Total Outstanding AR OD",
+    "Total Collected AR OD",
+    "Total Confirmed Payment AR OD",
+];
 
+                //Key untuk Persentase / Ratio
+$percentage_keys = [
+    "% Confirm Payment",
+    "% Confirm Payment AR OD",
+];
+
+                //Key untuk Jumlah Dokumen / Count
+$document_keys = [
+    "Total Invoice Document",
+    "Total Confirmed Invoice Document",
+    "Total Invoice Document AR OD",
+    "Total Confirmed Invoice Document AR OD",
+];
 
 @endphp
 
@@ -31,65 +55,43 @@
     {{-- Row Box Dashboard  --}}
     <div class="row row_box_dashboard wow animate__animated animate__fadeInUp">
 
-        @php
-        //Key untuk Nilai Uang / Nominal
-        $nominal_keys = [
-            "Total Outstanding AR",
-            "Total Collected",
-            "Total Confirmed Payment",
-            "Total Outstanding AR OD",
-            "Total Collected AR OD",
-            "Total Confirmed Payment AR OD",
-        ];
 
-        //Key untuk Persentase / Ratio
-        $percentage_keys = [
-            "% Confirm Payment",
-            "% Confirm Payment AR OD",
-        ];
-
-        //Key untuk Jumlah Dokumen / Count
-        $document_keys = [
-            "Total Invoice Document",
-            "Total Confirmed Invoice Document",
-            "Total Invoice Document AR OD",
-            "Total Confirmed Invoice Document AR OD",
-        ];
-        @endphp
+        <div class="col-12" style="padding:0">
+            <div class="kpi_grid">
 
 
-        {{-- Loop Row Card Dashboard --}}
 
-        @foreach ($row_card_dashboard as $key => $value )
+                {{-- Loop Row Card Dashboard --}}
 
-
-        {{-- Kalo dia bukan array --}}
-
-        @php
-        if ( in_array($key, $nominal_keys) ) {
-            $value = "Rp" . formatAbbreviatedNumber($value);
-        }else if ( in_array($key, $percentage_keys) ) {
-            $value =  "%" . formatAbbreviatedNumber(number_format($value, 2, '.', ''));
-        }else if( in_array($key, $document_keys ) ){
-            $value = $value;
-        }
-        @endphp
+                @foreach ($row_card_dashboard as $key => $value )
 
 
-        {{-- Col Box Dashboard --}}
-        <div class="col-md-2" style="margin-left: 20px;padding: 0;margin-bottom: 30px;">
-            <div class="card shadow-sm p-4 text-center">
-                <h6 class="text-black fw-bold"> {{ $key }} </h6>
-                <div class="h4 fw-bold text-secondary">
-                    {{ $value }}
+                {{-- Kalo dia bukan array --}}
+                @php
+                if ( in_array($key, $nominal_keys) ) {
+                    $value = "Rp" . formatAbbreviatedNumber($value);
+                }else if ( in_array($key, $percentage_keys) ) {
+                    $value =  "%" . formatAbbreviatedNumber(number_format($value, 2, '.', ''));
+                }else if( in_array($key, $document_keys ) ){
+                    $value = $value;
+                }
+                @endphp
 
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">{{ $key }}</div>
+                    <div class="kpi_value">{{ $value }}</div>
                 </div>
+
+
+                @endforeach
+                {{-- End Of Loop Row Card Dashboard --}}
+
             </div>
         </div>
-        {{-- End Of Col Box Dashboard --}}
 
-        @endforeach
-        {{-- End Of Loop Row Card Dashboard --}}
+
+
 
 
 
@@ -119,14 +121,30 @@
                     </div>
                 </div>
 
-                @if ( !empty($summary_successCollectOverdue_branch['result_all']) )
+                <style>
+                    .chart-scroll-wrapper canvas {
+                        min-height: 500px !important;
+                        height: auto !important;
+                    }
+
+                    .chart-scroll-wrapper {
+                        min-height: 550px;
+                        position: relative;
+                    }
+                </style>
+
+                @if ( !empty($summary_successCollect_branch['result_all']) )
                 <div class="row">
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_successRateCollectionBranch_all"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="chart_successRateCollectionBranch_all"></canvas>
+                        </div>
+
                     </div>
                     {{-- end of col grafik --}}
+
                 </div>
 
                 @else
@@ -171,9 +189,12 @@
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_successRateCollectionOverdueBranch_all"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="chart_successRateCollectionOverdueBranch_all"></canvas>
+                        </div>
                     </div>
                     {{-- end of col grafik --}}
+
                 </div>
 
                 @else
@@ -231,7 +252,9 @@
                 <div class="row">
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_badCollectionDriver_top" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="chart_badCollectionSalesDriver_top"></canvas>
+                        </div>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -264,7 +287,9 @@
                 <div class="row">
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_badCollectSalesDriver_cod" style="height: 500px !important; max-height: 500px;"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="chart_badCollectSalesDriver_cod"></canvas>
+                        </div>
                     </div>
                     {{-- end of col grafik --}}
                 </div>
@@ -312,7 +337,9 @@
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <canvas class="chart_badCollectCustomer"></canvas>
+                        <div class="chart-wrapper">
+                            <canvas id="chart_badCollectCustomer"></canvas>
+                        </div>
                     </div>
                     {{-- end of col grafik --}}
                 </div>

@@ -1,155 +1,126 @@
-window.stackbar_chart = function ({
-    el,
-    labels,
-    series,
-    xLabel = '',
-    yLabel = '',
-    showLegend = true,
-    horizontal = false,
-    barThickness = 40,
-    maxBarThickness = 40,
-    categoryPercentage = 0.8,
-    barPercentage = 0.9
-}) {
 
-    return new Chart(el, {
+const datasets_default = [
+    { label: 'Cabang A', collected_amount: 120, uncollected_amount: 30 },
+    { label: 'Cabang B', collected_amount: 90,  uncollected_amount: 50 },
+    { label: 'Cabang C', collected_amount: 150, uncollected_amount: 20 },
+    { label: 'Cabang C', collected_amount: 150, uncollected_amount: 20 },
+];
+
+
+
+
+function buildStackedBarChart(data_config = {
+    el: {},
+    data: datasets_default,
+    config: {
+        stacks: [
+            {
+                key: 'key_row_green',
+                label: 'Label Data Green',
+                backgroundColor: '#4CAF50'
+            },
+            {
+                key: 'key_row_red',
+                label: 'Label Data Red',
+                backgroundColor: 'F44336'
+            },
+        ],
+        heightChart: 300,
+        onBarClick: null // Diisi argumen function callback
+    }
+}) 
+{
+
+    //BODY FUNCTION
+
+
+    const el = data_config.el;
+    const data = data_config.data;
+    const config = data_config.config;
+
+    // Guard
+    if (!el) return;
+
+    // Set height
+    el.height = config.heightChart || 300;
+
+    const labels = data.map(item => item.label);
+
+    const datasets = config.stacks.map(stack => ({
+        label: stack.label,
+        data: data.map(item => {
+            let val = item[stack.key];
+            if (typeof val === 'string') {
+                val = val.replace('%', '').replace(/,/g, '').trim();
+            }
+            return Number(val) || 0;
+        }),
+        backgroundColor: stack.backgroundColor
+    }));
+
+    const minBarWidth = 60;
+    el.style.width = Math.max(labels.length * minBarWidth, 1200) + 'px';
+
+    const chart = new Chart(el, {
         type: 'bar',
-        data: {
-            labels,
-            datasets: series.map(s => ({
-                label: s.label,
-                data: s.data.map(v => Number(v) || 0),
-                backgroundColor: s.color,
-                borderWidth: 0,
-                barThickness,
-                maxBarThickness,
-                categoryPercentage,
-                barPercentage
-            }))
-        },
+        data: { labels, datasets },
         options: {
-            indexAxis: horizontal ? 'y' : 'x',
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: false,
+            devicePixelRatio: 1,
+
+            // 🎯 EVENT CLICK
+            onClick: (evt, elements) => {
+
+                if (!elements.length) return;
+
+                const element = elements[0];
+
+                const dataIndex = element.index;
+                const datasetIndex = element.datasetIndex;
+
+                const label = labels[dataIndex];
+                const datasetLabel = datasets[datasetIndex].label;
+                const value = datasets[datasetIndex].data[dataIndex];
+                const rawData = data[dataIndex];
+
+                // 🔔 Panggil callback user
+                if (typeof config.onBarClick === 'function') {
+                    config.onBarClick(
+                        label,
+                        rawData, //Row data dari stackbar yang diklik
+                        datasetLabel,
+                        value,
+                        dataIndex,
+                        datasetIndex
+                        );
+                }
+            },
+
             plugins: {
                 legend: {
-                    display: showLegend,
-                    position: 'top'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label(ctx) {
-                            const value = ctx.parsed.y ?? ctx.parsed.x;
-                            return `${ctx.dataset.label}: ${new Intl.NumberFormat('id-ID').format(value)}`;
-                        }
-                    }
+                    position: 'top',
+                    labels: { font: { size: 14 } }
                 }
             },
             scales: {
                 x: {
                     stacked: true,
-                    title: { display: !!xLabel, text: xLabel }
+                    ticks: { font: { size: 12 } }
                 },
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    title: { display: !!yLabel, text: yLabel },
-                    ticks: {
-                        callback: v => new Intl.NumberFormat('id-ID').format(v)
-                    }
+                    ticks: { font: { size: 12 } }
                 }
             }
         }
     });
-};
+
+    return chart;
+}
 
 
 
 
-window.buildStackbarByClass = function ({
-    className,
-    datasets,
-    seriesConfig = [],
-    horizontal = false,
-    xLabel = '',
-    yLabel = '',
-    showLegend = true,
-    scrollable = true,
-    maxWidth = '1500px',
-    maxHeight = '500px',
-    barWidth = 40,
-    spacing = 80
-}) {
 
-    document.querySelectorAll(`.${className}`).forEach(canvas => {
-
-        if (!Array.isArray(datasets) || !datasets.length) return;
-        if (!Array.isArray(seriesConfig) || !seriesConfig.length) return;
-
-        /* =============================
-         * 1️⃣ LABELS
-         * ============================= */
-        const labels = datasets.map(d => d.label ?? '');
-
-        /* =============================
-         * 2️⃣ SERIES (DINAMIS)
-         * ============================= */
-        const series = seriesConfig.map(cfg => ({
-            label: cfg.label,
-            data: datasets.map(d => Number(d[cfg.key]) || 0),
-            color: cfg.color
-        }));
-
-        /* =============================
-         * 3️⃣ SCROLL WRAPPER (VERTIKAL)
-         * ============================= */
-        if (scrollable && !horizontal) {
-            const parent = canvas.parentNode;
-            let wrapper = parent;
-
-            if (!parent.classList.contains('chart-scroll-wrapper')) {
-                wrapper = document.createElement('div');
-                wrapper.className = 'chart-scroll-wrapper';
-                parent.insertBefore(wrapper, canvas);
-                wrapper.appendChild(canvas);
-            }
-
-            const totalBars = labels.length;
-            const totalWidth = (totalBars * barWidth) + ((totalBars + 1) * spacing);
-
-            wrapper.style.cssText = `
-                width: 100%;
-                max-width: ${maxWidth};
-                max-height: ${maxHeight};
-                overflow-x: auto;
-                overflow-y: hidden;
-                padding: 15px;
-                background: #fff;
-                border-radius: 8px;
-            `;
-
-            canvas.style.width = `${totalWidth}px`;
-            canvas.style.height = maxHeight;
-            canvas.style.display = 'block';
-        }
-
-        /* =============================
-         * 4️⃣ RENDER CHART
-         * ============================= */
-        const chart = stackbar_chart({
-            el: canvas,
-            labels,
-            series,
-            xLabel,
-            yLabel,
-            showLegend,
-            horizontal,
-            barThickness: barWidth,
-            maxBarThickness: barWidth
-        });
-
-        chart.update();
-    });
-};
