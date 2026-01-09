@@ -326,6 +326,9 @@ $filterQuery = http_build_query(request()->only([
 
     $(document).ready(function(){
 
+
+
+        //Testing Debug
         open_modal_detailStackbar(function( modal_el ){ 
 
             modal_el = $( modal_el );
@@ -343,6 +346,7 @@ $filterQuery = http_build_query(request()->only([
             container_detail_stackbarTarget.addClass('active');
 
         });
+
 
 
         var data_successCollect_branchAll = @json( $summary_successCollect_branch['result_all'] ); //[ {},{},{} ]
@@ -366,8 +370,26 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
+                    //Callback stackbar diklik
                     open_modal_detailStackbar(function( modal_el ){
                         //Akan membuka modal detail stackbar yang menampilkan detail row data
+                        open_modal_detailStackbar(function( modal_el ){ 
+
+                            modal_el = $( modal_el );
+
+                            //Membuka container detail berdasarkan dataset yang di klik pada bar
+                            var id_container_detail_stackbar = "#successRateCollectionOverdueBranch_all";
+                            var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
+                            var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
+
+                            alert( "Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar);
+
+                             //Menutup semua container detail stackbar
+                            container_detail_stackbar.removeClass('active');
+                            //Membuka container detail stacbar target
+                            container_detail_stackbarTarget.addClass('active');
+
+                        });
 
 
                     });
