@@ -153,110 +153,6 @@ $filterQuery = http_build_query(request()->only([
 
 </div>
 
-<div class="modal fade" id="modal_detail_stackbar" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row">
-
-                        {{-- container detail stackbar - successRateCollectionBranch_all --}}
-                        <div class="col-12 container_detail_stackbar active" id="successRateCollectionBranch_all">
-
-                            <!-- IDENTITAS -->
-                            <div class="mb-3">
-                                <h6 class="fw-bold mb-1">Cabang / Territory</h6>
-                                <p class="mb-0">
-                                    <span id="detail_label">CIANJUR - COD</span>
-                                </p>
-                                <small class="text-muted">
-                                    Territory: <span id="detail_territory">CIANJUR</span> |
-                                    Order Type: <span id="detail_ordertype">COD</span>
-                                </small>
-                            </div>
-
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="border rounded p-3 h-100">
-                                        <h6 class="text-success fw-bold">Collected Rate</h6>
-                                        <h3 class="mb-0"><span id="detail_collected_rate">94.18%</span></h3>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="border rounded p-3 h-100">
-                                        <h6 class="text-danger fw-bold">Uncollected Rate</h6>
-                                        <h3 class="mb-0"><span id="detail_uncollected_rate">5.82%</span>
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- FINANCIAL -->
-                            <div class="border rounded p-3 mb-3">
-                                <h6 class="fw-bold mb-2">Financial Summary</h6>
-                                <table class="table table-sm mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td>Total AR</td>
-                                            <td class="text-end fw-bold">
-                                                <span id="detail_total_ar">Rp 1.146.475.063</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Collected Amount</td>
-                                            <td class="text-end text-success fw-bold">
-                                                <span id="detail_collected_amount">Rp 983.308.553</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Unconfirmed Amount</td>
-                                            <td class="text-end text-warning fw-bold">
-                                                <span id="detail_unconfirmed_amount">Rp 66.700.251</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Confirmed Amount</td>
-                                            <td class="text-end fw-bold">
-                                                <span id="detail_confirmed_amount">Rp 1.079.774.812</span>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Total Difference</td>
-                                            <td class="text-end fw-bold">
-                                                <span id="detail_difference" class="text-danger">
-                                                    - Rp 117.106.685
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-
-                        </div>
-
-                        {{-- end of container detail stackbar - successRateCollectionBranch_all --}}
-
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -292,20 +188,14 @@ $filterQuery = http_build_query(request()->only([
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script src="{{ asset('assets/js/utils/number-format-abbreviated.js') }}"></script>
-
-{{-- Script Bar Yang Saling Ketergantungan --}}
-{{-- Init Bar --}}
-<script src="{{ asset('assets/js/pages/cit_dashboard/generalBarChart.js') }}"></script>
-{{-- Custom Bar --}}
-<script src="{{ asset('assets/js/pages/cit_dashboard/chartDashboard.js') }}"></script>
-<script src="{{ asset('assets/js/pages/cit_dashboard/stackbar_chart.js') }}"></script>
+<script src="{{ asset('assets/js/pages/cit_dashboard/chart_main.js') }}"></script>
 {{-- End Of Script Bar Yang Saling Ketergantungan --}}
 
 
 
 <script>
 
-    function open_modal_detailStackbar( callback = false ){
+    function open_modal_detailStackbar( id_container_detail_stackbar, callback = false ){
         if( callback == false ){
             callback = function(){
                 return 1;
@@ -314,11 +204,28 @@ $filterQuery = http_build_query(request()->only([
         const modalEl = document.getElementById('modal_detail_stackbar');
         const modal = new bootstrap.Modal(modalEl);
 
-        callback( modalEl );
+
+        //Membuka container detail
+        var modal_el = $( modalEl );
+
+        //Membuka container detail berdasarkan dataset yang di klik pada bar
+        var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
+        var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
+
+        console.log( "+++ Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar + "+++++++++");
+
+        //Menutup semua container detail stackbar 
+
+        container_detail_stackbar.removeClass('active');
+        //Membuka container detail stacbar target
+        container_detail_stackbarTarget.addClass('active');
+
+        callback( modal_el, container_detail_stackbar );
 
         //Memunculkan modal
         modal.show();
     }
+
 
 
 
@@ -328,27 +235,7 @@ $filterQuery = http_build_query(request()->only([
 
 
 
-        //Testing Debug
-        open_modal_detailStackbar(function( modal_el ){ 
-
-            modal_el = $( modal_el );
-
-            //Membuka container detail berdasarkan dataset yang di klik pada bar
-            var id_container_detail_stackbar = "#successRateCollectionOverdueBranch_all";
-            var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
-            var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
-
-            alert( "Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar);
-
-            //Menutup semua container detail stackbar
-            container_detail_stackbar.removeClass('active');
-            //Membuka container detail stacbar target
-            container_detail_stackbarTarget.addClass('active');
-
-        });
-
-
-
+        {{-- Data SuccessCollect_branchAll --}}
         var data_successCollect_branchAll = @json( $summary_successCollect_branch['result_all'] ); //[ {},{},{} ]
         console.log(data_successCollect_branchAll);
         buildStackedBarChart({
@@ -371,25 +258,11 @@ $filterQuery = http_build_query(request()->only([
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback stackbar diklik
-                    open_modal_detailStackbar(function( modal_el ){
-                        //Akan membuka modal detail stackbar yang menampilkan detail row data
-                        open_modal_detailStackbar(function( modal_el ){ 
-
-                            modal_el = $( modal_el );
-
-                            //Membuka container detail berdasarkan dataset yang di klik pada bar
-                            var id_container_detail_stackbar = "#successRateCollectionOverdueBranch_all";
-                            var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
-                            var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
-
-                            alert( "Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar);
-
-                             //Menutup semua container detail stackbar
-                            container_detail_stackbar.removeClass('active');
-                            //Membuka container detail stacbar target
-                            container_detail_stackbarTarget.addClass('active');
-
-                        });
+                    //Akan membuka modal detail stackbar yang menampilkan detail row data
+                    open_modal_detailStackbar( '#successRateCollectionBranch_all',  function( modal_el, container_detail_stackbarTarget ){
+                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                        console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
+                        console.log( row_data );
 
 
                     });
@@ -417,7 +290,19 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: '#F44336'
                     }
                 ],
-                heightChart : 300
+                heightChart : 300,
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    //Callback stackbar diklik
+                    //Akan membuka modal detail stackbar yang menampilkan detail row data
+                    open_modal_detailStackbar( '#successCollectOverdue_branchAll',  function( modal_el, container_detail_stackbarTarget ){
+                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                        console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
+                        console.log( row_data );
+
+
+                    });
+                }
             }
         });
 
@@ -425,7 +310,6 @@ $filterQuery = http_build_query(request()->only([
 
         //Data Bad Collection DriverSales TOP Salesman
         var data_badCollectionDriverTOP = @json( $summary_badCollectionDriver['result_TOP'] ); //[ {},{},{} ]
-
         console.log("+++++++++++++");
         console.log( data_badCollectionDriverTOP );
         buildStackedBarChart({
@@ -445,6 +329,20 @@ $filterQuery = http_build_query(request()->only([
                     }
                 ],
                 heightChart : 300,
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    //Callback stackbar diklik
+                    //Akan membuka modal detail stackbar yang menampilkan detail row data
+                    open_modal_detailStackbar( '#BadCollectionSalesTOPCOD',  function( modal_el, container_detail_stackbarTarget ){
+                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                        console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
+                        console.log( row_data );
+
+
+
+
+                    });
+                }
             }
         });
 
@@ -466,7 +364,21 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: '#F44336'
                     }
                 ],
-                heightChart : 300
+                heightChart : 300, 
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    //Callback stackbar diklik
+                    //Akan membuka modal detail stackbar yang menampilkan detail row data
+                    open_modal_detailStackbar( '#BadCollectionSalesTOPCOD',  function( modal_el, container_detail_stackbarTarget ){
+                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                        console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
+                        console.log( row_data );
+
+
+
+
+                    });
+                }
             }
         });
 
@@ -488,9 +400,56 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: '#F44336'
                     }
                 ],
-                heightChart : 300
+                heightChart : 300,
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    //Callback stackbar diklik
+                    //Akan membuka modal detail stackbar yang menampilkan detail row data
+                    open_modal_detailStackbar( '#BadCollectionCustomer_all',  function( modal_el, container_detail_stackbarTarget ){
+                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                        console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
+                        console.log( row_data );
+
+
+
+
+
+                    });
+                }
+            }
+        }); 
+
+
+        //+++++++++++++++++++++++++++++ PIE CHART SUMMARY PAYMENT TYPE +++++++++
+
+        //Data Summary Payment Type TOP 
+        var data_summary_paymentTypeTOP = @json( $summary_paymentType['result_TOP'] ); //[ {},{},{} ]
+        buildPieChart({
+            el: document.getElementById('chart_summaryPaymentTypeOrder_TOP'),
+            datasets: data_summary_paymentTypeTOP,
+            key_value: "confirmed_amount",
+            label_color: {
+                "Giro": "#22C55E",
+                "Transfer": "#3B82F6",
+                "Cash": "#F59E0B"
             }
         });
+
+        //Data Summary Payment Type COD
+        var data_summary_paymentTypeCOD = @json( $summary_paymentType['result_COD'] ); //[ {},{},{} ]
+        buildPieChart({
+            el: document.getElementById('chart_summaryPaymentTypeOrder_COD'),
+            datasets: data_summary_paymentTypeCOD,
+            key_value: "confirmed_amount",
+            label_color: {
+                "Giro": "#22C55E",
+                "Transfer": "#3B82F6",
+                "Cash": "#F59E0B"
+            }
+        });
+
+
+
 
     });
 

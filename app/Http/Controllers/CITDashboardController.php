@@ -118,7 +118,8 @@ class CITDashboardController extends Controller{
 
 
         // Payment Type Pie Chart
-        $row_paymentType_pie = $datasets[1][0]; //[  []  ]
+        $data_paymentType = $datasets[1]; //[  []  ]
+
 
         // Data Grafik
         $data_successCollect_branch = $datasets[2]; //Success Rate Collection [ [], [], [], ..... ]
@@ -139,6 +140,30 @@ class CITDashboardController extends Controller{
         $build_filterData = $this->build_filterData( $request );
 
         //=========== Build Summary Data ================
+
+        // ++++ Data Summary Success Rate Collection Branch/Teritory ++++ 
+        $summary_paymentType = $this->build_datasetGrafik( 
+            $data_paymentType, 
+            'paymenttype', 
+            [
+                "mapping_key_data" => false,
+                "TOP_data" => true,
+                "COD_data" => true,
+                "sorting_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ],
+                "limit_10_data" => [
+                    "TOP_data" => false,
+                    "COD_data" => false,
+                    "all_data" => false
+                ], 
+            ]
+        ); 
+        // dd($summary_paymentType);
+        //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
+
 
         // ++++ Data Summary Success Rate Collection Branch/Teritory ++++ 
         $summary_successCollect_branch = $this->build_datasetGrafik( 
@@ -244,10 +269,11 @@ class CITDashboardController extends Controller{
 
         return view('cit.index', array_merge($build_filterData), compact(
             'row_card_dashboard',
-            'row_paymentType_pie',
             'data_view_teritory',
             'data_view_driversales',
             'data_view_customer',
+            'data_paymentType',
+            'summary_paymentType',
             'summary_successCollect_branch',
             'summary_successCollectOverdue_branch',
             'summary_badCollectionDriver',

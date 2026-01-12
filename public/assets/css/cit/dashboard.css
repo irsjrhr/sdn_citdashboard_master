@@ -318,6 +318,12 @@ canvas {
 	padding: 18px;
 	box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 	margin-bottom: 15px;
+	transition: .2s;
+}
+.kpi_card:hover{
+	transform: scale(1.5);
+	z-index: 99;
+
 }
 .kpi_title { font-size: 0.9rem; font-weight: 600; color: #555; }
 .kpi_value { font-size: 1.6rem; font-weight: 700; color: #0d6efd; }
@@ -363,7 +369,7 @@ canvas {
 }
 
 
-/*Chart Wraper*/
+/*Chart Wraper Ketika Chart Scrolling */
 .chart-wrapper {
 	width: 100%;
 	overflow-x: auto;
