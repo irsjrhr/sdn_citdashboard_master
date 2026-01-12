@@ -309,7 +309,7 @@ $document_keys = [
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top 10 Bad Collection by Salesman ( TOP )
+                        Top 10 Uncollected AR OD by Salesman ( TOP )
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_driversales"> View Detail Data </button>
                     </div>
@@ -344,7 +344,7 @@ $document_keys = [
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top 10 Bad Collection by Drivers ( COD )
+                        Top 10 Uncollected Amount By Drivers ( COD )
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_driversales"> View Detail Data </button>
                     </div>
@@ -393,7 +393,7 @@ $document_keys = [
                 <div class="row row_title_summary">
                     <div class="col-12">
 
-                        Top 20 Bad Collection By Customer
+                        Top 20 Uncollected AR OD by Customer
 
                         <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
                     </div>
