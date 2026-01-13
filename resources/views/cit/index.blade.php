@@ -1,9 +1,16 @@
 @extends('layouts.app')
-@section('titlepage', 'CIT Dashboard')
+@section('titlepage', 'CIT Dashboard' )
 
 @section('content')
 @section('navigasi')
 <span>CIT Dashboard</span>
+@isset($last_update)
+<br>
+<span class="text-muted small">
+    Last Updated: {{ \Carbon\Carbon::parse($last_update)->format('d M Y H:i') }}
+</span>
+@endisset
+
 @endsection
 
 @php

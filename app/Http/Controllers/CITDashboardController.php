@@ -85,10 +85,16 @@ class CITDashboardController extends Controller{
         $row_card_dashboard = $datasets[0][0]; 
 
         //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
-        $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Invoice Document'] . "/" . $row_card_dashboard['Total Confirmed Invoice Document'];
+        $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Confirmed Invoice Document'] . "/" . $row_card_dashboard['Total Invoice Document'] ;
         unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
 
 
+
+        //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
+        $row_card_dashboard['Total Invoice Document AR OD'] = $row_card_dashboard['Total Confirmed Invoice Document AR OD'] . "/" . $row_card_dashboard['Total Invoice Document AR OD'] ;
+        unset( $row_card_dashboard['Total Confirmed Invoice Document AR OD'] );
+
+        
 
         // Payment Type Pie Chart
         $data_paymentType = $datasets[1]; //[  []  ]
@@ -132,6 +138,8 @@ class CITDashboardController extends Controller{
                     "COD_data" => false,
                     "all_data" => false
                 ], 
+                "add_territoryid" => true 
+
             ]
         ); 
         // dd($summary_paymentType);
@@ -156,6 +164,9 @@ class CITDashboardController extends Controller{
                     "COD_data" => false,
                     "all_data" => false
                 ], 
+                "add_territoryid" => false 
+
+
             ]
         ); 
         // dd($summary_successCollect_branch);
@@ -180,6 +191,8 @@ class CITDashboardController extends Controller{
                     "COD_data" => false,
                     "all_data" => false
                 ], 
+                "add_territoryid" => true 
+
             ]
         );
         // dd($summary_successCollectOverdue_branch);
@@ -204,6 +217,8 @@ class CITDashboardController extends Controller{
                     "COD_data" => false,
                     "all_data" => false
                 ], 
+                "add_territoryid" => true 
+
             ]
         );
         // dd(  $summary_badCollectionDriver );
@@ -227,6 +242,8 @@ class CITDashboardController extends Controller{
                     "COD_data" => false,
                     "all_data" => false
                 ], 
+                "add_territoryid" => true 
+
             ]
         );
         // dd(  $summary_badCollectionCustomer );
@@ -238,6 +255,10 @@ class CITDashboardController extends Controller{
         $maps_header_teritory = $build_header_table['maps_header_teritory'];
         $maps_header_driversales = $build_header_table['maps_header_driversales'];
         $maps_header_customer = $build_header_table['maps_header_customer'];
+
+
+        // ========== GET LAST UPDATE ======
+        $last_update = $this->get_last_updateCIT();
 
 
         return view('cit.index', array_merge($build_filterData), compact(
@@ -254,6 +275,7 @@ class CITDashboardController extends Controller{
             'maps_header_teritory',
             'maps_header_driversales',
             'maps_header_customer',
+            'last_update'
         ));
 
 
@@ -407,6 +429,7 @@ class CITDashboardController extends Controller{
 
         // dd($data_coh_detail[0]);
 
+
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
         return view('cit.coh_reason_detail', $build_filterData, compact(
@@ -419,6 +442,21 @@ class CITDashboardController extends Controller{
     }
 
 
+
+
+    private function get_last_updateCIT(){
+        $cit_table = $this->db->table('dbo.ZH_Collection_CIT_Dashboard');
+        $query = $cit_table
+        ->select('senddate')
+        ->distinct()
+        ->orderBy('senddate', 'DESC')
+        ->first();
+
+        $senddate = $query->senddate;
+
+
+        return $senddate;
+    }
     private function build_filterData( Request $request ){
 
         $result = [];
@@ -461,6 +499,7 @@ class CITDashboardController extends Controller{
             "COD_data" => true,
             "all_data" => true
         ], 
+        "add_territoryid" => false 
     ];
     private function build_datasetGrafik( $datasets_grafik = [], $key_label_row, $option_build = [] ) : array{
 
@@ -491,6 +530,11 @@ class CITDashboardController extends Controller{
         + Kalo $option_build['limit_10_data']['TOP_data'] maka akan berpengaruh pada $result_TOP ( nilai true maka berjalan, nilai false maka tidak berjalan )
         + Kalo $option_build['limit_10_data']['COD_data'] maka akan berpengaruh pada $result_COD ( nilai true maka berjalan, nilai false maka tidak berjalan )
         + Kalo $option_build['limit_10_data']['all_data'] maka akan berpengaruh pada $result_all ( nilai true maka berjalan, nilai false maka tidak berjalan ) 
+
+        => ADD TERRITORY ID 
+        - Melakukan penambahan kode teritory/cabang pada label
+        - Hal ini hanya bisa dilakukan ketika row memiliki kolom territoryid dan option_build['add_territoryid']
+        - Fitur ini dilakukan pada saat iterasi mapping dan clustering setiap row setelah row_result_new sudah terbentuk atau termapping
         =====================================================================
         */
 
@@ -562,38 +606,45 @@ class CITDashboardController extends Controller{
             //Jika Option Build Ingin Mapping Data
             //Mapping key kolom untuk data. Mengambil hanya key yang ada di row_param
             //Cek apakah key pada row_param ada di key setiap row_dataset
-            //Isi key row result new berdasarkan $option_mapping_key_data
+            //Melakukan Isi key row result new berdasarkan $option_mapping_key_data
             //Jika option mapping itu treu, Lakukan pengecekan apakah key pada row_datasets ada di key row_param. Kalo dia ada, maka lakukan Cek apakah key pada row datasets ada di key row_param
-            foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
 
-                //+++ Lakukan Mapping Key Data Berdasarkan Dengan option buildnya
-                if ( $option_mapping_key_data == true ) {
-                    //Jika option_mapping_key_data itu true, maka lakukan clusterting dengan Cek apakah key pada row datasets ada di key row_param. Jika ada maka tambahkan key dan nilai tersebut ke row baru 
+             //+++ Lakukan Mapping Key Data Berdasarkan Dengan option buildnya
+            if ( $option_mapping_key_data == true ) {
+
+                 //Jika option_mapping_key_data itu true, maka lakukan clusterting dengan Cek apakah key pada row datasets ada di key row_param. Jika ada maka tambahkan key dan nilai tersebut ke row baru 
+                foreach ($row_datasets as $key_row_dataset => $value_row_datasets ) {
                     if ( array_key_exists( $key_row_dataset, $row_param) == true ) {
-                        //Kalo key pada row datasetsnya ada di row param, maka tambahkan key dan valuenya ke $row_result_new
-                        //Menambahkan ke key row_result_new dengan key tersebut
-
-
-                        //+++ Ubah tipe data nilai_add yang akan ditambahkan, berdasarkan tipe data dari nilai degan key yang sama di row_param +++
+                    //Kalo key pada row datasetsnya ada di row param, maka tambahkan key dan valuenya ke $row_result_new
+                    //Menambahkan ke key row_result_new dengan key tersebut
+                    //+++ Ubah tipe data nilai_add yang akan ditambahkan, berdasarkan tipe data dari nilai degan key yang sama di row_param +++
                         $nilai_row_param = $row_param[ $key_row_dataset ];
                         $nilai_baru = $value_row_datasets;
                         if ( is_string( $nilai_row_param ) ) {
-                            //Jika pada row param nilai dengan key ini tipe datanya string. Maka ubah ke string
+                        //Jika pada row param nilai dengan key ini tipe datanya string. Maka ubah ke string
                             $nilai_baru = ( string ) $nilai_baru;
                         }else if ( is_float( $nilai_row_param ) ) {
-                            //Jika pada row param nilai dengan key ini tipe datanya float. Maka ubah ke float
+                        //Jika pada row param nilai dengan key ini tipe datanya float. Maka ubah ke float
                             $nilai_baru = ( float ) $nilai_baru;
                         }
-
 
                         $row_result_new[$key_row_dataset] = $nilai_baru;
                     }
 
-                }else{
-                    // Jika option_mapping_key_data itu false, maka jangan lakukan cluseing dan masukkan semmua key dan nilai pada row datasest tanap adanya pengecekan, kemudian datanya apa adanya tapi ada label untuk kebutuhan FE
-                    $row_result_new = array_merge( $row_result_new, $row_datasets );
                 }
+            }else{
+                // Jika option_mapping_key_data itu false, maka jangan lakukan clustering dan masukkan semmua key dan nilai pada row datasest tanap adanya pengecekan, kemudian datanya apa adanya tapi ada key. kolom label untuk kebutuhan FE
+                $row_result_new = array_merge( $row_result_new, $row_datasets );
+            }
 
+
+            //====== Proses selanjutnya dibawah itu artinya row_result_new sudah di build keynya ===== 
+
+            //========= ADD TERITORY - Penambahan territory id pada label  =========
+            //INGAT!! ini hanya bisa dilakukan ketika row data punya key kolom territoryid dan option_build['add_territoryid']
+            // Jadinya format : label - territoryid 
+            if ( $option_build['add_territoryid'] == true && isset( $row_result_new['territoryid'] ) ) {
+                $row_result_new['label'] = $row_result_new['label'] . " - " . $row_result_new['territoryid'];
             }
 
 
@@ -694,8 +745,10 @@ class CITDashboardController extends Controller{
         return $summary10payment;
     }
     private function build_header_table( $data_teritory, $data_driversales, $data_customer ){
-
-
+        //INGAT!! Semua key header di semua data maps_header keynya harus sama denggan key dari row data aslinya 
+        //maps_header_teritory harus sama dengan key yang ada di data_teritory
+        //maps_header_driversales harus sama dengan key yang ada di data_driversales
+        //maps_header_customer harus sama dengan key yang ada di data_customer
 
         $result = [];
         $result['maps_header_teritory'] = [
@@ -710,6 +763,7 @@ class CITDashboardController extends Controller{
         ];
 
         $result['maps_header_driversales'] = [
+            "territoryid"        => "Territory ID",
             "salesnameordrivername" => "Sales / Driver Name",
             "ordertype"             => "Order Type",
             "total_ar"              => "Total AR",
@@ -721,6 +775,7 @@ class CITDashboardController extends Controller{
         ];
 
         $result['maps_header_customer'] = [
+            "territoryid"        => "Territory ID",
             "customercode"       => "Customer Code",
             "customername"       => "Customer Name",
             "invoice_count"      => "Invoice Count",

@@ -67,7 +67,6 @@
                                                 <span id="detail_unconfirmed_amount">Rp 66.700.251</span>
                                             </td>
                                         </tr>
-
                                         <tr>
                                             <td>Confirmed Amount</td>
                                             <td class="text-end fw-bold">
@@ -202,7 +201,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="border rounded p-3 h-100">
-                                        <h6 class="text-success fw-bold">Confirmed Amount</h6>
+                                        <h6 class="text-success fw-bold">Collected Amount</h6>
                                         <h3 class="mb-0">
                                             <span id="detail_collected_amount">
                                                 Rp 81.662.469.269
@@ -213,7 +212,7 @@
 
                                 <div class="col-md-6">
                                     <div class="border rounded p-3 h-100">
-                                        <h6 class="text-warning fw-bold">Unconfirmed Amount</h6>
+                                        <h6 class="text-warning fw-bold">Uncollected Amount</h6>
                                         <h3 class="mb-0">
                                             <span id="detail_uncollected_amount">
                                                 Rp 17.436.040.470
@@ -286,7 +285,7 @@
 
                                 <div class="col-md-6">
                                     <div class="border rounded p-3 h-100">
-                                        <h6 class="text-warning fw-bold">Unconfirmed Amount</h6>
+                                        <h6 class="text-warning fw-bold">Uncollected Amount</h6>
                                         <h3 class="mb-0">
                                             <span id="detail_uncollected_amount">
                                                 Rp 5.794.746.512
