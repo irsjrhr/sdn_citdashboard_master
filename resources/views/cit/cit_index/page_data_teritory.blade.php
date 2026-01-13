@@ -25,7 +25,7 @@
                             @php
                             $class_kolom_angka = "";
                             $nilai = $row_data[$key2];
-                            if ( $key2 != "territoryname" && $key2 != "ordertype" ) {
+                            if ( $key2 != "territoryname" && $key2 != "ordertype" && $key2 != "territoryid" ) {
                                 // Kalo nilai kolomnya string berbentuk nilai nominal, maka ubah tipe datanya ke angka dan number format
                                 // angka itu kolomnya rata kanan 
                                 $class_kolom_angka = "kolom_angka";

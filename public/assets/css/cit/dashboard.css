@@ -321,7 +321,7 @@ canvas {
 	transition: .2s;
 }
 .kpi_card:hover{
-	transform: scale(1.5);
+	transform: scale(1.2);
 	z-index: 99;
 
 }
@@ -384,9 +384,32 @@ canvas {
 #modal_detail_stackbar{
 
 }
-.container_detail_stackbar{
+.container_detail_chart{
 	display: none;	
 }
-.container_detail_stackbar.active{
+.container_detail_chart.active{
 	display: block;
+}
+
+
+
+.col_paymenyType_TOP,
+.col_paymenyType_COD
+{
+	transition: .8s;
+}
+.col_paymenyType_TOP:hover,
+.col_paymenyType_COD:hover
+{
+	transform: scale(1.2);
+	z-index: 99;
+
+
+} 
+
+
+.chart_wrapper_pie{
+	width: 300px;
+	height: 300px;
+	margin: auto;
 }

@@ -47,6 +47,8 @@ const DATA_CONFIG_FORMAT_STACKEDBARCHART = {
     }
 }
 
+
+
 function buildStackedBarChart(data_config = DATA_CONFIG_FORMAT_STACKEDBARCHART ) 
 {
 

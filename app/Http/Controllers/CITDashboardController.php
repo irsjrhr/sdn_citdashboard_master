@@ -34,33 +34,6 @@ class CITDashboardController extends Controller{
     }
 
 
-
-
-    private function build_filterData( Request $request ){
-
-        $result = [];
-
-        $result['startDate'] = $request->input('startDate')
-        ? Carbon::parse($request->input('startDate'))->startOfDay()
-        : Carbon::now()->startOfYear()->startOfDay();
-
-        $result['endDate'] = $request->input('endDate')
-        ? Carbon::parse($request->input('endDate'))->endOfDay()
-        : Carbon::now()->endOfYear()->endOfDay();
-
-        $locationFilters = UserMetricFilterService::getFilters(
-            $this->db,
-            $this->userTitle,
-            $this->userBranchCode,
-            $this->userRegion
-        );
-        $result['regions']   = $locationFilters['regions'];
-        $result['branches']  = $locationFilters['branches'];
-        $locations = $locationFilters['locations'];
-
-        return $result;
-    }
-
     public function index( Request $request ){
 
 
@@ -444,6 +417,33 @@ class CITDashboardController extends Controller{
         ));
 
     }
+
+
+    private function build_filterData( Request $request ){
+
+        $result = [];
+
+        $result['startDate'] = $request->input('startDate')
+        ? Carbon::parse($request->input('startDate'))->startOfDay()
+        : Carbon::now()->startOfYear()->startOfDay();
+
+        $result['endDate'] = $request->input('endDate')
+        ? Carbon::parse($request->input('endDate'))->endOfDay()
+        : Carbon::now()->endOfYear()->endOfDay();
+
+        $locationFilters = UserMetricFilterService::getFilters(
+            $this->db,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
+        $result['regions']   = $locationFilters['regions'];
+        $result['branches']  = $locationFilters['branches'];
+        $locations = $locationFilters['locations'];
+
+        return $result;
+    }
+
 
     //Method untuk melakukan normalisasi data yang datanya memiliki key confirmed_amount dan unconfirmed amount seperti datasets_driversales, datasets_branch, dan datasets cumstomer
     // Method ini akan menghasilkan data yang digunakan pada data grafik baru

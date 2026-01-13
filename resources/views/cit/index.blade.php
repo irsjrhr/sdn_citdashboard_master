@@ -154,6 +154,8 @@ $filterQuery = http_build_query(request()->only([
 </div>
 
 
+@include('cit.cit_index.modal_detail_chart');
+
 
 
 
@@ -195,13 +197,13 @@ $filterQuery = http_build_query(request()->only([
 
 <script>
 
-    function open_modal_detailStackbar( id_container_detail_stackbar, callback = false ){
+    function open_modal_detailChart( id_container_detail_chart, callback = false ){
         if( callback == false ){
             callback = function(){
                 return 1;
             }
         }
-        const modalEl = document.getElementById('modal_detail_stackbar');
+        const modalEl = document.getElementById('modal_detail_chart');
         const modal = new bootstrap.Modal(modalEl);
 
 
@@ -209,29 +211,188 @@ $filterQuery = http_build_query(request()->only([
         var modal_el = $( modalEl );
 
         //Membuka container detail berdasarkan dataset yang di klik pada bar
-        var container_detail_stackbar = modal_el.find('.container_detail_stackbar');
-        var container_detail_stackbarTarget = container_detail_stackbar.filter(id_container_detail_stackbar);
+        var container_detail_chart = modal_el.find('.container_detail_chart');
+        var container_detail_chartTarget = container_detail_chart.filter(id_container_detail_chart);
 
-        console.log( "+++ Membuka modal_detailStackbar untuk container_detail_stackbar dengan id " + id_container_detail_stackbar + "+++++++++");
+        console.log( "+++ Membuka modal_detailchart untuk container_detail_chart dengan id " + id_container_detail_chart + "+++++++++");
 
-        //Menutup semua container detail stackbar 
+        //Menutup semua container detail chart 
 
-        container_detail_stackbar.removeClass('active');
+        container_detail_chart.removeClass('active');
         //Membuka container detail stacbar target
-        container_detail_stackbarTarget.addClass('active');
+        container_detail_chartTarget.addClass('active');
 
-        callback( modal_el, container_detail_stackbar );
+        callback( modal_el, container_detail_chart );
 
         //Memunculkan modal
         modal.show();
     }
+    //=============== METHOD KETIKA MODAL DETAIL CHART TERBUKA DAN MENGIMPLEMENTASIKAN ROW DATA DARI CALLBACK CHART ==========
+    function renderDetail_successRateCollectionBranch(row_data) {
 
 
+        const container_detail_chartTarget = $('.container_detail_chart#successRateCollectionBranch_all');
+
+        // IDENTITAS
+        container_detail_chartTarget.find('#detail_label').text(row_data.label);
+        container_detail_chartTarget.find('#detail_territory').text(row_data.territoryname);
+        container_detail_chartTarget.find('#detail_ordertype').text(row_data.ordertype);
+
+        // RATE
+        container_detail_chartTarget.find('#detail_collected_rate').text(
+            formatPercent(row_data.collection_rate_pct)
+            );
+
+        container_detail_chartTarget.find('#detail_uncollected_rate').text(
+            formatPercent(row_data.uncollected_rate_pct)
+            );
+
+        // FINANCIAL
+        container_detail_chartTarget.find('#detail_total_ar').text(
+            formatRupiah(row_data.total_ar)
+            );
+
+        container_detail_chartTarget.find('#detail_collected_amount').text(
+            formatRupiah(row_data.collected_amount)
+            );
+
+        container_detail_chartTarget.find('#detail_unconfirmed_amount').text(
+            formatRupiah(row_data.unconfirmed_amount)
+            );
+
+        container_detail_chartTarget.find('#detail_confirmed_amount').text(
+            formatRupiah(row_data.confirmed_amount)
+            );
+
+        // TOTAL DIFFERENCE (auto warna)
+        const diffVal = Number(row_data.total_difference || 0);
+        const diffEl = container_detail_chartTarget.find('#detail_difference');
 
 
-    //Data Success Rate Collection Branch 
+        //Menambahkan efek class warna berdasarkan nilai. Jika minus maka akan class warna merah, kalo tidak minus jadi hijau
+        diffEl
+        .text(formatRupiah(diffVal))
+        .removeClass('text-danger text-success')
+        .addClass(diffVal < 0 ? 'text-danger' : 'text-success');
+    }
+    function renderDetail_successRateCollectionOverdueBranch(row_data) {
+
+        const container_detail_chartTarget = $('.container_detail_chart#successCollectOverdue_branchAll');
+
+
+        // IDENTITAS
+        container_detail_chartTarget.find('#detail_overdue_label').text(row_data.label);
+        container_detail_chartTarget.find('#detail_overdue_territory').text(row_data.territoryname);
+
+        // RATE
+        container_detail_chartTarget.find('#detail_overdue_collected_rate').text(
+            formatPercent(row_data.overdue_collection_rate_pct)
+            );
+
+        container_detail_chartTarget.find('#detail_overdue_uncollected_rate').text(
+            formatPercent(row_data.overdue_uncollected_rate_pct)
+            );
+
+        // FINANCIAL
+        container_detail_chartTarget.find('#detail_total_ar_overdue').text(
+            formatRupiah(row_data.total_ar_overdue)
+            );
+
+        container_detail_chartTarget.find('#detail_collected_amount_overdue').text(
+            formatRupiah(row_data.collected_amount_overdue)
+            );
+
+        container_detail_chartTarget.find('#detail_unconfirmed_amount_overdue').text(
+            formatRupiah(row_data.unconfirmed_amount_overdue)
+            );
+
+        container_detail_chartTarget.find('#detail_confirmed_amount_overdue').text(
+            formatRupiah(row_data.confirmed_amount_overdue)
+            );
+
+        // TOTAL DIFFERENCE (auto warna)
+        const diffVal = Number(row_data.total_difference_overdue || 0);
+        const diffEl = container_detail_chartTarget.find('#detail_difference_overdue');
+
+        diffEl
+        .text(formatRupiah(diffVal))
+        .removeClass('text-danger text-success')
+        .addClass(diffVal < 0 ? 'text-danger' : 'text-success');
+    }
+
+    function renderDetail_badCollectionSalesDriver(row_data) {
+
+        const container_detail_chartTarget = $('.container_detail_chart#badCollectionSalesTOPCOD');
+
+
+        // IDENTITAS
+        container_detail_chartTarget.find('#detail_sales_label').text(
+            row_data.salesnameordrivername || row_data.label || '-'
+            );
+
+        container_detail_chartTarget.find('#detail_sales_ordertype').text(row_data.ordertype);
+        container_detail_chartTarget.find('#detail_avg_days_late').text(row_data.avg_days_late || 0);
+
+        // RATE / AMOUNT BOX
+        container_detail_chartTarget.find('#detail_collected_amount').text(
+            formatRupiah(row_data.confirmed_amount));
+
+        container_detail_chartTarget.find('#detail_uncollected_amount').text(
+            formatRupiah(row_data.unconfirmed_amount));
+
+        // FINANCIAL SUMMARY
+        container_detail_chartTarget.find('#detail_total_ar').text(
+            formatRupiah(row_data.total_ar));
+
+        // TOTAL DIFFERENCE (auto warna)
+        const diffVal = Number(row_data.total_difference || 0);
+        const diffEl = container_detail_chartTarget.find('#detail_difference');
+
+        diffEl
+        .text(formatRupiah(diffVal))
+        .removeClass('text-danger text-success')
+        .addClass(diffVal < 0 ? 'text-danger' : 'text-success');
+    }
+    function renderDetailBadCollectionCustomer(row_data) {
+
+        const container_detail_chartTarget = $('.container_detail_chart#badCollectionCustomer_all');
+
+
+        // IDENTITAS
+        container_detail_chartTarget.find('#detail_customer_label').text(
+            row_data.customername || row_data.label || '-'
+            );
+
+        container_detail_chartTarget.find('#detail_customer_code').text(
+            row_data.customercode || '-'
+            );
+
+        container_detail_chartTarget.find('#detail_invoice_count').text(row_data.invoice_count);
+
+        // HIGHLIGHT
+        container_detail_chartTarget.find('#detail_collected_amount').text(
+            formatRupiah(row_data.confirmed_amount));
+
+        container_detail_chartTarget.find('#detail_uncollected_amount').text(
+            formatRupiah(row_data.unconfirmed_amount));
+
+        // FINANCIAL SUMMARY
+        container_detail_chartTarget.find('#detail_total_ar').text(
+            formatRupiah(row_data.total_ar)
+            );
+        // TOTAL DIFFERENCE (auto warna)
+        const diffVal = Number(row_data.total_difference || 0);
+        const diffEl = container_detail_chartTarget.find('#detail_difference');
+
+        diffEl
+        .text(formatRupiah(diffVal))
+        .removeClass('text-danger text-success')
+        .addClass(diffVal < 0 ? 'text-danger' : 'text-success');
+    }
+
 
     $(document).ready(function(){
+
 
 
 
@@ -257,12 +418,14 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
-                    //Callback stackbar diklik
-                    //Akan membuka modal detail stackbar yang menampilkan detail row data
-                    open_modal_detailStackbar( '#successRateCollectionBranch_all',  function( modal_el, container_detail_stackbarTarget ){
-                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                    open_modal_detailChart( '#successRateCollectionBranch_all',  function( modal_el, container_detail_chartTarget ){
+                        //Ubah content di dalam container detail chart berdasarkan row data nya
                         console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
                         console.log( row_data );
+
+                        renderDetail_successRateCollectionBranch( row_data )
 
 
                     });
@@ -293,14 +456,14 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
-                    //Callback stackbar diklik
-                    //Akan membuka modal detail stackbar yang menampilkan detail row data
-                    open_modal_detailStackbar( '#successCollectOverdue_branchAll',  function( modal_el, container_detail_stackbarTarget ){
-                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                    open_modal_detailChart( '#successCollectOverdue_branchAll',  function( modal_el, container_detail_chartTarget ){
+                        //Ubah content di dalam container detail chart berdasarkan row data nya
                         console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
                         console.log( row_data );
 
-
+                        renderDetail_successRateCollectionOverdueBranch( row_data )
                     });
                 }
             }
@@ -331,15 +494,14 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
-                    //Callback stackbar diklik
-                    //Akan membuka modal detail stackbar yang menampilkan detail row data
-                    open_modal_detailStackbar( '#BadCollectionSalesTOPCOD',  function( modal_el, container_detail_stackbarTarget ){
-                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                    open_modal_detailChart( '#badCollectionSalesTOPCOD',  function( modal_el, container_detail_chartTarget ){
+                        //Ubah content di dalam container detail chart berdasarkan row data nya
                         console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
                         console.log( row_data );
 
-
-
+                        renderDetail_badCollectionSalesDriver( row_data )
 
                     });
                 }
@@ -367,14 +529,13 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300, 
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
-                    //Callback stackbar diklik
-                    //Akan membuka modal detail stackbar yang menampilkan detail row data
-                    open_modal_detailStackbar( '#BadCollectionSalesTOPCOD',  function( modal_el, container_detail_stackbarTarget ){
-                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                    open_modal_detailChart( '#badCollectionSalesTOPCOD',  function( modal_el, container_detail_chartTarget ){
+                        //Ubah content di dalam container detail chart berdasarkan row data nya
                         console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
                         console.log( row_data );
-
-
+                        renderDetail_badCollectionSalesDriver( row_data )
 
 
                     });
@@ -403,15 +564,14 @@ $filterQuery = http_build_query(request()->only([
                 heightChart : 300,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
-                    //Callback stackbar diklik
-                    //Akan membuka modal detail stackbar yang menampilkan detail row data
-                    open_modal_detailStackbar( '#BadCollectionCustomer_all',  function( modal_el, container_detail_stackbarTarget ){
-                        //Ubah content di dalam container detail stackbar berdasarkan row data nya
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                    open_modal_detailChart( '#badCollectionCustomer_all',  function( modal_el, container_detail_chartTarget ){
+                        //Ubah content di dalam container detail chart berdasarkan row data nya
                         console.log("++++ ROW DATA DETAIL YANG DIBUKA ++++++");
                         console.log( row_data );
 
-
-
+                        renderDetailBadCollectionCustomer( row_data );
 
 
                     });
@@ -491,9 +651,9 @@ $filterQuery = http_build_query(request()->only([
 
 
 
- {{--     var build_stackbar_section = ( DATA, judul_x = "JUDUL" ) => {
+ {{--     var build_chart_section = ( DATA, judul_x = "JUDUL" ) => {
 
-        buildStackbarByClass({
+        buildchartByClass({
             className: DATA.selector,
             datasets: DATA.datasets,
             xLabel: 'Bulan',
@@ -509,7 +669,7 @@ $filterQuery = http_build_query(request()->only([
     --}}
 
 
-{{--     buildStackbarByClass({
+{{--     buildchartByClass({
         className: 'chart-cit',
         datasets: dataFromAPI,
         seriesConfig: [
@@ -530,13 +690,13 @@ $filterQuery = http_build_query(request()->only([
 
 
 
-    build_stackbar_section({
+    build_chart_section({
         selector:"chart_successRateCollectionBranch_all",
         datasets : data_successRateCollectionBranch_all
     }, "BRANCHES");
 
 
-    build_stackbar_section({
+    build_chart_section({
         selector:"chart_successRateCollectionOverdueBranch_all",
         datasets : data_successRateCollectionOverdueBranch_all
     }, "BRANCHES");
