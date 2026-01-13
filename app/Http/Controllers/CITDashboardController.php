@@ -81,33 +81,30 @@ class CITDashboardController extends Controller{
 
 
 
-        //Card Dataset
+        //++++++ Card Dataset
         $row_card_dashboard = $datasets[0][0]; 
 
         //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
         $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Confirmed Invoice Document'] . "/" . $row_card_dashboard['Total Invoice Document'] ;
         unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
-
-
-
         //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
         $row_card_dashboard['Total Invoice Document AR OD'] = $row_card_dashboard['Total Confirmed Invoice Document AR OD'] . "/" . $row_card_dashboard['Total Invoice Document AR OD'] ;
         unset( $row_card_dashboard['Total Confirmed Invoice Document AR OD'] );
 
         
 
-        // Payment Type Pie Chart
+        //++++++ Payment Type Pie Chart
         $data_paymentType = $datasets[1]; //[  []  ]
 
 
-        // Data Grafik
+        //++++++ Data Grafik
         $data_successCollect_branch = $datasets[2]; //Success Rate Collection [ [], [], [], ..... ]
         $data_successCollectOverdue_branch = $datasets[3]; //Success Rate Collection AR Overdue [ [], [], [], ..... ]
         $data_badCollectiondriver = $datasets[4]; // Bad Collection by Driver Or Sales [ [], [], [], ..... ]
         $data_badCollectionCustomer = $datasets[5]; // Bad Customer Collection [ [], [], [], ..... ]
 
 
-        // Data View Detail Tabel
+        //++++++ Data View Detail Tabel
         $data_view_teritory = $datasets[6];  //[ [], [], [], ..... ]
         $data_view_driversales = $datasets[7]; // [ [], [], [], ..... ]
         $data_view_customer = $datasets[8]; // [ [], [], [], ..... ]

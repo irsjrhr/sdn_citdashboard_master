@@ -63,7 +63,7 @@ $document_keys = [
         </div>
     </div>
     {{-- Row Box Dashboard  --}}
-    <div class="row row_box_dashboard wow animate__animated animate__fadeInUp">
+    <div class="row row_box_dashboard">
 
 
         <div class="col-12" style="padding:0">
@@ -73,11 +73,16 @@ $document_keys = [
 
                 {{-- Loop Row Card Dashboard --}}
 
+                @php
+                $card_increment = 0;
+                @endphp
                 @foreach ($row_card_dashboard as $key => $value )
 
 
                 {{-- Kalo dia bukan array --}}
                 @php
+
+                //Formatring nilai
                 if ( in_array($key, $nominal_keys) ) {
                     $value = "Rp " . formatAbbreviatedNumber($value);
                 }else if ( in_array($key, $percentage_keys) ) {
@@ -85,15 +90,32 @@ $document_keys = [
                 }else if( in_array($key, $document_keys ) ){
                     $value = $value;
                 }
+
+
+                //Filtering class dari kpi card untuk class animasi dan class lainnya berdasarkan nilai increment
+                if ($card_increment % 2 == 0) {
+                    //Jika nilainya adalah genap 
+                    $class_card_animasi = "animate__fadeInUp";
+                } else {
+                    //Jika nilainya adalah ganjil
+                    $class_card_animasi = "animate__fadeInDown";
+                }
+
+
+
                 @endphp
 
 
-                <div class="kpi_card kpi_blue">
+
+                <div class="kpi_card kpi_blue wow animate__animated {{$class_card_animasi}}">
                     <div class="kpi_title">{{ $key }}</div>
                     <div class="kpi_value">{{ $value }}</div>
                 </div>
 
 
+                @php
+                $card_increment++;
+                @endphp
                 @endforeach
                 {{-- End Of Loop Row Card Dashboard --}}
 
