@@ -398,7 +398,12 @@ $filterQuery = http_build_query(request()->only([
     }
 
 
+
+    var uncollected_color = "#F44336";
+    var collected_color = "#4CAF50";
+
     $(document).ready(function(){
+
 
 
 
@@ -414,12 +419,12 @@ $filterQuery = http_build_query(request()->only([
                     {
                         key: 'collection_rate_pct',
                         label: 'Collected Rate ( % )',
-                        backgroundColor: '#4CAF50'
+                        backgroundColor: collected_color
                     },
                     {
                         key: 'uncollected_rate_pct',
                         label: 'Uncollected Rate ( %  )',
-                        backgroundColor: '#F44336'
+                        backgroundColor: uncollected_color
                     }
                 ],
                 heightChart : 300,
@@ -452,12 +457,12 @@ $filterQuery = http_build_query(request()->only([
                     {
                         key: 'overdue_collection_rate_pct',
                         label: 'Collected Amount ( % )',
-                        backgroundColor: '#4CAF50'
+                        backgroundColor: collected_color
                     },
                     {
                         key: 'overdue_uncollected_rate_pct',
                         label: 'Uncollected Amount ( %  )',
-                        backgroundColor: '#F44336'
+                        backgroundColor: uncollected_color
                     }
                 ],
                 heightChart : 300,
@@ -490,12 +495,12 @@ $filterQuery = http_build_query(request()->only([
                     {
                         key: 'confirmed_amount',
                         label: 'Collected Amount ( Rp )',
-                        backgroundColor: '#4CAF50'
+                        backgroundColor: collected_color
                     },
                     {
                         key: 'unconfirmed_amount',
                         label: 'Uncollected Amount ( Rp )',
-                        backgroundColor: '#F44336'
+                        backgroundColor: uncollected_color
                     }
                 ],
                 heightChart : 300,
@@ -525,12 +530,12 @@ $filterQuery = http_build_query(request()->only([
                     {
                         key: 'confirmed_amount',
                         label: 'Collected Amount ( Rp )',
-                        backgroundColor: '#4CAF50'
+                        backgroundColor: collected_color
                     },
                     {
                         key: 'unconfirmed_amount',
                         label: 'Uncollected Amount ( Rp )',
-                        backgroundColor: '#F44336'
+                        backgroundColor: uncollected_color
                     }
                 ],
                 heightChart : 300, 
@@ -560,12 +565,12 @@ $filterQuery = http_build_query(request()->only([
                     {
                         key: 'confirmed_amount',
                         label: 'Collected Amount ( Rp )',
-                        backgroundColor: '#4CAF50'
+                        backgroundColor: collected_color
                     },
                     {
                         key: 'unconfirmed_amount',
                         label: 'Uncollected Amount ( Rp )',
-                        backgroundColor: '#F44336'
+                        backgroundColor: uncollected_color
                     }
                 ],
                 heightChart : 300,

@@ -121,6 +121,10 @@ function buildStackedBarChart(data_config = DATA_CONFIG_FORMAT_STACKEDBARCHART )
             plugins: {
                 legend: {
                     position: 'top',
+                    align: 'start', 
+                    padding: {
+                        bottom : 100
+                    },  // 🎯 jarak ke bawah (legend → chart)
                     labels: { font: { size: 14 } }
                 }
             },
