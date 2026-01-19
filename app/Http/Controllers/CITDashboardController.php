@@ -57,9 +57,6 @@ class CITDashboardController extends Controller{
         // Extract region code safely
         $filters['region'] = $request->input('region');
 
-
-
-
         // Prepare Datasets with filters
         $pdo = $this->db->getPdo();
         $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData_test
@@ -106,9 +103,11 @@ class CITDashboardController extends Controller{
         $data_badCollectionCustomer = $datasets[5]; // Bad Customer Collection [ [], [], [], ..... ]
 
 
+
         //++++++ Data View Detail Tabel
         $data_view_teritory = $datasets[6];  //[ [], [], [], ..... ]
         $data_view_driversales = $datasets[7]; // [ [], [], [], ..... ]
+        // dd( $data_view_teritory );
         $data_view_customer = $datasets[8]; // [ [], [], [], ..... ]
 
 

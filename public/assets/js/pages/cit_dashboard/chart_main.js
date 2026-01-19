@@ -119,11 +119,32 @@ function buildStackedBarChart(data_config = DATA_CONFIG_FORMAT_STACKEDBARCHART )
             },
 
             plugins: {
-                legend: {
-                    position: 'top',
-                    align: 'start', 
-                    padding: {
-                        bottom : 100
+                tooltip: {
+                mode: 'index',        // 🔥 gabung per index (per BAR)
+                intersect: false,     // 🔥 ga harus tepat kena segment
+                callbacks: {
+                    title: function(context) {
+                    // Judul tooltip (label bar)
+                        return context[0].label;
+                    },
+                    label: function(context) {
+                        const datasetLabel = context.dataset.label;
+                        const value = context.parsed.y;
+                        return `${datasetLabel}: ${value.toLocaleString()}`;
+                    },
+                    footer: function(context) {
+                // Optional: total semua stack
+                        const total = context.reduce((sum, item) => sum + item.parsed.y, 0);
+                        return `Total: ${total.toLocaleString()}`;
+                    }
+                }
+            },
+
+            legend: {
+                position: 'top',
+                align: 'start', 
+                padding: {
+                    bottom : 100
                     },  // 🎯 jarak ke bawah (legend → chart)
                     labels: { font: { size: 14 } }
                 }
@@ -196,6 +217,7 @@ function buildPieChart(data_config = DATA_CONFIG_FORMAT_PIECHART ) {
     var data_value = [];
     var data_background = [];
 
+    //Membuat dataset untuk grafik berdasarakkan formatnya
     for (var i = 0; i < data_config.datasets.length; i++) {
 
         var row_obj = data_config.datasets[i];
