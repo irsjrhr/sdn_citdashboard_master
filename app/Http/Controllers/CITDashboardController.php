@@ -55,8 +55,10 @@ class CITDashboardController extends Controller{
         );
 
         // Extract region code safely
-        $regionParts = explode(' ', $request->input('region', ''));
-        $filters['region'] = $regionParts[1] ?? null;
+        $filters['region'] = $request->input('region');
+
+
+
 
         // Prepare Datasets with filters
         $pdo = $this->db->getPdo();
