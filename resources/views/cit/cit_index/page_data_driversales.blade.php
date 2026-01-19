@@ -12,31 +12,31 @@
                 <table class="table table-bordered table-striped align-middle small">
                     <thead class="table-light">
                         <tr>
-                            @foreach ($data_view_driversales[0] as $key => $kolom )
-                            <td>{{ $maps_header_driversales[$key] }}</td>
-                            @endforeach
+                            <th>Territory ID</th>
+                            <th>Sales / Driver Name</th>
+                            <th>Order Type</th>
+                            <th>Total AR</th>
+                            <th>Collected Amount</th>
+                            <th>Confirmed Amount</th>
+                            <th>Unconfirmed Amount</th>
+                            <th>Total Difference</th>
                         </tr>
+
                     </thead>
                     <tbody>
                         @foreach ($data_view_driversales as $row_data)
 
                         <tr>
-                            @foreach ($data_view_driversales[0] as $key2=>$kolom)
-                            @php
-                            $nilai = $row_data[$key2];
-                            $class_kolom_angka = "";
-                            if ( $key2 != "salesnameordrivername" && $key2 != "ordertype"  ) {
-                                // Kalo nilai kolomnya string berbentuk nilai nominal, maka ubah tipe datanya ke angka dan number format
-                                // angka itu kolomnya rata kanan 
-                                $class_kolom_angka = "kolom_angka";
-                                $nilai = number_format( ( float ) $nilai  );
-                            }
-                            @endphp
+                            <td><?= $row_data['territoryid']; ?></td>
+                            <td><?= $row_data['salesnameordrivername']; ?></td>
+                            <td><?= $row_data['ordertype']; ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_ar']);?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['collected_amount']);?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['confirmed_amount']);?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['unconfirmed_amount']);?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_difference']);?></td>
 
-                            <td class="{{$class_kolom_angka}}"> {{$nilai}}  </td>
-                            @endforeach
                         </tr>
-
 
                         @endforeach
                     </tbody>

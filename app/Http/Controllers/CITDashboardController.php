@@ -257,6 +257,8 @@ class CITDashboardController extends Controller{
         // ========== GET LAST UPDATE ======
         $last_update = $this->get_last_updateCIT();
 
+        // dd(  $data_view_teritory );
+
 
         return view('cit.index', array_merge($build_filterData), compact(
             'row_card_dashboard',
@@ -630,7 +632,7 @@ class CITDashboardController extends Controller{
 
                 }
             }else{
-                // Jika option_mapping_key_data itu false, maka jangan lakukan clustering dan masukkan semmua key dan nilai pada row datasest tanap adanya pengecekan, kemudian datanya apa adanya tapi ada key. kolom label untuk kebutuhan FE
+                // Jika option_mapping_key_data itu false, maka jangan lakukan clustering dan masukkan semmua key dan nilai pada row datasest ke row_result_new tanpa adanya pengecekan, kemudian datanya apa adanya tapi ada key. kolom label untuk kebutuhan FE
                 $row_result_new = array_merge( $row_result_new, $row_datasets );
             }
 
@@ -721,26 +723,6 @@ class CITDashboardController extends Controller{
     }
 
 
-    // Method ini akan menghasilkan data yang digunakan pada grafik pie
-    public function build_datasetPaymentTop10($datasets_payment){
-        // ======================= TOP 10 PAYMENT TYPE BERMASALAH =========================== 
-        $datasets_payment = $data[5];
-        $summary10payment = [];
-        foreach ($datasets_payment ?? [] as $row) {
-
-            $row_payments = [
-                'payment_type'     => $row['paymenttype'] ?? null,
-                'total_difference' => (float) ($row['total_difference'] ?? 0),
-                'avg_diff_pct'     => (float) ($row['avg_difference_pct'] ?? 0),
-            ];
-            $summary10payment[] = $row_payments;
-        }
-        //Mengurutkan data
-        usort($summary10payment, fn ($a, $b) => $b['total_difference'] <=> $a['total_difference']);
-        //Mengambil top 10 data
-        $summary10payment = array_slice($summary10payment, 0, 10); 
-        return $summary10payment;
-    }
     private function build_header_table( $data_teritory, $data_driversales, $data_customer ){
         //INGAT!! Semua key header di semua data maps_header keynya harus sama denggan key dari row data aslinya 
         //maps_header_teritory harus sama dengan key yang ada di data_teritory
@@ -770,6 +752,7 @@ class CITDashboardController extends Controller{
             "total_difference"      => "Total Difference",
             "avg_days_late"         => "Average Days Late",
         ];
+
 
         $result['maps_header_customer'] = [
             "territoryid"        => "Territory ID",

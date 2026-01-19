@@ -205,6 +205,10 @@ $filterQuery = http_build_query(request()->only([
 <script>
 
     function open_modal_detailChart( id_container_detail_chart, callback = false ){
+
+        //Membuka container detail berdasarkan dataset yang di klik pada bar di modal_detail_chart
+
+
         if( callback == false ){
             callback = function(){
                 return 1;
@@ -217,14 +221,12 @@ $filterQuery = http_build_query(request()->only([
         //Membuka container detail
         var modal_el = $( modalEl );
 
-        //Membuka container detail berdasarkan dataset yang di klik pada bar
         var container_detail_chart = modal_el.find('.container_detail_chart');
         var container_detail_chartTarget = container_detail_chart.filter(id_container_detail_chart);
 
         console.log( "+++ Membuka modal_detailchart untuk container_detail_chart dengan id " + id_container_detail_chart + "+++++++++");
 
         //Menutup semua container detail chart 
-
         container_detail_chart.removeClass('active');
         //Membuka container detail stacbar target
         container_detail_chartTarget.addClass('active');

@@ -12,34 +12,31 @@
                 <table class="table table-bordered table-striped align-middle small">
                     <thead class="table-light">
                         <tr>
-                            @foreach ($data_view_customer[0] as $key => $kolom )
-                            <td>{{ $maps_header_customer[$key] }}</td>
-                            @endforeach
+                            <th>Territory ID</th>
+                            <th>Customer Code</th>
+                            <th>Customer Name</th>
+                            <th>Invoice Count</th>
+                            <th>Total Difference</th>
+                            <th>Total AR</th>
+                            <th>Collected Amount</th>
+                            <th>Confirmed Amount</th>
+                            <th>Unconfirmed Amount</th>
                         </tr>
+
                     </thead>
                     <tbody>
                         @foreach ($data_view_customer as $row_data)
-
-
                         <tr>
-                            @foreach ($data_view_customer[0] as $key2=>$kolom)
-                            @php
-                            $nilai = $row_data[$key2];
-                            $class_kolom_angka = "";
-                            if ( $key2 != "customername" && $key2 != "customercode" && $key2 != "ordertype"  ) {
-                                // Kalo nilai kolomnya string berbentuk nilai nominal, maka ubah tipe datanya ke angka dan number format
-                                // Kalo nilai kolomnya string berbentuk nilai nominal, maka ubah tipe datanya ke angka dan number format
-                                // angka itu kolomnya rata kanan 
-                                $class_kolom_angka = "kolom_angka";
-                                $nilai = number_format( ( float ) $nilai  );
-                            }
-                            @endphp
-
-                            <td class="{{$class_kolom_angka}}"> {{$nilai}}  </td>
-                            @endforeach
+                            <td><?= $row_data['territoryid']; ?></td>
+                            <td><?= $row_data['customercode']; ?></td>
+                            <td><?= $row_data['customername']; ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['invoice_count']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_difference']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_ar']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['collected_amount']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['confirmed_amount']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['unconfirmed_amount']); ?></td>
                         </tr>
-
-
                         @endforeach
                     </tbody>
                 </table>

@@ -13,33 +13,28 @@
                 <table class="table table-bordered table-striped align-middle small">
                     <thead class="table-light">
                         <tr>
-                            @foreach ($data_view_teritory[0] as $key => $kolom )
-                            <td>{{ $maps_header_teritory[$key] }}</td>
-                            @endforeach
+                            <td>Territory ID</td>
+                            <td>Territory Name</td>
+                            <td>Invoice Count</td>
+                            <td>Total Difference</td>
+                            <td>Total AR</td>
+                            <td>Collected Amount</td>
+                            <td>Confirmed Amount</td>
+                            <td>Unconfirmed Amount</td>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data_view_teritory as $row_data)
                         <tr>
-                            @foreach ($data_view_teritory[0] as $key2=>$kolom)
-                            @php
-                            $class_kolom_angka = "";
-                            $nilai = $row_data[$key2];
-                            if ( $key2 != "territoryname" && $key2 != "ordertype" && $key2 != "territoryid" ) {
-                                // Kalo nilai kolomnya string berbentuk nilai nominal, maka ubah tipe datanya ke angka dan number format
-                                // angka itu kolomnya rata kanan 
-                                $class_kolom_angka = "kolom_angka";
-                                $nilai = (float) $nilai;
-                                if ( $key2 == "collection_rate_pct" || $key2 == "trust_gap_pct" ) {
-                                    $nilai = formatAbbreviatedNumber(number_format($nilai, 2, '.', ''));
-                                }else{
-                                    $nilai = number_format(  $nilai  );
-                                }
-                            }
-                            @endphp
+                            <td><?= $row_data['territoryid']; ?></td>
+                            <td><?= $row_data['territoryname']; ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['invoice_count']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_difference']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_ar']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['collected_amount']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['confirmed_amount']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['unconfirmed_amount']); ?></td>
 
-                            <td class="{{$class_kolom_angka}}"> {{$nilai}}  </td>
-                            @endforeach
                         </tr>
                         @endforeach
 
