@@ -97,47 +97,83 @@ $filterQuery = http_build_query(request()->only([
                         <table class="table table-bordered table-striped align-middle small">
                             <thead class="table-light">
                                 <tr>
-                                    @foreach ($data_coh[0] as $key_kolom => $nilai_kolom )
-                                    @php
-                                    if ( $key_kolom == "TotalRows" ) {
-                                        continue;
-                                    }
-                                    @endphp
-                                    <td> {{ $key_kolom }} </td>
-                                    @endforeach
-                                    <td> Action </td>
+                                    <th>Action</th>
+                                    <th>Branch Code</th>
+                                    <th>Branch Name</th>
+                                    <th>Collection Date</th>
+                                    <th>Transaction Type</th>
+
+                                    <th>Outstanding AR</th>
+                                    <th>Total Collection</th>
+                                    <th>Payment Difference</th>
+                                    <th>Payment Performance (Value)</th>
+                                    <th>Difference Flag</th>
+
+                                    <th>Total Invoice</th>
+                                    <th>Total Collected Doc</th>
+                                    <th>Payment Performance (Doc)</th>
+
+                                    <th>Payment Cash</th>
+                                    <th>Payment Transfer</th>
+                                    <th>Payment Giro</th>
+                                    <th>Total Payment Cash + TF</th>
+
+                                    <th>Total TOP OD</th>
+                                    <th>Total Paid TOP OD</th>
+                                    <th>Payment Performance OD</th>
+
+                                    <th>COH</th>
+                                    <th>Bank In</th>
+                                    <th>Balance</th>
+                                    <th>Reason</th>
                                 </tr>
 
                             </thead>
 
                             <tbody>
-                                @foreach ($data_coh as $row_coh)
+                                @foreach ($data_coh as $row_data)
                                 <tr>
-                                    @foreach ($row_coh as $key_kolom => $nilai_kolom )
-                                    @php
-                                    //Melakukan number formating untuk nilai yang keynya termasuk ke dalam $key_rupiah_data
-                                    $nilai = $row_coh[$key_kolom];
-                                    if( in_array( $key_kolom, $key_rupiah_data ) ){
-                                        $nilai = number_format( $nilai );
-                                    }   
-
-                                    if ( $key_kolom == "TotalRows" ) {
-                                        continue;
-                                    }
-                                    @endphp
-                                    <td> {{ $nilai }} </td>
-                                    @endforeach
-
                                     <td> 
                                         @php
-                                        $branchCode = $row_coh['BranchCode'];
+                                        $branchCode = $row_data['BranchCode'];
+                                        $collectionDate = $row_data['CollectionDate'];
+                                        $url_direct = asset('cit/coh_reason_detail?branchCode=') . $branchCode . "&" . "collectionDate=" . $collectionDate;
                                         @endphp
-                                        <a class="btn btn-primary" href="{{ asset('cit/coh_reason_detail?branchCode=') . $branchCode }}">
+                                        <a class="btn btn-primary" href="{{ $url_direct }}">
 
                                             View Detail 
                                             
                                         </a>
                                     </td>
+
+                                    <td><?= $row_data['BranchCode'] ?></td>
+                                    <td><?= $row_data['BranchName'] ?></td>
+                                    <td><?= $row_data['CollectionDate'] ?></td>
+                                    <td><?= $row_data['TransactionType'] ?></td>
+
+                                    <td class="kolom_angka"><?= number_format($row_data['Outstanding_AR'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Collection'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Selisih_Payment'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Payment_Performance_Value'], 0, ',', '.') ?></td>
+                                    <td><?= $row_data['Flag_Selisih'] ?></td>
+
+                                    <td class="kolom_angka"><?= $row_data['Total_Doc_Invoice'] ?></td>
+                                    <td class="kolom_angka"><?= $row_data['Total_Collected_Doc'] ?></td>
+                                    <td class="kolom_angka"><?= $row_data['Payment_Performance_Document'] ?></td>
+
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_TF'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Giro'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash_TF'], 0, ',', '.') ?></td>
+
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_TOP_OD_Value'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Total_Paid_TOP_OD_Value'], 0, ',', '.') ?></td>
+                                    <td><?= $row_data['Payment_Performance_OD_Value'] ?? '-' ?></td>
+
+                                    <td class="kolom_angka"><?= number_format($row_data['COH'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Bank In'], 0, ',', '.') ?></td>
+                                    <td class="kolom_angka"><?= number_format($row_data['Balance'], 0, ',', '.') ?></td>
+                                    <td><?= $row_data['Reason'] ?: '-' ?></td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -155,7 +191,7 @@ $filterQuery = http_build_query(request()->only([
 
                     @if ( !empty( $data_coh ) )
 
-                     <div class="float-end small">{{ $data_paginator->links() }}</div>
+                    <div class="float-end small">{{ $data_paginator->links() }}</div>
 
                     @endif
 

@@ -33,7 +33,6 @@ class CITDashboardController extends Controller{
         });
     }
 
-
     public function index( Request $request ){
 
 
@@ -71,7 +70,7 @@ class CITDashboardController extends Controller{
             'regionCode'   => $filters['region'],
             'branchCode'   => $filters['branch']
         ]);
-        //Fetch Alll Data - Convert to array index multi dimensi value array associatif
+        //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
         $datasets = [];
         do {
             $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -284,7 +283,10 @@ class CITDashboardController extends Controller{
     }
 
 
+
+    //COH Reason untuk table data header
     public function coh_reason(Request $request){
+
 
 
 
@@ -324,13 +326,12 @@ class CITDashboardController extends Controller{
             'pageNumber'   => $filters['pageNumber'],
             'pageSize'   => $pageSize,
         ]);
-        //Fetch Alll Data - Convert to array index multi dimensi value array associatif
+        //Fetch Alll Data - Convert to array index multi dimensi [ [ [], [], [] ] ]
         $datasets = [];
         do {
             $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } while ($stmt->nextRowset());
 
-        //Bentuk datasets [  [], [], [], []   ] 
         //========== End Of Get Datasets From DB ==========
 
         //Data COH Primer
@@ -339,6 +340,8 @@ class CITDashboardController extends Controller{
 
         // dd( $datasets );
         // dd($data_coh);
+
+
 
 
         $data_paginator = new LengthAwarePaginator(
@@ -381,36 +384,85 @@ class CITDashboardController extends Controller{
         ));
     }
 
+
+    //COH Reason untuk table data detail dari header dengan detail COH dan CIT berdasarkan parameter branchCode yang dilempar
     public function coh_reason_detail(Request $request){
 
-        //Route ini hanya bisa diakses kalo ada parameter ?branchCode dan nilainya gak kosong
+        //================================ Validasi parameter wajib =======================================
+        //INGAT!!! Route ini hanya bisa diakses kalo ada parameter ?branchCode dan nilainya gak kosong
         $branchCodeParam = null;
-        if ( isset( $_GET['branchCode']) && !empty($_GET['branchCode'])  ) {
+        $collectionDateParam = null;
+        if ( ( isset( $_GET['branchCode']) && !empty($_GET['branchCode']) ) && ( isset( $_GET['collectionDate']) && !empty($_GET['collectionDate']) )  ) {
             $branchCodeParam = $request->input('branchCode');
+            $collectionDateParam = $request->input('collectionDate')
+            ? Carbon::parse($request->input('collectionDate'))->startOfDay()
+            : Carbon::now()->startOfYear()->startOfDay();
         }else{
             return redirect()->route('cit.coh_reason');
         }
-        $ROUTE_DEFAULT = route('cit.coh_reason_detail') . "?branchCode=" . $branchCodeParam;
+        // $ROUTE_DEFAULT = route('cit.coh_reason_detail') . "?branchCode=" . $branchCodeParam;
 
-        //=========== Build Datasets   ===========
-        // Prepare Datasets with filters
+
+
+
+        //=========================== End Of Validasi parameter wajib =======================================
+
         $pdo = $this->db->getPdo();
+
+        //========================== Build Datasets - Detail CIT  =======================
+
+
+        // Prepare Datasets with filters
         $stmt = $pdo->prepare("EXEC sp_ZH_Collection_CIT_Dashboard
-            @territoryId  = :branchCode
+            @territoryId  = :branchCode,
+            @startDate  = :startDate,
+            @endDate  = :endDate
             ");
         $stmt->execute([
-            'branchCode' => $branchCodeParam
+            'branchCode' => $branchCodeParam,
+            'startDate' => $collectionDateParam,
+            'endDate' => $collectionDateParam,
         ]);
-        //Fetch Alll Data - Convert to array index multi dimensi value array associatif
-        $datasets = [];
+        //Fetch All Data - Convert to array index multi dimensi $datasets = [ [ [], [], .... ] ]
+        $datasets_coh_detailCIT = [];
         do {
-            $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $datasets_coh_detailCIT[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } while ($stmt->nextRowset());
 
+        $data_coh_detailCIT = $datasets_coh_detailCIT[0]; // $data_coh_detailCIT [ [], [], [] ]
 
 
-        //Data COH Primer
-        $data_coh_detail = $datasets[0];
+        // dd( $data_coh_detailCIT );
+        
+
+        //========================== Build Datasets - Detail COH  ======================= 
+
+
+        // Prepare Datasets with filters
+        $stmt = $pdo->prepare("EXEC sp_ZH_COH_Summary
+            @territoryId  = :branchCode,
+            @startDate  = :startDate,
+            @endDate  = :endDate
+            ");
+        $stmt->execute([
+            'branchCode' => $branchCodeParam,
+            'startDate' => $collectionDateParam,
+            'endDate' => $collectionDateParam,
+        ]);
+
+        //Fetch Alll Data - Convert to array index multi dimensi $datasets = [ [ [], [] ] ]
+        $datasets_coh_detailCOH = [];
+        do {
+            $datasets_coh_detailCOH[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } while ($stmt->nextRowset());
+
+        $data_coh_detailCOH = $datasets_coh_detailCOH[0]; // $data_coh_detailCOH [ [], [], [] ]
+
+        // dd( $data_coh_detailCOH );
+
+
+        //============================ End Of Build Datasets =====================================
+
         $key_rupiah_data = [
             "amount",
             "cash_collectionamount",
@@ -427,15 +479,16 @@ class CITDashboardController extends Controller{
         ];
 
 
-        // dd($data_coh_detail[0]);
+        // dd($data_coh_detailCOH[0]);
 
 
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
         return view('cit.coh_reason_detail', $build_filterData, compact(
-            'data_coh_detail', 
+            'data_coh_detailCOH', 
+            'data_coh_detailCIT', 
             'branchCodeParam',
-            'ROUTE_DEFAULT',
+            // 'ROUTE_DEFAULT',
             'key_rupiah_data'
         ));
 
