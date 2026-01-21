@@ -27,6 +27,10 @@ $filterQuery = http_build_query(request()->only([
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/cit/dashboard.css')}}">
 
 <style>
+    .nav_tab .tab_el{
+        flex : 1;
+        text-align: center;
+    }
     #form_update_detailCOH,
     #form_update_detailCIT{
         display : none
@@ -360,7 +364,7 @@ $filterQuery = http_build_query(request()->only([
                         <label class="small text-muted fw-bold">Diff Reason</label>
                         <div class="input-group input-group-merge">
                             <span class="input-group-text"><i class="ti ti-notes"></i></span>
-                            <textarea name="differencereason_detail"
+                            <textarea name="differencereason"
                             class="form-control"
                             rows="3"
                             placeholder="Input diff reason"></textarea>
@@ -519,7 +523,7 @@ $filterQuery = http_build_query(request()->only([
             formTarget.find('[name="territoryname"]').val(row_data.territoryname);
             formTarget.find('[name="collectiondate"]').val(row_data.collectiondate);
             formTarget.find('[name="billingnumber"]').val(row_data.billingnumber);
-            formTarget.find('[name="differencereason_detail"]').val(row_data.differencereason_detail);
+            formTarget.find('[name="differencereason"]').val(row_data.differencereason_detail);
 
 
             modal_update.show();
