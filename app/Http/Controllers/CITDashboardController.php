@@ -37,15 +37,16 @@ class CITDashboardController extends Controller{
 
 
 
-        //=========== Build Datasets   ===========
+
+        //=========== Build Filter Data For SQL By Metric ===========
+
+        //++++++ Build Metric Filter ++++++++
         $filters = [
-            'startDate' => $request->input('startDate'),
-            'endDate' => $request->input('endDate'),
             'branch'   => $request->input('branch'),
             'region'   => $request->input('region'),
-            'branch'   => $request->input('branch')
+            'startDate' => $request->input('startDate'),
+            'endDate' => $request->input('endDate'),
         ];
-
         $filters = UserMetricFilterService::applyUserDefaultFilters(
             $filters,
             $this->userTitle,
@@ -53,22 +54,24 @@ class CITDashboardController extends Controller{
             $this->userRegion
         );
 
-        // Extract region code safely
+        //++++++ Build Region Filter ++++++++
         $filters['region'] = $request->input('region');
+
+        //=========== Build Datasets ==============
 
         // Prepare Datasets with filters
         $pdo = $this->db->getPdo();
         $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData_test
             @startDate    = :startDate,
             @endDate   = :endDate,
-            @branchCode = :branchCode,
+            @branchCode = :branch,
             @regionCode  = :regionCode
             ");
         $stmt->execute([
             'startDate' => $filters['startDate'],
             'endDate'  => $filters['endDate'],
             'regionCode'   => $filters['region'],
-            'branchCode'   => $filters['branch']
+            'branch'   => $filters['branch']
         ]);
         //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
         $datasets = [];
@@ -112,11 +115,10 @@ class CITDashboardController extends Controller{
 
         //=========== End Of Build Datasets  ===========
 
-        //=========== Build Filter Data  ===========
+        //=========== Build Filter Data For UI List Option By Metric ===========
         $build_filterData = $this->build_filterData( $request );
 
         //=========== Build Summary Data ================
-
         // ++++ Data Summary Success Rate Collection Branch/Teritory ++++ 
         $summary_paymentType = $this->build_datasetGrafik( 
             $data_paymentType, 
@@ -287,31 +289,32 @@ class CITDashboardController extends Controller{
     //COH Reason untuk table data header
     public function coh_reason(Request $request){
 
+        //=========== Build Filter Data For SQL By Metric ===========
 
-
-
-        //========== Get Datasets From DB ==========
-        if ( !isset($_GET['page']) && empty( $pageNumber ) ) {
-            //Page pertama, kalo gak ada parameter ?get
-            $pageNumber = 1;
-        }else{
-            $pageNumber = $request->input('page');
-        }
-
-        $pageSize = 100;
+        //++++++ Build Metric Filter ++++++++
         $filters = [
+            'branch'   => $request->input('branch'),
             'startDate' => $request->input('startDate'),
             'endDate' => $request->input('endDate'),
-            'branch' => $request->input('branch'),
-            'pageNumber' => $pageNumber,
-            'pageSize' => $pageSize,
         ];
-        // Extract region code safely
-        $regionParts = explode(' ', $request->input('region', ''));
-        $filters['region'] = $regionParts[1] ?? null;
+        $filters = UserMetricFilterService::applyUserDefaultFilters(
+            $filters,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
 
-        // Prepare Datasets with filters
+        //++++++ Build Pagination Param ++++++++
+        $pageNumber = (  isset($_GET['page']) && !empty( $_GET['page'] ) ) ? $request->input('page') : 1;
+        $pageSize = 100;
+        $filters['pageNumber'] = $pageNumber;
+        $filters['pageSize'] = $pageSize;
+
+
+        //========================== Build Datasets - Table Header  =======================
         $pdo = $this->db->getPdo();
+        
+        // Prepare Datasets with filters
         $stmt = $pdo->prepare("EXEC sp_ZH_Collection_CIT_Performance_Final
             @startDate    = :startDate,
             @endDate   = :endDate,
@@ -326,6 +329,8 @@ class CITDashboardController extends Controller{
             'pageNumber'   => $filters['pageNumber'],
             'pageSize'   => $pageSize,
         ]);
+
+
         //Fetch Alll Data - Convert to array index multi dimensi [ [ [], [], [] ] ]
         $datasets = [];
         do {
@@ -341,9 +346,9 @@ class CITDashboardController extends Controller{
         // dd( $datasets );
         // dd($data_coh);
 
+        //========================== End Of Build Datasets - Table Header  =======================
 
-
-
+        //========================== Build Pagination From Data Datasets  =======================
         $data_paginator = new LengthAwarePaginator(
         $data_coh,                         // data per halaman ( data result dari SP )
         $total_all_data,                        // total seluruh data 
@@ -372,7 +377,7 @@ class CITDashboardController extends Controller{
 
 
 
-        //=========== Build Filter Data  ===========
+        //=========== Build Filter Data For UI List Option By Metric ===========
         $build_filterData = $this->build_filterData( $request );
 
 
@@ -388,40 +393,51 @@ class CITDashboardController extends Controller{
     //COH Reason untuk table data detail dari header dengan detail COH dan CIT berdasarkan parameter branchCode yang dilempar
     public function coh_reason_detail(Request $request){
 
-        //================================ Validasi parameter wajib =======================================
-        //INGAT!!! Route ini hanya bisa diakses kalo ada parameter ?branchCode dan nilainya gak kosong
+
+        //=========== Build Filter Data For SQL By Metric ===========
+
+
+        //++++++ Validasi parameter filter wajib ++++++
+        //INGAT!!! Method route ini hanya bisa diakses kalo ada parameter ?branch dan ?collectionDate kemudian juga nilainya gak kosong
         $branchCodeParam = null;
         $collectionDateParam = null;
-        if ( ( isset( $_GET['branchCode']) && !empty($_GET['branchCode']) ) && ( isset( $_GET['collectionDate']) && !empty($_GET['collectionDate']) )  ) {
-            $branchCodeParam = $request->input('branchCode');
+        if ( ( isset( $_GET['branch']) && !empty($_GET['branch']) ) && ( isset( $_GET['collectionDate']) && !empty($_GET['collectionDate']) )  ) {
+            $branchCodeParam = $request->input('branch');
             $collectionDateParam = $request->input('collectionDate')
             ? Carbon::parse($request->input('collectionDate'))->startOfDay()
             : Carbon::now()->startOfYear()->startOfDay();
         }else{
             return redirect()->route('cit.coh_reason');
         }
-        // $ROUTE_DEFAULT = route('cit.coh_reason_detail') . "?branchCode=" . $branchCodeParam;
 
+        //++++++ Build Metric Filter ++++++++
+        $filters = [
+            'branch'   => $request->input('branch'),
+            'region'   => $request->input('region'),
+            'collectionDate'   => $collectionDateParam
+        ];
 
+        $filters = UserMetricFilterService::applyUserDefaultFilters(
+            $filters,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
 
-
-        //=========================== End Of Validasi parameter wajib =======================================
-
-        $pdo = $this->db->getPdo();
 
         //========================== Build Datasets - Detail CIT  =======================
+        $pdo = $this->db->getPdo();
 
-
-        // Prepare Datasets with filters
+        //+++++ Build Datasets CIT Detail ++++++++++== 
         $stmt = $pdo->prepare("EXEC sp_ZH_Collection_CIT_Dashboard
-            @territoryId  = :branchCode,
+            @territoryId  = :branch,
             @startDate  = :startDate,
             @endDate  = :endDate
             ");
         $stmt->execute([
-            'branchCode' => $branchCodeParam,
-            'startDate' => $collectionDateParam,
-            'endDate' => $collectionDateParam,
+            'branch' => $filters['branch'],
+            'startDate' => $filters['collectionDate'],
+            'endDate' => $filters['collectionDate'],
         ]);
         //Fetch All Data - Convert to array index multi dimensi $datasets = [ [ [], [], .... ] ]
         $datasets_coh_detailCIT = [];
@@ -434,20 +450,17 @@ class CITDashboardController extends Controller{
 
         // dd( $data_coh_detailCIT );
         
-
-        //========================== Build Datasets - Detail COH  ======================= 
-
-
+        //+++++ Build Datasets COH Detail ++++++++++== 
         // Prepare Datasets with filters
         $stmt = $pdo->prepare("EXEC sp_ZH_COH_Summary
-            @territoryId  = :branchCode,
+            @territoryId  = :branch,
             @startDate  = :startDate,
             @endDate  = :endDate
             ");
         $stmt->execute([
-            'branchCode' => $branchCodeParam,
-            'startDate' => $collectionDateParam,
-            'endDate' => $collectionDateParam,
+            'branch' => $filters['branch'],
+            'startDate' => $filters['collectionDate'],
+            'endDate' => $filters['collectionDate']
         ]);
 
         //Fetch Alll Data - Convert to array index multi dimensi $datasets = [ [ [], [] ] ]
@@ -475,12 +488,11 @@ class CITDashboardController extends Controller{
             "giro_confirmamount",
             "giro_differenceamount",
             "total_payment",
-            "claimpromoorreturn"
+            "claimpromoorreturn",
         ];
 
 
         // dd($data_coh_detailCOH[0]);
-
 
         //=========== Build Filter Data  ===========
         $build_filterData = $this->build_filterData( $request );
@@ -488,7 +500,7 @@ class CITDashboardController extends Controller{
             'data_coh_detailCOH', 
             'data_coh_detailCIT', 
             'branchCodeParam',
-            // 'ROUTE_DEFAULT',
+            "collectionDateParam",
             'key_rupiah_data'
         ));
 
@@ -514,6 +526,14 @@ class CITDashboardController extends Controller{
 
         $result = [];
 
+        $locationFilters = UserMetricFilterService::getFilters(
+            $this->db,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
+        $locations = $locationFilters['locations'];
+
         $result['startDate'] = $request->input('startDate')
         ? Carbon::parse($request->input('startDate'))->startOfDay()
         : Carbon::now()->startOfYear()->startOfDay();
@@ -521,16 +541,8 @@ class CITDashboardController extends Controller{
         $result['endDate'] = $request->input('endDate')
         ? Carbon::parse($request->input('endDate'))->endOfDay()
         : Carbon::now()->endOfYear()->endOfDay();
-
-        $locationFilters = UserMetricFilterService::getFilters(
-            $this->db,
-            $this->userTitle,
-            $this->userBranchCode,
-            $this->userRegion
-        );
         $result['regions']   = $locationFilters['regions'];
         $result['branches']  = $locationFilters['branches'];
-        $locations = $locationFilters['locations'];
 
         return $result;
     }

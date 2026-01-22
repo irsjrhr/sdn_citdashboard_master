@@ -44,18 +44,62 @@ $filterQuery = http_build_query(request()->only([
 
 
 <div class="row row_container mb-3">
+
     <div class="col-12 col_nav">
+        {{-- Nav Tab Teritory Label --}}
         <div class="nav_container">
             <div class="alert alert-primary py-2 mb-3">
-                <strong> View Detail By Territory ID : {{request()->input('branchCode')}} </strong> 
+                <strong> View Detail By Territory ID : {{request()->input('branch')}} </strong> 
             </div>
         </div>
+        {{-- Nav Tab Indicotor --}}
         <div class="nav_container">
             <div class="nav_tab">
                 <div class="tab_el tab_indicator" data-target="data_table_cit"> Detail Table CIT </div>
                 <div class="tab_el tab_indicator" data-target="data_table_coh"> Detail Table COH </div>
             </div>
         </div>
+        {{-- Filter Nav --}}
+        <div class="nav_container">
+            {{-- Filter --}}
+            <form action="{{ route('cit.coh_reason') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 mb-4">
+
+
+                <div>
+                    <label class="small text-muted fw-bold">Collection Date</label>
+                    <input type="date" name="collectionDate" value="{{ $collectionDateParam->format('Y-m-d') }}"
+                    class="form-control form-control-sm">
+                </div>
+
+                <div>
+                    <label class="small text-muted fw-bold">Branch</label>
+                    <select name="branch" class="form-control form-control-sm">
+                        <option value="">All</option>
+                        @foreach ($branches as $b)
+                        <option value="{{ $b->territory_code }}"
+                            {{ request('branch') == $b->territory_code ? 'selected' : '' }}>
+                            {{ $b->branch_name }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                
+
+
+                <div class="mt-2">
+                    <a href="{{ url()->current() }}" class="btn btn-secondary btn-sm">
+                        <i class="ti ti-refresh me-1"></i> Reset
+                    </a>
+                </div>
+
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="ti ti-filter me-1"></i> Apply
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 

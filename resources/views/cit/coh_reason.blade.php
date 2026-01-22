@@ -137,7 +137,7 @@ $filterQuery = http_build_query(request()->only([
                                         @php
                                         $branchCode = $row_data['BranchCode'];
                                         $collectionDate = $row_data['CollectionDate'];
-                                        $url_direct = asset('cit/coh_reason_detail?branchCode=') . $branchCode . "&" . "collectionDate=" . $collectionDate;
+                                        $url_direct = asset('cit/coh_reason_detail?branch=') . $branchCode . "&" . "collectionDate=" . $collectionDate;
                                         @endphp
                                         <a class="btn btn-primary" href="{{ $url_direct }}">
 
