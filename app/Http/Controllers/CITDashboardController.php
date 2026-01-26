@@ -39,22 +39,22 @@ class CITDashboardController extends Controller{
 
         //=========== Build Filter Data For SQL By Metric ===========
 
-        //++++++ Build Metric Filter ++++++++
-        $filters = [
+        //++++++ Build Filter Date ++++++++
+        $filters =  $this->build_filterDate( $request );
+
+        //++++++ Build Filter Metrix ++++++++
+        $filters = array_merge($filters, [
             'branch'   => $request->input('branch'),
             'region'   => $request->input('region'),
-            'startDate' => $request->input('startDate'),
-            'endDate' => $request->input('endDate'),
-        ];
+        ]);
+
+
         $filters = UserMetricFilterService::applyUserDefaultFilters(
             $filters,
             $this->userTitle,
             $this->userBranchCode,
             $this->userRegion
         );
-
-        //++++++ Build Region Filter ++++++++
-        $filters['region'] = $request->input('region');
 
         //=========== Build Datasets ==============
 
@@ -119,6 +119,9 @@ class CITDashboardController extends Controller{
         $build_filterData = $this->build_filterData( $request );
 
 
+
+
+        // dd( $datasets );
 
 
         //=========== Build Summary Data ================
@@ -524,6 +527,26 @@ class CITDashboardController extends Controller{
 
         return $senddate;
     }
+
+    private function build_filterDate( Request $request ){
+
+        $result = [];
+
+        //Tentukan nilai default filter date, dengan jika gak ada yang di request filter, date itu D-1 (hari kemarin) di awal hari 
+        $date_default = Carbon::now()->yesterday()->startOfDay();
+
+        $result['startDate'] = $request->input('startDate')
+        ? Carbon::parse($request->input('startDate'))->startOfDay() //Kalo ada request filter, date itu yang direquest
+        : $date_default; //Kalo gak ada yang di request filter, date itu D-1(hari kemarin) di awal hari 
+
+        $result['endDate'] = $request->input('endDate')
+        ? Carbon::parse($request->input('endDate'))->startOfDay() //Kalo ada request filter, date itu yang direquest
+        : $date_default; //Kalo gak ada yang di request filter, date itu D-1(hari kemarin) di awal hari 
+
+
+        return $result;
+    }
+
     private function build_filterData( Request $request ){
 
         $result = [];
@@ -535,18 +558,11 @@ class CITDashboardController extends Controller{
             $this->userRegion
         );
         $locations = $locationFilters['locations'];
-
-        $result['startDate'] = $request->input('startDate')
-        ? Carbon::parse($request->input('startDate'))->startOfDay()
-        : Carbon::now()->startOfYear()->startOfDay();
-
-        $result['endDate'] = $request->input('endDate')
-        ? Carbon::parse($request->input('endDate'))->endOfDay()
-        : Carbon::now()->endOfYear()->endOfDay();
         $result['regions']   = $locationFilters['regions'];
         $result['branches']  = $locationFilters['branches'];
 
 
+        $result = array_merge( $result, $this->build_filterDate( $request ) );
 
 
         // dd($result);
@@ -612,6 +628,21 @@ class CITDashboardController extends Controller{
         */
 
 
+        $result_TOP = [];  //Kumpulan data hanya row data dengan ordertype dengan nilai TOP
+        $result_COD = []; //Kumpulan data hanya row data dengan ordertype dengan nilai COD
+        $result_all = []; //Kumpulan semua data 
+
+        //+++++++++++++++++++ HANDLING JIKA DATANYA KOSONG, maka data resultnya juga pasti kosong +++++++++++++++++++++++++++++++++++
+
+        if (empty($datasets_grafik)) {
+
+            return [
+                'result_COD' =>  $result_TOP, 
+                'result_TOP' => $result_TOP, 
+                'result_all' => $result_all
+            ];//MENGHENTIKAN LAJU FUNGSI KE BAWAH
+        }
+
         //============= Handling Format Default Parameter Argument $option_build ========== 
 
         //Ketika User memasukkan argumen $option_build ke method dengan struktur yang kurang benar dari yang diharapkan (property $option_build_default) sehingga yang diterapkan itu key dan sturktur yang default
@@ -644,9 +675,7 @@ class CITDashboardController extends Controller{
 
 
         
-        $result_TOP = [];  //Kumpulan data hanya row data dengan ordertype dengan nilai TOP
-        $result_COD = []; //Kumpulan data hanya row data dengan ordertype dengan nilai COD
-        $result_all = []; //Kumpulan semua data 
+
 
         //===========  NORMALISASI DAN MAPPING =============================
         // Menyiapkan dan Mengisi $result_TOP, $result_COD, dan $result_all

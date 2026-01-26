@@ -31,6 +31,7 @@ $filterQuery = http_build_query(request()->only([
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/cit/dashboard.css')}}">
+
 <style>
     .chart_container_scroll canvas {
         min-height: 500px !important;
@@ -40,6 +41,12 @@ $filterQuery = http_build_query(request()->only([
     .chart_container_scroll {
         min-height: 550px;
         position: relative;
+    }
+    option.option_branch{
+        display: none;
+    }
+    .option_branch.active{
+        display : block;
     }
 </style>
 
@@ -72,13 +79,13 @@ $filterQuery = http_build_query(request()->only([
                     class="form-control form-control-sm">
                 </div>
 
-                {{-- Region Filter --}}
+                {{-- REGION FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Region</label>
                     <select name="region" class="form-control form-control-sm">
-                        <option value="">All</option>
+                        <option class="option_region_all" value="" autosave>All</option>
                         @foreach ($regions as $r)
-                        <option class="option_region" data-territoryCode="{{$r->territory_code}}" value="{{ $r->region }}"
+                        <option class="option_region"  value="{{ $r->region }}"
                             {{ request('region') == $r->region ? 'selected' : '' }}>
                             {{ $r->region }}
                         </option>
@@ -86,28 +93,47 @@ $filterQuery = http_build_query(request()->only([
                     </select>
                 </div>
 
-                <style>
-                    option.option_branch{
-                        display: none;
-                    }
-                    .option_branch.active{
-                        display : block;
-                    }
-                </style>
                 {{-- BRANCH FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Branch</label>
-                    <select name="branch" class="form-control form-control-sm">
-                        <option value="">All</option>
+                    <select name="branch" class="form-control form-control-sm" autosave>
+                        <option class="option_branch_all" value="">All</option>
                         @foreach ($branches as $b)
-                        <option class="option_branch" data-territoryCode="{{$b->territory_code}}" value="{{ $b->territory_code }}"
+                        <option class="option_branch" data-region="{{$b->region}}" value="{{ $b->territory_code }}"
                             {{ request('branch') == $b->territory_code ? 'selected' : '' }}>
                             {{ $b->branch_name }}
                         </option>
                         @endforeach
                     </select>
                 </div>
+
+
+                {{-- BUSINESS TYPE FILTER --}}
+                <div>
+                    <label class="small text-muted fw-bold">Order Type</label>
+                    <select name="orderType" class="form-control form-control-sm" autosave>
+                        <option value="">All</option>
+                        <option value="TOP">TOP</option>
+                        <option value="COD">COD</option>
+                    </select>
+                </div>
+
+
+
+                {{-- ORDER TYPE FILTER --}}
+                <div>
+                    <label class="small text-muted fw-bold">Business Type</label>
+                    <select name="businessType" class="form-control form-control-sm" autosave>
+                        <option value="">All</option>
+                        <option value="MIX">MIX</option>
+                        <option value="JTI">JTI</option>
+                        <option value="ULI">ULI</option>
+                    </select>
+                </div>
+
                 
+
+
 
 
                 <div class="mt-2">
@@ -193,16 +219,66 @@ $filterQuery = http_build_query(request()->only([
       new WOW().init();
   }, 1000)
 
-$(document).ready(function(){
+        //Filter Metric 
+    $(document).ready(function(){
 
 
-    $('.option_region').on('click', function(){
-        var option_region_target = $(this);
-        var territory_code = option_region_target.attr('data-territoryCode');
-        alert( territory_code );
+        render_branch_byRegion("All");
+
+        //Menampilkan branch berdasarkan region yang dipilih atau semua branch
+        $('select[name=region]').on('change', function(){
+
+            var option_region_target = $(this);
+            var region_target = option_region_target.val();
+
+            //Cek apakah option region yang dipilih all atau bukan, kalo iya maka jadikan nilai render argumentnya jadi All agar semua branch ditampilkan
+
+            var option_region_all = $('.option_region_all');
+            if( option_region_all.is(':selected') ){
+                render_branch_byRegion( "All" );
+            }else{
+                render_branch_byRegion( region_target );
+            }
+
+
+        });
+
+        {{-- render_branch_byRegion("Region 3                             "); --}}
+
     });
 
-});
+    function render_branch_byRegion( region = "All" ){
+
+        var option_branch = $('.option_branch');
+
+
+        //Tampilkan semua branch atau branch sesuai dengan region
+        if( region == "All" ){
+            console.log( "Menampilkan semua elemen option_branch");
+
+
+            //Jika yang ditampilkan semua branch
+            option_branch.addClass('active');
+
+        }else {
+            //Jika yang ditampilkan branch berdasarkan region
+            console.log( "Menampilkan elemen option_branch hanya yang memiliki data-region " + region);
+
+
+            var option_branch_byRegion = option_branch.filter('[data-region="'+region+'"]');
+            console.log( "Elemen option_branch pada region "+ region + "ada sebanyak :" + option_branch_byRegion.length );
+            //Hilangkan semua branch
+            option_branch.removeClass('active');
+             //Tampilkan branch hanya yang punya data-region dari filter region yang dipilih
+            option_branch_byRegion.addClass('active');
+        }
+
+
+        //Pada input select branch, selalu pilih nilainya di all agar menjadi nilai awal 
+        $('.option_branch_all').prop('selected', true);
+    }
+
+
 </script>
 
 
@@ -645,6 +721,9 @@ $(document).ready(function(){
 
 
     });
+
+
+
 
 
 
