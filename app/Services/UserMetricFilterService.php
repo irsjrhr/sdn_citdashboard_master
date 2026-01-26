@@ -52,7 +52,7 @@ class UserMetricFilterService
 
             return [
                 'regions' => $regionQuery
-                    ->select('region')
+                    ->select('region', 'territory_code')
                     ->where('territory_code', $userBranchCode)
                     ->distinct()
                     ->get(),
@@ -73,7 +73,8 @@ class UserMetricFilterService
         // HO / SUPERUSER
         return [
             'regions' => $regionQuery
-                ->select('region')
+                ->select('region', 'territory_code')
+                ->groupBy('region', 'territory_CODE')
                 ->distinct()
                 ->orderBy('region')
                 ->get(),

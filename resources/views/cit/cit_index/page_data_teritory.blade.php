@@ -15,12 +15,13 @@
                         <tr>
                             <td>Territory ID</td>
                             <td>Territory Name</td>
+                            <td>Order Type</td>
                             <td>Invoice Count</td>
-                            <td>Total Difference</td>
                             <td>Total AR</td>
                             <td>Collected Amount</td>
                             <td>Confirmed Amount</td>
-                            <td>Unconfirmed Amount</td>
+                            <td>Total Difference</td>
+                            <td>Outstanding AR Amount</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,11 +29,12 @@
                         <tr>
                             <td><?= $row_data['territoryid']; ?></td>
                             <td><?= $row_data['territoryname']; ?></td>
+                            <td><?= $row_data['ordertype']; ?></td>
                             <td class="kolom_angka"><?= number_format($row_data['invoice_count']); ?></td>
-                            <td class="kolom_angka"><?= number_format($row_data['total_difference']); ?></td>
                             <td class="kolom_angka"><?= number_format($row_data['total_ar']); ?></td>
                             <td class="kolom_angka"><?= number_format($row_data['collected_amount']); ?></td>
                             <td class="kolom_angka"><?= number_format($row_data['confirmed_amount']); ?></td>
+                            <td class="kolom_angka"><?= number_format($row_data['total_difference']); ?></td>
                             <td class="kolom_angka"><?= number_format($row_data['unconfirmed_amount']); ?></td>
 
                         </tr>

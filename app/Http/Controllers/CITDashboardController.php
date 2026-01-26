@@ -37,7 +37,6 @@ class CITDashboardController extends Controller{
 
 
 
-
         //=========== Build Filter Data For SQL By Metric ===========
 
         //++++++ Build Metric Filter ++++++++
@@ -80,17 +79,18 @@ class CITDashboardController extends Controller{
         } while ($stmt->nextRowset());
 
 
-
-
         //++++++ Card Dataset
         $row_card_dashboard = $datasets[0][0]; 
 
+
+        // dd( $row_card_dashboard );
+
         //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
-        $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Confirmed Invoice Document'] . "/" . $row_card_dashboard['Total Invoice Document'] ;
-        unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
-        //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
-        $row_card_dashboard['Total Invoice Document AR OD'] = $row_card_dashboard['Total Confirmed Invoice Document AR OD'] . "/" . $row_card_dashboard['Total Invoice Document AR OD'] ;
-        unset( $row_card_dashboard['Total Confirmed Invoice Document AR OD'] );
+        // $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Confirmed Invoice Document'] . "/" . $row_card_dashboard['Total Invoice Document'] ;
+        // unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
+        // //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
+        // $row_card_dashboard['Total Invoice Document AR OD'] = $row_card_dashboard['Total Confirmed Invoice Document AR OD'] . "/" . $row_card_dashboard['Total Invoice Document AR OD'] ;
+        // unset( $row_card_dashboard['Total Confirmed Invoice Document AR OD'] );
 
         
 
@@ -117,6 +117,9 @@ class CITDashboardController extends Controller{
 
         //=========== Build Filter Data For UI List Option By Metric ===========
         $build_filterData = $this->build_filterData( $request );
+
+
+
 
         //=========== Build Summary Data ================
         // ++++ Data Summary Success Rate Collection Branch/Teritory ++++ 
@@ -389,7 +392,6 @@ class CITDashboardController extends Controller{
         ));
     }
 
-
     //COH Reason untuk table data detail dari header dengan detail COH dan CIT berdasarkan parameter branchCode yang dilempar
     public function coh_reason_detail(Request $request){
 
@@ -543,6 +545,12 @@ class CITDashboardController extends Controller{
         : Carbon::now()->endOfYear()->endOfDay();
         $result['regions']   = $locationFilters['regions'];
         $result['branches']  = $locationFilters['branches'];
+
+
+
+
+        // dd($result);
+
 
         return $result;
     }

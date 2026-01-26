@@ -78,7 +78,7 @@ $filterQuery = http_build_query(request()->only([
                     <select name="region" class="form-control form-control-sm">
                         <option value="">All</option>
                         @foreach ($regions as $r)
-                        <option value="{{ $r->region }}"
+                        <option class="option_region" data-territoryCode="{{$r->territory_code}}" value="{{ $r->region }}"
                             {{ request('region') == $r->region ? 'selected' : '' }}>
                             {{ $r->region }}
                         </option>
@@ -86,13 +86,21 @@ $filterQuery = http_build_query(request()->only([
                     </select>
                 </div>
 
+                <style>
+                    option.option_branch{
+                        display: none;
+                    }
+                    .option_branch.active{
+                        display : block;
+                    }
+                </style>
                 {{-- BRANCH FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Branch</label>
                     <select name="branch" class="form-control form-control-sm">
                         <option value="">All</option>
                         @foreach ($branches as $b)
-                        <option value="{{ $b->territory_code }}"
+                        <option class="option_branch" data-territoryCode="{{$b->territory_code}}" value="{{ $b->territory_code }}"
                             {{ request('branch') == $b->territory_code ? 'selected' : '' }}>
                             {{ $b->branch_name }}
                         </option>
@@ -184,6 +192,17 @@ $filterQuery = http_build_query(request()->only([
     setTimeout(function(){
       new WOW().init();
   }, 1000)
+
+$(document).ready(function(){
+
+
+    $('.option_region').on('click', function(){
+        var option_region_target = $(this);
+        var territory_code = option_region_target.attr('data-territoryCode');
+        alert( territory_code );
+    });
+
+});
 </script>
 
 
@@ -429,7 +448,7 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
-                heightChart : 300,
+                heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback chart diklik
@@ -467,7 +486,7 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
-                heightChart : 300,
+                heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback chart diklik
@@ -505,7 +524,7 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
-                heightChart : 300,
+                heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback chart diklik
@@ -540,7 +559,7 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
-                heightChart : 300, 
+                heightChart : 500, 
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback chart diklik
@@ -559,7 +578,7 @@ $filterQuery = http_build_query(request()->only([
 
         //Data Bad Collection Customer
         var data_badCollectionCustomer = @json( $summary_badCollectionCustomer['result_all'] ); //[ {},{},{} ]
-        buildStackedBarChart({
+        buildStackedBarChart_customer({
             el: document.getElementById('chart_badCollectCustomer'),
             data: data_badCollectionCustomer,
             config: {
@@ -575,7 +594,7 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
-                heightChart : 300,
+                heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
                     //Callback chart diklik

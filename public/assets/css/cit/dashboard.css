@@ -152,7 +152,7 @@ table .kolom_angka{
 
 .btn_tab_indicator.tab_indicator{
 	position: absolute;
-	top: -30px;
+	top: 10px;
 	right: -30px;
 	font-size: 10px;
 }
@@ -306,9 +306,10 @@ canvas {
 
 
 /* ============ KPI CARD ======*/
+
 .kpi_grid {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr); /* 5 columns */
+	grid-template-columns: repeat(6, 1fr) !important;  /*6 kolom*/
 	gap: 15px;
 }
 

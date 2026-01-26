@@ -8,6 +8,9 @@
         min-height: 550px;
         position: relative;
     }
+{{--     .chart-wrapper{
+        height:400px;
+    } --}}
 </style>
 
 <div class="title_type_data">
@@ -67,59 +70,136 @@ $document_keys = [
 
 
         <div class="col-12" style="padding:0">
+
+
+
+
+            {{-- ================= KPI DASHBOARD ================= --}}
             <div class="kpi_grid">
 
+                {{-- ================= TOTAL AR ================= --}}
 
-
-                {{-- Loop Row Card Dashboard --}}
-
-                @php
-                $card_increment = 0;
-                @endphp
-                @foreach ($row_card_dashboard as $key => $value )
-
-
-                {{-- Kalo dia bukan array --}}
-                @php
-
-                //Formatring nilai
-                if ( in_array($key, $nominal_keys) ) {
-                    $value = "Rp " . formatAbbreviatedNumber($value);
-                }else if ( in_array($key, $percentage_keys) ) {
-                    $value =  formatAbbreviatedNumber(number_format($value, 2, '.', '')) . "%";
-                }else if( in_array($key, $document_keys ) ){
-                    $value = $value;
-                }
-
-
-                //Filtering class dari kpi card untuk class animasi dan class lainnya berdasarkan nilai increment
-                if ($card_increment % 2 == 0) {
-                    //Jika nilainya adalah genap 
-                    $class_card_animasi = "animate__fadeInUp";
-                } else {
-                    //Jika nilainya adalah ganjil
-                    $class_card_animasi = "animate__fadeInDown";
-                }
-
-
-
-                @endphp
-
-
-
-                <div class="kpi_card kpi_blue wow animate__animated {{$class_card_animasi}}">
-                    <div class="kpi_title">{{ $key }}</div>
-                    <div class="kpi_value">{{ $value }}</div>
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title"> Total AR To Be Collected </div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Outstanding AR'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
                 </div>
 
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Collected</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Collected'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
 
-                @php
-                $card_increment++;
-                @endphp
-                @endforeach
-                {{-- End Of Loop Row Card Dashboard --}}
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Confirmed Payment</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Confirmed Payment'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">% Confirm Payment</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['% Confirm Payment'];
+                        $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Invoice Document</div>
+                    <div class="kpi_value">
+                        {{ $row_card_dashboard['Total Invoice Document'] }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Confirmed Invoice Paymen</div>
+                    <div class="kpi_value">
+                        {{ $row_card_dashboard['Total Confirmed Invoice Document'] }}
+                    </div>
+                </div>
+
+                {{-- ================= AR OD ================= --}}
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Outstanding AR OD</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Outstanding AR OD'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Collected AR OD</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Collected AR OD'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Confirmed Payment AR OD</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['Total Confirmed Payment AR OD'];
+                        $value = 'Rp ' . formatAbbreviatedNumber($value);
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">% Confirm Payment AR OD</div>
+                    <div class="kpi_value">
+                        @php
+                        $value = $row_card_dashboard['% Confirm Payment AR OD'];
+                        $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
+                        @endphp
+                        {{ $value }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Invoice Document AR OD</div>
+                    <div class="kpi_value">
+                        {{ $row_card_dashboard['Total Invoice Document AR OD'] }}
+                    </div>
+                </div>
+
+                <div class="kpi_card kpi_blue">
+                    <div class="kpi_title">Total Confirmed Invoice Document AR OD</div>
+                    <div class="kpi_value">
+                        {{ $row_card_dashboard['Total Confirmed Invoice Document AR OD'] }}
+                    </div>
+                </div>
 
             </div>
+            {{-- ================= END KPI DASHBOARD ================= --}}
+
         </div>
 
 
@@ -313,24 +393,14 @@ $document_keys = [
 
 
 
-
-
 {{-- Container Summary - Drivers --}}
 <div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
 
     <div class="row row_main_summary row_tab_data">
 
-        <div class="col-12 mb-4">
-            <div class="nav_container">
-                <div class="nav_tab">
-                    <div class="tab_el tab_indicator_section text-center" data-target="col_section_top"> Salesman TOP </div>
-                    <div class="tab_el tab_indicator_section text-center" data-target="col_section_cod"> Drivers COD </div>
-                </div>
-            </div>
-        </div>
 
         {{-- Col Main Grafik - TOP --}}
-        <div class="col-12 col_main_grafik col_grafik_top col_section_data" id="col_section_top">
+        <div class="col-sm-6 col_main_grafik col_grafik_top col_section_data active" id="col_section_top" style="margin-bottom:50px;">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
@@ -365,7 +435,7 @@ $document_keys = [
 
 
         {{-- Col Main Grafik  - COD--}}
-        <div class="col-12 col_main_grafik col_grafik_cod col_section_data" id="col_section_cod">
+        <div class="col-sm-6 col_main_grafik col_grafik_cod col_section_data active" id="col_section_cod">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
@@ -430,7 +500,7 @@ $document_keys = [
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
-                        <div class="chart-wrapper">
+                        <div class="chart-wrapper" style="padding:0">
                             <canvas id="chart_badCollectCustomer"></canvas>
                         </div>
                     </div>
@@ -464,7 +534,7 @@ $document_keys = [
 
 
 
-
+chart_badCollectCustomer
 
 
 
