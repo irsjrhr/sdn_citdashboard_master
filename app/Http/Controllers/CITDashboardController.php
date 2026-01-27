@@ -61,7 +61,7 @@ class CITDashboardController extends Controller{
         ]);
 
 
-        //=========== Build Datasets ==============
+        //=========== Build Datasets - CIT ==============
 
         // Prepare Datasets with filters
         $pdo = $this->db->getPdo();
@@ -92,16 +92,7 @@ class CITDashboardController extends Controller{
         $row_card_dashboard = $datasets[0][0]; 
 
 
-        // dd( $row_card_dashboard );
-
-        //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
-        // $row_card_dashboard['Total Invoice Document'] = $row_card_dashboard['Total Confirmed Invoice Document'] . "/" . $row_card_dashboard['Total Invoice Document'] ;
-        // unset( $row_card_dashboard['Total Confirmed Invoice Document'] );
-        // //Menyaatukan key Total Invoice Document dengan Total Confirmed Invoice Document dalam 1 key dengan array 
-        // $row_card_dashboard['Total Invoice Document AR OD'] = $row_card_dashboard['Total Confirmed Invoice Document AR OD'] . "/" . $row_card_dashboard['Total Invoice Document AR OD'] ;
-        // unset( $row_card_dashboard['Total Confirmed Invoice Document AR OD'] );
-
-        
+        // dd( $row_card_dashboard );        
 
         //++++++ Payment Type Pie Chart
         $data_paymentType = $datasets[1]; //[  []  ]
@@ -121,16 +112,22 @@ class CITDashboardController extends Controller{
         // dd( $data_view_teritory );
         $data_view_customer = $datasets[8]; // [ [], [], [], ..... ]
 
+        //=========== End Of Build Datasets - CIT ==============
 
-        //=========== End Of Build Datasets  ===========
+
+        // ========== GET LAST UPDATE ======
+        $last_update = $this->get_last_updateCIT();
+        // ==========  End Of GET LAST UPDATE ======
+
+
 
         //=========== Build Filter Data For UI List Option By Metric ===========
         $build_filterData = $this->build_filterData( $request );
+        //=========== End Of Build Filter Data For UI List Option By Metric ===========
 
 
 
 
-        // dd( $datasets );
 
 
         //=========== Build Summary Data ================
@@ -263,18 +260,20 @@ class CITDashboardController extends Controller{
         // dd(  $summary_badCollectionCustomer );
         //Menghasilkan  [ "result_TOP" => [[],[],[]],"result_COD" => [[],[],[]], "result_all" => [[],[],[]] ]
 
-
-        // ========== Mapping Key Untuk Tabel View Detail  ========
-        $build_header_table =  $this->build_header_table( $data_view_teritory, $data_view_driversales, $data_view_customer );
-        $maps_header_teritory = $build_header_table['maps_header_teritory'];
-        $maps_header_driversales = $build_header_table['maps_header_driversales'];
-        $maps_header_customer = $build_header_table['maps_header_customer'];
+        //=========== End Of Build Summary Data ================
 
 
-        // ========== GET LAST UPDATE ======
-        $last_update = $this->get_last_updateCIT();
 
-        // dd(  $data_view_teritory );
+        // ========== Data Summary dan Tabular Data COH VS Bank In By Branch ========== 
+
+        //Build Data Grafik COH Bank In 
+        $data_grafik_cohBankIn = $this->build_dataGrafik_cohBankIn($datasets[9]);
+
+        //Build Dataset COH Bank In 
+        $build_datasetCOHBankIn = $this->build_datasetCOHBankIn( $filters );
+        $data_tabular_cohBankIn = $build_datasetCOHBankIn['data_tabular_cohBankIn'];
+        $key_rupiah_data = $build_datasetCOHBankIn['key_rupiah_data'];
+        $data_paginator_cohBankIn = $build_datasetCOHBankIn['data_paginator'];
 
 
         return view('cit.index', array_merge($build_filterData), compact(
@@ -288,13 +287,12 @@ class CITDashboardController extends Controller{
             'summary_successCollectOverdue_branch',
             'summary_badCollectionDriver',
             'summary_badCollectionCustomer',
-            'maps_header_teritory',
-            'maps_header_driversales',
-            'maps_header_customer',
-            'last_update'
+            'last_update',
+            'data_grafik_cohBankIn',
+            'data_tabular_cohBankIn',
+            'data_paginator_cohBankIn',
+            'key_rupiah_data',
         ));
-
-
 
 
     }
@@ -389,6 +387,7 @@ class CITDashboardController extends Controller{
             "Bank In",
             "Balance",
         ];
+
 
 
 
@@ -523,6 +522,142 @@ class CITDashboardController extends Controller{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //+++++++++++++++++++++++++++++++++++++ METHOD BUILDER +++++++++++++++++++++++++++++++++++
+
+    //Method untuk membuat datasets dengan format bank in dan cash in di satu grafik yang sama
+
+    private function build_dataGrafik_cohBankIn( $data_grafik_cohBankIn = [] ) : array{
+
+
+        $result = [];
+        foreach ($data_grafik_cohBankIn as $key => $row_data ) {
+
+
+            //Buat dan masukkan row tabular cashin
+            $result[] = [
+                'label' => $row_data['label'] . "-" . "COH",
+                'amount' => $row_data['cashin'],
+            ];
+
+            //Buat dan masukkan untuk row tabular bankin
+            $result[] = [
+                'label' => $row_data['label'] . " - " . "Bank In",
+                'amount' => $row_data['bankin'],
+            ];
+
+        }
+
+
+        return $result;
+    }
+
+
+
+
+    private function build_datasetCOHBankIn( $filters ){
+
+
+        //++++++ Build Pagination Param ++++++++
+        $pageNumber = (  isset($_GET['page']) && !empty( $_GET['page'] ) ) ? request('page') : 1;
+        $pageSize = 100;
+        $filters['pageNumber'] = $pageNumber;
+        $filters['pageSize'] = $pageSize;
+
+
+        //========================== Build Datasets - Table Header  =======================
+        $pdo = $this->db->getPdo();
+        
+        // Prepare Datasets with filters
+        $stmt = $pdo->prepare("EXEC sp_ZH_Collection_CIT_Performance_Final
+            @startDate    = :startDate,
+            @endDate   = :endDate,
+            @territoryId  = :territoryId,
+            @pageNumber = :pageNumber,
+            @pageSize = :pageSize
+            ");
+        $stmt->execute([
+            'startDate' => $filters['startDate'],
+            'endDate'  => $filters['endDate'],
+            'territoryId'   => $filters['branch'],
+            'pageNumber'   => $filters['pageNumber'],
+            'pageSize'   => $pageSize,
+        ]);
+
+
+        //Fetch Alll Data - Convert to array index multi dimensi [ [ [], [], [] ] ]
+        $datasets = [];
+        do {
+            $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } while ($stmt->nextRowset());
+
+        //========== End Of Get Datasets From DB ==========
+
+        //Data COH Primer
+        $data_coh = $datasets[0]; //Data Pagination atau bagian
+        $total_all_data = (int) $data_coh[0]['TotalRows'];
+
+        // dd( $datasets );
+        // dd($data_coh);
+
+        //========================== End Of Build Datasets - Table Header  =======================
+
+        //========================== Build Pagination From Data Datasets  =======================
+        $data_paginator = new LengthAwarePaginator(
+        $data_coh,                         // data per halaman ( data result dari SP )
+        $total_all_data,                        // total seluruh data 
+        $filters['pageSize'],          // per page
+        $filters['pageNumber'],        // current page
+        [
+            'path'     => request()->url(),
+            'pageName' => 'page',
+            'query'    => request()->query(),
+        ]);
+        //Mapping number formating view
+        $key_rupiah_data = [
+            "Outstanding_AR",
+            "Total_Collection",
+            "Selisih_Payment",
+            "Total_Payment_Cash",
+            "Total_Payment_TF",
+            "Total_Payment_Giro",
+            "Total_Payment_Cash_TF",
+            "Total_TOP_OD_Value",
+            "Total_Paid_TOP_OD_Value",
+            "COH",
+            "Bank In",
+            "Balance",
+        ];
+
+
+        $result = [];
+        $result['data_tabular_cohBankIn'] = $data_coh;
+        $result['data_paginator'] = $data_paginator;
+        $result['key_rupiah_data'] = $key_rupiah_data;
+
+        return $result;
+    }   
+
+
+
+
+
     private function get_last_updateCIT(){
         $cit_table = $this->db->table('dbo.ZH_Collection_CIT_Dashboard');
         $query = $cit_table
@@ -537,7 +672,9 @@ class CITDashboardController extends Controller{
         return $senddate;
     }
 
-    private function build_filterDate( Request $request ){
+
+    //Method untuk membangun filter date
+    private function build_filterDate ( Request $request ) : array {
 
         $result = [];
 
@@ -556,7 +693,9 @@ class CITDashboardController extends Controller{
         return $result;
     }
 
-    private function build_filterData( Request $request ){
+
+    //Method untuk membangun filter data keseluruhan 
+    private function build_filterData( Request $request ) :array {
 
         $result = [];
 

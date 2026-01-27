@@ -82,10 +82,10 @@ $filterQuery = http_build_query(request()->only([
     {{-- Col_container_data - page_data_teritory --}}
     <div class="col-12 col_container_data type_data active pt-3" id="data_table">
 
-{{--         <div class="title_type_data">
+        <div class="title_type_data">
             Summary Per Territory 
         </div>
-        --}}
+        
         <div class="container-fluid">
             {{-- Row Table --}}
             <div class="row row_table">
@@ -195,9 +195,10 @@ $filterQuery = http_build_query(request()->only([
 
                     @endif
 
-
                 </div>
             </div>
+            {{-- End Of Row Table --}}
+
         </div>
 
     </div>

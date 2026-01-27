@@ -235,7 +235,7 @@ $document_keys = [
                             </div>
                             <div class="card-body">
 
-                                @if ( !empty($summary_paymentType['result_TOP']) )  )
+                                @if ( !empty($summary_paymentType['result_TOP']) )  
 
                                 <div class="chart_wrapper_pie">
                                     <canvas id="chart_summaryPaymentTypeOrder_TOP"></canvas>
@@ -533,7 +533,7 @@ $document_keys = [
                     <div class="col-sm-12">
                         @if ( !empty($summary_badCollectionCustomer['result_all']) )  
 
-                        <div class="chart-wrapper">
+                        <div class="chart-wrapper-customer" style="height:700px;width:100%;overflow: unset!important">
                             <canvas id="chart_badCollectCustomer"></canvas>
                         </div>
 
@@ -558,7 +558,6 @@ $document_keys = [
     </div>
 
 
-
 </div>
 {{-- End Of Top Entities - Bad Colletion Customer --}}
 
@@ -568,9 +567,160 @@ $document_keys = [
 
 
 
+{{-- Container Summary - COH VS BANK IN --}}
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
 
 
-{{-- chart_badCollectCustomer --}}
+
+    {{-- Row Chart --}}
+
+    <div class="row row_main_summary">
+        {{-- Col Main Grafik - COH Bank In By Branch --}}
+        <div class="col-sm-12 col_main_grafik col_grafik_top col_section_data active" id="col_section_top" style="margin-bottom:50px;">
+            <div class="container-fluid">
+                <div class="row row_title_summary">
+                    <div class="col-12">
+
+                        COH VS Bank In By Branch
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="chart-wrapper">
+                            <canvas id="chart_cohBankIn"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>   
+        </div>
+        {{-- End Of Col Main Grafik - COH Bank In By Branch --}}
+
+
+    </div>
+    {{-- End Of Row Chart --}}
+
+    {{--  Row Tabular Data --}}
+    <div class="row">
+        <div class="col-12">
+            <div class="container-fluid">
+
+
+                {{-- Row Table --}}
+                <div class="row row_table">
+                    <div class="col-12">
+                        {{-- Table Responsive --}}
+                        <div class="table-responsive">
+                            @if (!empty($data_tabular_cohBankIn))
+
+                            <table class="table table-bordered table-striped align-middle small">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Branch Code</th>
+                                        <th>Branch Name</th>
+                                        <th>Collection Date</th>
+                                        <th>Transaction Type</th>
+
+                                        <th>Outstanding AR</th>
+                                        <th>Total Collection</th>
+                                        <th>Payment Difference</th>
+                                        <th>Payment Performance (Value)</th>
+                                        <th>Difference Flag</th>
+
+                                        <th>Total Invoice</th>
+                                        <th>Total Collected Doc</th>
+                                        <th>Payment Performance (Doc)</th>
+
+                                        <th>Payment Cash</th>
+                                        <th>Payment Transfer</th>
+                                        <th>Payment Giro</th>
+                                        <th>Total Payment Cash + TF</th>
+
+                                        <th>Total TOP OD</th>
+                                        <th>Total Paid TOP OD</th>
+                                        <th>Payment Performance OD</th>
+
+                                        <th>COH</th>
+                                        <th>Bank In</th>
+                                        <th>Balance</th>
+                                        <th>Reason</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+                                    @foreach ($data_tabular_cohBankIn as $row_data)
+                                    <tr>
+
+                                        <td><?= $row_data['BranchCode'] ?></td>
+                                        <td><?= $row_data['BranchName'] ?></td>
+                                        <td><?= $row_data['CollectionDate'] ?></td>
+                                        <td><?= $row_data['TransactionType'] ?></td>
+
+                                        <td class="kolom_angka"><?= number_format($row_data['Outstanding_AR'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Collection'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Selisih_Payment'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Payment_Performance_Value'], 0, ',', '.') ?></td>
+                                        <td><?= $row_data['Flag_Selisih'] ?></td>
+
+                                        <td class="kolom_angka"><?= $row_data['Total_Doc_Invoice'] ?></td>
+                                        <td class="kolom_angka"><?= $row_data['Total_Collected_Doc'] ?></td>
+                                        <td class="kolom_angka"><?= $row_data['Payment_Performance_Document'] ?></td>
+
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_TF'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Giro'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash_TF'], 0, ',', '.') ?></td>
+
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_TOP_OD_Value'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Total_Paid_TOP_OD_Value'], 0, ',', '.') ?></td>
+                                        <td><?= $row_data['Payment_Performance_OD_Value'] ?? '-' ?></td>
+
+                                        <td class="kolom_angka"><?= number_format($row_data['COH'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Bank In'], 0, ',', '.') ?></td>
+                                        <td class="kolom_angka"><?= number_format($row_data['Balance'], 0, ',', '.') ?></td>
+                                        <td><?= $row_data['Reason'] ?: '-' ?></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                            @else
+
+                            <div class="alert alert-danger py-2 mb-3">
+                                <strong> Data Not Founded </strong> 
+                            </div>
+
+                            @endif
+                        </div>
+                        {{-- End Of Table Responsive --}}
+
+                        @if ( !empty( $data_tabular_cohBankIn ) )
+
+                        <div class="float-end small">{{ $data_paginator_cohBankIn->links() }}</div>
+
+                        @endif
+
+                    </div>
+                </div>
+                {{-- End Of Row Table --}}
+
+            </div>
+
+        </div>
+    </div>
+    {{--  End Of Row Tabular Data --}}
+
+
+
+
+
+</div>
+{{-- Container Summary - COH VS BANK IN --}}
+
+
+
 
 
 

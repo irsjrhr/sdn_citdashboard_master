@@ -221,7 +221,7 @@ $filterQuery = http_build_query(request()->only([
 
 
     @php
-    if ( isset($_GET['region']) ) {
+    if ( isset($_GET['region']) && !empty($_GET['region'])  ) {
         $region_default = $_GET['region'];
     }else{
 
@@ -240,8 +240,9 @@ $filterQuery = http_build_query(request()->only([
         var select_region = $('select[name=region]');
         var option_region = select_region.find('option');
         var option_region_target = option_region.filter('[value="'+region_default+'"]');
-        option_region_target.prop('selected', true);
 
+
+        option_region_target.prop('selected', true);
         //Membuka default list branch berdasarkan region dari request atau region_defaultnya 
         render_branch_byRegion( region_default );
 
@@ -537,6 +538,40 @@ $filterQuery = http_build_query(request()->only([
 
 
 
+        //+++++++++++++++++++++++++++++ PIE CHART SUMMARY PAYMENT TYPE +++++++++
+
+        //Data Summary Payment Type TOP 
+        var data_summary_paymentTypeTOP = @json( $summary_paymentType['result_TOP'] ); //[ {},{},{} ]
+        buildPieChart({
+            el: document.getElementById('chart_summaryPaymentTypeOrder_TOP'),
+            datasets: data_summary_paymentTypeTOP,
+            key_value: "confirmed_amount",
+            label_color: {
+                "Giro": "#22C55E",
+                "Transfer": "#3B82F6",
+                "Cash": "#F59E0B"
+            }
+        });
+
+        //Data Summary Payment Type COD
+        var data_summary_paymentTypeCOD = @json( $summary_paymentType['result_COD'] ); //[ {},{},{} ]
+        buildPieChart({
+            el: document.getElementById('chart_summaryPaymentTypeOrder_COD'),
+            datasets: data_summary_paymentTypeCOD,
+            key_value: "confirmed_amount",
+            label_color: {
+                "Giro": "#22C55E",
+                "Transfer": "#3B82F6",
+                "Cash": "#F59E0B"
+            }
+        });
+
+
+        //+++++++++++++++++++++++++++++ STACKED BAR CHART +++++++++++++++++++++++++++
+
+
+
+
         {{-- Data SuccessCollect_branchAll --}}
         var data_successCollect_branchAll = @json( $summary_successCollect_branch['result_all'] ); //[ {},{},{} ]
         console.log(data_successCollect_branchAll);
@@ -556,6 +591,11 @@ $filterQuery = http_build_query(request()->only([
                         backgroundColor: uncollected_color
                     }
                 ],
+                // TOOLTIP CUSTOM
+                tooltipExtras : [
+                    { label : 'Collected Amount', key : 'collected_amount', format : 'number' },
+                    { label : 'Uncollected Amount', key : 'unconfirmed_amount', format : 'number' }
+                ],
                 heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
                     console.log( row_data )
@@ -568,11 +608,11 @@ $filterQuery = http_build_query(request()->only([
 
                         renderDetail_successRateCollectionBranch( row_data )
 
-
                     });
                 }
             }
         });
+
 
 
 
@@ -593,6 +633,11 @@ $filterQuery = http_build_query(request()->only([
                         label: 'Uncollected Amount ( %  )',
                         backgroundColor: uncollected_color
                     }
+                ],
+                // TOOLTIP CUSTOM
+                tooltipExtras : [
+                    { label : 'Collected Amount Overdue', key : 'collected_amount_overdue', format : 'number' },
+                    { label : 'Uncollected Amount Overdue', key : 'unconfirmed_amount_overdue', format : 'number' }
                 ],
                 heightChart : 500,
                 onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
@@ -721,34 +766,29 @@ $filterQuery = http_build_query(request()->only([
         }); 
 
 
-        //+++++++++++++++++++++++++++++ PIE CHART SUMMARY PAYMENT TYPE +++++++++
+        {{-- ++++++++++++++++ COH/Cash In VS BANK IN +++++++++++++ --}}
+        var data_coh_bankIn = @json( $data_grafik_cohBankIn ); //[ {},{},{} ]
 
-        //Data Summary Payment Type TOP 
-        var data_summary_paymentTypeTOP = @json( $summary_paymentType['result_TOP'] ); //[ {},{},{} ]
-        buildPieChart({
-            el: document.getElementById('chart_summaryPaymentTypeOrder_TOP'),
-            datasets: data_summary_paymentTypeTOP,
-            key_value: "confirmed_amount",
-            label_color: {
-                "Giro": "#22C55E",
-                "Transfer": "#3B82F6",
-                "Cash": "#F59E0B"
+        //Data COH / Cash In By Branch
+        buildStackedBarChart({
+            el: document.getElementById('chart_cohBankIn'),
+            data: data_coh_bankIn,
+            config: {
+                stacks: [
+                    {
+                        key: 'amount',
+                        label: 'Amount ( Rp )',
+                        backgroundColor: collected_color
+                    },
+                ],
+                heightChart : 500,
+                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
+                    console.log( row_data )
+                    //Callback chart diklik
+                    //Akan membuka modal detail chart yang menampilkan detail row data
+                }
             }
-        });
-
-        //Data Summary Payment Type COD
-        var data_summary_paymentTypeCOD = @json( $summary_paymentType['result_COD'] ); //[ {},{},{} ]
-        buildPieChart({
-            el: document.getElementById('chart_summaryPaymentTypeOrder_COD'),
-            datasets: data_summary_paymentTypeCOD,
-            key_value: "confirmed_amount",
-            label_color: {
-                "Giro": "#22C55E",
-                "Transfer": "#3B82F6",
-                "Cash": "#F59E0B"
-            }
-        });
-
+        }); 
 
 
 
