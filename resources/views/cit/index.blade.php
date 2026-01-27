@@ -85,8 +85,7 @@ $filterQuery = http_build_query(request()->only([
                     <select name="region" class="form-control form-control-sm">
                         <option class="option_region_all" value="" autosave>All</option>
                         @foreach ($regions as $r)
-                        <option class="option_region"  value="{{ $r->region }}"
-                            {{ request('region') == $r->region ? 'selected' : '' }}>
+                        <option class="option_region" value="{{ $r->region }}">
                             {{ $r->region }}
                         </option>
                         @endforeach
@@ -113,10 +112,11 @@ $filterQuery = http_build_query(request()->only([
                     <label class="small text-muted fw-bold">Order Type</label>
                     <select name="orderType" class="form-control form-control-sm" autosave>
                         <option value="">All</option>
-                        <option value="TOP">TOP</option>
-                        <option value="COD">COD</option>
+                        <option value="TOP" {{ request('orderType') == "TOP" ? 'selected' : '' }}>TOP</option>
+                        <option value="COD" {{ request('orderType') == "COD" ? 'selected' : '' }}>COD</option>
                     </select>
                 </div>
+
 
 
 
@@ -125,13 +125,12 @@ $filterQuery = http_build_query(request()->only([
                     <label class="small text-muted fw-bold">Business Type</label>
                     <select name="businessType" class="form-control form-control-sm" autosave>
                         <option value="">All</option>
-                        <option value="MIX">MIX</option>
-                        <option value="JTI">JTI</option>
-                        <option value="ULI">ULI</option>
+                        <option value="MIX" {{ request('businessType') == "MIX" ? 'selected' : '' }}>MIX</option>
+                        <option value="JTI" {{ request('businessType') == "JTI" ? 'selected' : '' }}>JTI</option>
+                        <option value="ULI" {{ request('businessType') == "ULI" ? 'selected' : '' }}>ULI</option>
                     </select>
                 </div>
 
-                
 
 
 
@@ -210,7 +209,6 @@ $filterQuery = http_build_query(request()->only([
 
 
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('assets/js/pages/cit_dashboard/main.js') }}"></script>
@@ -219,13 +217,36 @@ $filterQuery = http_build_query(request()->only([
       new WOW().init();
   }, 1000)
 
+
+
+
+    @php
+    if ( isset($_GET['region']) ) {
+        $region_default = $_GET['region'];
+    }else{
+
+        $region_default = "All";
+    }
+    @endphp
+
         //Filter Metric 
     $(document).ready(function(){
 
+        //+++ Default Filter Region dan Branch
 
-        render_branch_byRegion("All");
+        var region_default = "<?= $region_default ?>";
 
-        //Menampilkan branch berdasarkan region yang dipilih atau semua branch
+        //Memilih option pada select region berdasarkan region default
+        var select_region = $('select[name=region]');
+        var option_region = select_region.find('option');
+        var option_region_target = option_region.filter('[value="'+region_default+'"]');
+        option_region_target.prop('selected', true);
+
+        //Membuka default list branch berdasarkan region dari request atau region_defaultnya 
+        render_branch_byRegion( region_default );
+
+
+        //+++ Event ketika region dipilih branch berdasarkan region yang dipilih atau semua branch
         $('select[name=region]').on('change', function(){
 
             var option_region_target = $(this);
@@ -240,6 +261,8 @@ $filterQuery = http_build_query(request()->only([
                 render_branch_byRegion( region_target );
             }
 
+            //Pada input select branch, selalu pilih nilainya di all agar menjadi nilai awal 
+            $('.option_branch_all').prop('selected', true);
 
         });
 
@@ -247,7 +270,16 @@ $filterQuery = http_build_query(request()->only([
 
     });
 
-    function render_branch_byRegion( region = "All" ){
+
+    //Method memunculkan option branch berdasarkan region 
+    function render_branch_byRegion( region = "All", callback = false ){
+
+        if( callback == false ){
+            callback = function(){
+                return 1;
+            }
+        }
+
 
         var option_branch = $('.option_branch');
 
@@ -274,8 +306,8 @@ $filterQuery = http_build_query(request()->only([
         }
 
 
-        //Pada input select branch, selalu pilih nilainya di all agar menjadi nilai awal 
-        $('.option_branch_all').prop('selected', true);
+
+        callback();
     }
 
 

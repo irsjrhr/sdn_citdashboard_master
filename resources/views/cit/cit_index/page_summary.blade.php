@@ -225,7 +225,6 @@ $document_keys = [
 
 
 
-                @if ( !empty($summary_paymentType['result_TOP']) && !empty($summary_paymentType['result_COD'])  )
                 <div class="row">
 
                     {{-- col grafik - TOP --}}
@@ -235,9 +234,23 @@ $document_keys = [
                                 Summary Payment Type - Order TOP
                             </div>
                             <div class="card-body">
+
+                                @if ( !empty($summary_paymentType['result_TOP']) )  )
+
                                 <div class="chart_wrapper_pie">
                                     <canvas id="chart_summaryPaymentTypeOrder_TOP"></canvas>
                                 </div>
+
+                                @else
+
+                                <div class="alert alert-danger py-2 mb-3">
+                                    <strong> Data not found </strong> 
+                                </div>
+
+                                @endif
+
+
+
                             </div>
                         </div>
 
@@ -252,9 +265,21 @@ $document_keys = [
                                 Summary Payment Type - Order COD
                             </div>
                             <div class="card-body">
+
+                                @if ( !empty($summary_paymentType['result_COD']) )  
+
                                 <div class="chart_wrapper_pie">
                                     <canvas id="chart_summaryPaymentTypeOrder_COD"></canvas>
                                 </div>
+
+                                @else
+                                
+                                <div class="alert alert-danger py-2 mb-3">
+                                    <strong> Data not found </strong> 
+                                </div>
+
+                                @endif
+
                             </div>
                         </div>
 
@@ -264,13 +289,6 @@ $document_keys = [
 
                 </div>
 
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik - ALL --}}
@@ -305,28 +323,29 @@ $document_keys = [
                 </div>
 
 
-
-                @if ( !empty($summary_successCollect_branch['result_all']) )
                 <div class="row">
 
                     {{-- col grafik --}}
                     <div class="col-sm-12">
+
+                        @if ( !empty($summary_successCollect_branch['result_TOP']) )  
+
                         <div class="chart-wrapper">
                             <canvas id="chart_successRateCollectionBranch_all"></canvas>
                         </div>
 
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data not found </strong> 
+                        </div>
+
+                        @endif
                     </div>
                     {{-- end of col grafik --}}
 
                 </div>
 
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik - ALL --}}
@@ -357,26 +376,28 @@ $document_keys = [
                     </div>
                 </div>
 
-                @if ( !empty($summary_successCollectOverdue_branch['result_all']) )
                 <div class="row">
 
-                    {{-- col grafik --}}
+
                     <div class="col-sm-12">
+                        @if ( !empty($summary_successCollectOverdue_branch['result_all']) )  
+
                         <div class="chart-wrapper">
                             <canvas id="chart_successRateCollectionOverdueBranch_all"></canvas>
                         </div>
+
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data not found </strong> 
+                        </div>
+
+                        @endif
                     </div>
-                    {{-- end of col grafik --}}
+
 
                 </div>
 
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik - ALL --}}
@@ -411,24 +432,29 @@ $document_keys = [
                     </div>
                 </div>
 
-                @if ( !empty($summary_badCollectionDriver['result_TOP']) )
+
+
                 <div class="row">
-                    {{-- col grafik --}}
+
+
                     <div class="col-sm-12">
+                        @if ( !empty($summary_badCollectionDriver['result_TOP']) )  
+
                         <div class="chart-wrapper">
                             <canvas id="chart_badCollectionSalesDriver_top"></canvas>
                         </div>
+
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data not found </strong> 
+                        </div>
+
+                        @endif
                     </div>
-                    {{-- end of col grafik --}}
+
+
                 </div>
-
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik - TOP --}}
@@ -446,24 +472,29 @@ $document_keys = [
                     </div>
                 </div>
 
-                @if ( !empty($summary_badCollectionDriver['result_COD']) )
+
                 <div class="row">
-                    {{-- col grafik --}}
+
+
                     <div class="col-sm-12">
+                        @if ( !empty($summary_badCollectionDriver['result_COD']) )  
+
                         <div class="chart-wrapper">
                             <canvas id="chart_badCollectSalesDriver_cod"></canvas>
                         </div>
+
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data not found </strong> 
+                        </div>
+
+                        @endif
                     </div>
-                    {{-- end of col grafik --}}
+
+
                 </div>
 
-                @else
-
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik  - COD --}}
@@ -495,25 +526,30 @@ $document_keys = [
                     </div>
                 </div>
 
-                @if ( !empty($summary_badCollectionCustomer['result_all']) )
+
                 <div class="row">
 
-                    {{-- col grafik --}}
+
                     <div class="col-sm-12">
-                        <div class="chart-wrapper" style="padding:0">
+                        @if ( !empty($summary_badCollectionCustomer['result_all']) )  
+
+                        <div class="chart-wrapper">
                             <canvas id="chart_badCollectCustomer"></canvas>
                         </div>
+
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data not found </strong> 
+                        </div>
+
+                        @endif
                     </div>
-                    {{-- end of col grafik --}}
+
+
                 </div>
 
-                @else
 
-                <div class="alert alert-danger py-2 mb-3">
-                    <strong> Data not found </strong> 
-                </div>
-
-                @endif
             </div>   
         </div>
         {{-- End Of Col Main Grafik - ALL --}}

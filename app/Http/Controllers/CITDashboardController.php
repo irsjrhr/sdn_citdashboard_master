@@ -35,8 +35,6 @@ class CITDashboardController extends Controller{
 
     public function index( Request $request ){
 
-
-
         //=========== Build Filter Data For SQL By Metric ===========
 
         //++++++ Build Filter Date ++++++++
@@ -56,6 +54,13 @@ class CITDashboardController extends Controller{
             $this->userRegion
         );
 
+        //Build Filter Order Type dan Business Type
+        $filters = array_merge( $filters, [
+            "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 
+            "businessType" => $request->input('orderType') ?  $request->input('businessType') : NULL
+        ]);
+
+
         //=========== Build Datasets ==============
 
         // Prepare Datasets with filters
@@ -64,13 +69,17 @@ class CITDashboardController extends Controller{
             @startDate    = :startDate,
             @endDate   = :endDate,
             @branchCode = :branch,
-            @regionCode  = :regionCode
+            @regionCode  = :regionCode,
+            @orderType = :orderType,
+            @businessType = :businessType
             ");
         $stmt->execute([
             'startDate' => $filters['startDate'],
             'endDate'  => $filters['endDate'],
             'regionCode'   => $filters['region'],
-            'branch'   => $filters['branch']
+            'branch'   => $filters['branch'],
+            'orderType'   => $filters['orderType'],
+            'businessType'   => $filters['businessType']
         ]);
         //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
         $datasets = [];
