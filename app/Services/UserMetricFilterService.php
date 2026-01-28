@@ -78,7 +78,7 @@ class UserMetricFilterService{
                 ->get(),
 
                 'branches' => $branchQuery
-                ->select('territory_code', 'branch_name', 'region')
+                ->select('territory_code', 'branch_name', 'region',  'business_unit')
                 ->orderBy('branch_name')
                 ->get(),
 
@@ -88,6 +88,9 @@ class UserMetricFilterService{
                 ->orderBy('location')
                 ->get(),
             ];
+
+            
+
         }
 
         public static function applyUserDefaultFilters(

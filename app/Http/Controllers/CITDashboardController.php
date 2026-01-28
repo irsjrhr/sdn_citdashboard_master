@@ -57,7 +57,7 @@ class CITDashboardController extends Controller{
         //Build Filter Order Type dan Business Type
         $filters = array_merge( $filters, [
             "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 
-            "businessType" => $request->input('orderType') ?  $request->input('businessType') : NULL
+            "businessUnit" => $request->input('businessUnit') ?  $request->input('businessUnit') : NULL
         ]);
 
 
@@ -79,7 +79,7 @@ class CITDashboardController extends Controller{
             'regionCode'   => $filters['region'],
             'branch'   => $filters['branch'],
             'orderType'   => $filters['orderType'],
-            'businessType'   => $filters['businessType']
+            'businessType'   => $filters['businessUnit']
         ]);
         //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
         $datasets = [];
@@ -553,19 +553,24 @@ class CITDashboardController extends Controller{
             //Buat dan masukkan row tabular cashin
             $result[] = [
                 'label' => $row_data['label'] . "-" . "COH",
-                'amount' => $row_data['cashin'],
+                'amount_cohbankin' => $row_data['cashin'],
+                'backgroundColor' => "#3BC1A8"
             ];
 
             //Buat dan masukkan untuk row tabular bankin
             $result[] = [
                 'label' => $row_data['label'] . " - " . "Bank In",
-                'amount' => $row_data['bankin'],
+                'amount_cohbankin' => $row_data['bankin'],
+                'backgroundColor' => "#005461"
             ];
 
         }
 
 
         return $result;
+
+
+        // dd( $data_grafik_cohBankIn );
     }
 
 
@@ -713,7 +718,8 @@ class CITDashboardController extends Controller{
         $result = array_merge( $result, $this->build_filterDate( $request ) );
 
 
-        // dd($result);
+        // dd( $result );
+
 
 
         return $result;

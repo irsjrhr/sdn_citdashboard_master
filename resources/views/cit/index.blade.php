@@ -42,12 +42,17 @@ $filterQuery = http_build_query(request()->only([
         min-height: 550px;
         position: relative;
     }
-    option.option_branch{
-        display: none;
+
+    select[name=branch] .option_metrix{
+        display : none;
     }
-    .option_branch.active{
+    
+    select[name=branch] .option_metrix.active{
         display : block;
     }
+
+
+
 </style>
 
 
@@ -79,35 +84,51 @@ $filterQuery = http_build_query(request()->only([
                     class="form-control form-control-sm">
                 </div>
 
+
+
+                {{-- BUSINESS FILTER --}}
+                <div>
+                    <label class="small text-muted fw-bold">Business Type</label>
+                    <select name="businessUnit" class="form-control form-control-sm" autosave>
+                        <option value="" class="option_all">All</option>
+                        <option value="MIX" {{ request('businessUnit') == "MIX" ? 'selected' : '' }}>MIX</option>
+                        <option value="JTI" {{ request('businessUnit') == "JTI" ? 'selected' : '' }}>JTI</option>
+                        <option value="ULI" {{ request('businessUnit') == "ULI" ? 'selected' : '' }}>ULI</option>
+                    </select>
+                </div>
                 {{-- REGION FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Region</label>
                     <select name="region" class="form-control form-control-sm">
-                        <option class="option_region_all" value="" autosave>All</option>
-                        @foreach ($regions as $r)
-                        <option class="option_region" value="{{ $r->region }}">
-                            {{ $r->region }}
+                        <option value="" class="option_all" autosave>All</option>
+                        @foreach ($regions as $row_data)
+
+                        <option class="option_metrix option_region" value="{{ $row_data->region }}"  
+                            {{ request('region') == trim($row_data->region) ? 'selected' : '' }}  >
+                            {{ $row_data->region }}
                         </option>
                         @endforeach
                     </select>
                 </div>
+
 
                 {{-- BRANCH FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Branch</label>
                     <select name="branch" class="form-control form-control-sm" autosave>
-                        <option class="option_branch_all" value="">All</option>
-                        @foreach ($branches as $b)
-                        <option class="option_branch" data-region="{{$b->region}}" value="{{ $b->territory_code }}"
-                            {{ request('branch') == $b->territory_code ? 'selected' : '' }}>
-                            {{ $b->branch_name }}
+                        <option value="" class="option_all">All</option>
+                        @foreach ($branches as $row_data)
+                        <option class="option_metrix option_branch" data-region="{{$row_data->region}}" data-business-unit="{{$row_data->business_unit}}" value="{{ $row_data->territory_code }}" 
+                            {{ request('branch') == $row_data->territory_code ? 'selected' : '' }}
+                            >
+
+                            {{ $row_data->branch_name }}
                         </option>
                         @endforeach
                     </select>
                 </div>
 
-
-                {{-- BUSINESS TYPE FILTER --}}
+                {{-- ORDER TYPE FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Order Type</label>
                     <select name="orderType" class="form-control form-control-sm" autosave>
@@ -120,16 +141,9 @@ $filterQuery = http_build_query(request()->only([
 
 
 
-                {{-- ORDER TYPE FILTER --}}
-                <div>
-                    <label class="small text-muted fw-bold">Business Type</label>
-                    <select name="businessType" class="form-control form-control-sm" autosave>
-                        <option value="">All</option>
-                        <option value="MIX" {{ request('businessType') == "MIX" ? 'selected' : '' }}>MIX</option>
-                        <option value="JTI" {{ request('businessType') == "JTI" ? 'selected' : '' }}>JTI</option>
-                        <option value="ULI" {{ request('businessType') == "ULI" ? 'selected' : '' }}>ULI</option>
-                    </select>
-                </div>
+
+
+
 
 
 
@@ -218,98 +232,6 @@ $filterQuery = http_build_query(request()->only([
   }, 1000)
 
 
-
-
-    @php
-    if ( isset($_GET['region']) && !empty($_GET['region'])  ) {
-        $region_default = $_GET['region'];
-    }else{
-
-        $region_default = "All";
-    }
-    @endphp
-
-        //Filter Metric 
-    $(document).ready(function(){
-
-        //+++ Default Filter Region dan Branch
-
-        var region_default = "<?= $region_default ?>";
-
-        //Memilih option pada select region berdasarkan region default
-        var select_region = $('select[name=region]');
-        var option_region = select_region.find('option');
-        var option_region_target = option_region.filter('[value="'+region_default+'"]');
-
-
-        option_region_target.prop('selected', true);
-        //Membuka default list branch berdasarkan region dari request atau region_defaultnya 
-        render_branch_byRegion( region_default );
-
-
-        //+++ Event ketika region dipilih branch berdasarkan region yang dipilih atau semua branch
-        $('select[name=region]').on('change', function(){
-
-            var option_region_target = $(this);
-            var region_target = option_region_target.val();
-
-            //Cek apakah option region yang dipilih all atau bukan, kalo iya maka jadikan nilai render argumentnya jadi All agar semua branch ditampilkan
-
-            var option_region_all = $('.option_region_all');
-            if( option_region_all.is(':selected') ){
-                render_branch_byRegion( "All" );
-            }else{
-                render_branch_byRegion( region_target );
-            }
-
-            //Pada input select branch, selalu pilih nilainya di all agar menjadi nilai awal 
-            $('.option_branch_all').prop('selected', true);
-
-        });
-
-        {{-- render_branch_byRegion("Region 3                             "); --}}
-
-    });
-
-
-    //Method memunculkan option branch berdasarkan region 
-    function render_branch_byRegion( region = "All", callback = false ){
-
-        if( callback == false ){
-            callback = function(){
-                return 1;
-            }
-        }
-
-
-        var option_branch = $('.option_branch');
-
-
-        //Tampilkan semua branch atau branch sesuai dengan region
-        if( region == "All" ){
-            console.log( "Menampilkan semua elemen option_branch");
-
-
-            //Jika yang ditampilkan semua branch
-            option_branch.addClass('active');
-
-        }else {
-            //Jika yang ditampilkan branch berdasarkan region
-            console.log( "Menampilkan elemen option_branch hanya yang memiliki data-region " + region);
-
-
-            var option_branch_byRegion = option_branch.filter('[data-region="'+region+'"]');
-            console.log( "Elemen option_branch pada region "+ region + "ada sebanyak :" + option_branch_byRegion.length );
-            //Hilangkan semua branch
-            option_branch.removeClass('active');
-             //Tampilkan branch hanya yang punya data-region dari filter region yang dipilih
-            option_branch_byRegion.addClass('active');
-        }
-
-
-
-        callback();
-    }
 
 
 </script>
@@ -769,26 +691,24 @@ $filterQuery = http_build_query(request()->only([
         {{-- ++++++++++++++++ COH/Cash In VS BANK IN +++++++++++++ --}}
         var data_coh_bankIn = @json( $data_grafik_cohBankIn ); //[ {},{},{} ]
 
+
+
+
+
         //Data COH / Cash In By Branch
-        buildStackedBarChart({
+        buildSingleBarChart_cohBankIn({
             el: document.getElementById('chart_cohBankIn'),
-            data: data_coh_bankIn,
+            data : data_coh_bankIn,
             config: {
-                stacks: [
-                    {
-                        key: 'amount',
-                        label: 'Amount ( Rp )',
-                        backgroundColor: collected_color
-                    },
-                ],
-                heightChart : 500,
-                onBarClick: function( label, row_data, datasetLabel, value, dataIndex, datasetIndex ){
-                    console.log( row_data )
-                    //Callback chart diklik
-                    //Akan membuka modal detail chart yang menampilkan detail row data
+                label: 'Amount',
+                valueKey: 'amount_cohbankin',
+                onBarClick: (label, row_data) => {
+                    console.log('Klik:', label);
+                    console.log('Row data:', row_data);
                 }
             }
-        }); 
+        });
+
 
 
 
