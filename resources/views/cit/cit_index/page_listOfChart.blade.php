@@ -620,7 +620,7 @@ $document_keys = [
                 <div class="row">
                     <div class="col-sm-12">
 
-                        @if ( isset($data_grafik_coh) && !empty( $data_grafik_cohBankIn ) )
+                        @if ( isset($data_grafik_cohBankIn) && !empty( $data_grafik_cohBankIn ) )
 
                         <div class="chart-wrapper">
                             <canvas id="chart_cohBankIn"></canvas>
