@@ -18,6 +18,8 @@ class CITDashboardController extends Controller{
 
     public function __construct(){
 
+
+
         // ========================== START CONNECTION ========
         $this->db = DB::connection('sqlsrv-sdndwh');
         // ========================== END CONNECTION ========
@@ -37,6 +39,8 @@ class CITDashboardController extends Controller{
     //https://url_app/cit/dashboard
     //Dashboard CIT
     public function index( Request $request ){
+
+
 
         //=========== Build Filter Data For SQL By Metric ===========
 

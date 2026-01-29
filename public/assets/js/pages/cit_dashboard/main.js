@@ -1,20 +1,19 @@
 $(document).ready(function() {
 
 
+	//+++ Event Method Click Tab Indicator Untuk Col Container Data +++
+	// tab_indicator_clickFirst();
 	$('.tab_indicator').on('click', function(e) {
 		open_container_data( $(this) );
 	});
-	$('.tab_indicator').eq(0).click();
 
 
+	$('.tab_indicator_section').eq(0).click();
 	$('.tab_indicator_section').on('click', function(e) {
 		open_section( $(this) );
 		// alert();
 
 	});
-	$('.tab_indicator_section').eq(0).click();
-
-
 
 	//+++ Event menampilkan list branch berdasarkan region dan business unit yang dipilih +++ 
 	render_branchByRegionBusinessUnit(); //By Default
@@ -34,10 +33,6 @@ $(document).ready(function() {
 });
 
 
-
-
-var business_unit =  ""
-var region =  "";
 
 function render_branchByRegionBusinessUnit(){
 
@@ -336,6 +331,24 @@ var
 triger_open = true,
 COL_CONTAINER_DATA_ACTIVE; //DEBUG DOM YANG SEDANG ACTIVE
 
+
+
+
+//Fungi untuk mengklik tab indicator berdasarkan COL_CONTAINER_DATA_ACTIVE yang tersimpan di local
+var tab_indicator_clickFirst(){
+
+	var COL_CONTAINER_DATA_SAVED = localStorage.getItem('COL_CONTAINER_DATA_ACTIVE');
+	var tab_indicator = $('.tab_indicator');	
+	var tab_indicator_target;
+	if ( COL_CONTAINER_DATA_SAVED ) {
+
+		tab_indicator_target = tab_indicator.filter(`.tab_indicator[data-target=${COL_CONTAINER_DATA_SAVED}]`);
+	}else{
+		tab_indicator_target = tab_indicator.eq(0);
+	}
+
+	open_container_data(tab_indicator_target);
+}
 var open_container_data = ( tab_indicator_click ) => {
 
 
@@ -362,9 +375,15 @@ var open_container_data = ( tab_indicator_click ) => {
 
 		COL_CONTAINER_DATA_ACTIVE = col_container_data_target
 
+
 		//Memberikan efek ke button
 		tab_indicator.removeClass('active');
 		tab_indicator_target.addClass('active');
+
+
+		//Simpan ke localstorage untuk state 
+		localStorage.setItem('COL_CONTAINER_DATA_ACTIVE', COL_CONTAINER_DATA_ACTIVE);
+
 	}, 500);
 
 	console.log("Membuka", col_container_data_target);
