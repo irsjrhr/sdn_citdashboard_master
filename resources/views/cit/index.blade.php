@@ -43,6 +43,18 @@ $filterQuery = http_build_query(request()->only([
         position: relative;
     }
 
+
+    {{-- CSS EFEK FOR REGION OPTION --}}
+    select[name=region] .option_metrix{
+        display : none;
+    }
+    
+    select[name=region] .option_metrix.active{
+        display : block;
+    }
+
+
+    {{-- CSS EFEK FOR BRANCH OPTION --}}
     select[name=branch] .option_metrix{
         display : none;
     }
@@ -50,6 +62,8 @@ $filterQuery = http_build_query(request()->only([
     select[name=branch] .option_metrix.active{
         display : block;
     }
+
+
 
 
 
@@ -103,7 +117,7 @@ $filterQuery = http_build_query(request()->only([
                         <option value="" class="option_all" autosave>All</option>
                         @foreach ($regions as $row_data)
 
-                        <option class="option_metrix option_region" value="{{ $row_data->region }}"  
+                        <option class="option_metrix option_region" data-region-trim="{{trim($row_data->region)}}" value="{{ $row_data->region }}"  
                             {{ request('region') == trim($row_data->region) ? 'selected' : '' }}  >
                             {{ $row_data->region }}
                         </option>
@@ -118,7 +132,20 @@ $filterQuery = http_build_query(request()->only([
                     <select name="branch" class="form-control form-control-sm" autosave>
                         <option value="" class="option_all">All</option>
                         @foreach ($branches as $row_data)
-                        <option class="option_metrix option_branch" data-region="{{$row_data->region}}" data-business-unit="{{$row_data->business_unit}}" value="{{ $row_data->territory_code }}" 
+
+                        @php
+                        // Lakukan Pengkondisian untuk row dengan kolom business_unit nya bernilai ada kata ULI nya, maka jadikan ULI saja 
+                        $business_unit = $row_data->business_unit;
+                        if (preg_match('/\bULI\b/', $business_unit, $match)) {
+                            //Kalo ada kata ULI nya maka ambil nilai ULI nya saja 
+                            $business_unit = "ULI";
+                        } else {
+                            //Kalo tidak ada kata ULI nya maka pake nilai asli
+                            $business_unit = $business_unit;
+                        }
+                        @endphp
+
+                        <option class="option_metrix option_branch" data-region="{{$row_data->region}}" data-business-unit="{{$business_unit}}" value="{{ $row_data->territory_code }}" 
                             {{ request('branch') == $row_data->territory_code ? 'selected' : '' }}
                             >
 

@@ -96,36 +96,53 @@ $filterQuery = http_build_query(request()->only([
 
                         <table class="table table-bordered table-striped align-middle small">
                             <thead class="table-light">
+
+
                                 <tr>
                                     <th>Action</th>
+
                                     <th>Branch Code</th>
                                     <th>Branch Name</th>
                                     <th>Collection Date</th>
                                     <th>Transaction Type</th>
 
-                                    <th>Outstanding AR</th>
-                                    <th>Total Collection</th>
-                                    <th>Payment Difference</th>
-                                    <th>Payment Performance (Value)</th>
-                                    <th>Difference Flag</th>
+                                    <th>Outstanding Amount Invoice</th>
+                                    <th>Nilai Input FSR / Driver</th>
+                                    <th>Total Confirm Collection</th>
+                                    <th>Diff (Cash, TF, BG) by Value</th>
+                                    <th>Unpaid Value</th>
+                                    <th>Performa Coll by Value</th>
+                                    <th>Diff Note</th>
 
-                                    <th>Total Invoice</th>
-                                    <th>Total Collected Doc</th>
-                                    <th>Payment Performance (Doc)</th>
+                                    <th>Total Doc Invoice</th>
+                                    <th>Total Collected Doc Invoice</th>
+                                    <th>Performa Coll by Inv</th>
 
-                                    <th>Payment Cash</th>
-                                    <th>Payment Transfer</th>
-                                    <th>Payment Giro</th>
-                                    <th>Total Payment Cash + TF</th>
-
-                                    <th>Total TOP OD</th>
-                                    <th>Total Paid TOP OD</th>
-                                    <th>Payment Performance OD</th>
+                                    <th>Total Inv TOP OD by Value</th>
+                                    <th>Total Paid Inv TOP OD by Value</th>
+                                    <th>Performa Coll AR OD by Value</th>
+                                    <th>Total Inv TOP OD by Doc</th>
+                                    <th>Paid Inv TOP OD by Doc</th>
+                                    <th>Performa Coll by Doc</th>
 
                                     <th>COH</th>
                                     <th>Bank In</th>
                                     <th>Balance</th>
                                     <th>Reason</th>
+                                    <th>Cash Bank Manual</th>
+                                    <th>Payment Performance Document</th>
+
+                                    <th>Cash Value FSR</th>
+                                    <th>Cash Confirm Kasir</th>
+                                    <th>Diff Cash</th>
+
+                                    <th>TF Value FSR</th>
+                                    <th>TF Confirm Kasir</th>
+                                    <th>Diff TF</th>
+
+                                    <th>Giro Value FSR</th>
+                                    <th>Giro Confirm Kasir</th>
+                                    <th>Diff Giro</th>
                                 </tr>
 
                             </thead>
@@ -135,8 +152,8 @@ $filterQuery = http_build_query(request()->only([
                                 <tr>
                                     <td> 
                                         @php
-                                        $branchCode = $row_data['BranchCode'];
-                                        $collectionDate = $row_data['CollectionDate'];
+                                        $branchCode = $row_data['Branch Code'];
+                                        $collectionDate = $row_data['Branch Name'];
                                         $url_direct = asset('cit/coh_reason_detail?branch=') . $branchCode . "&" . "collectionDate=" . $collectionDate;
                                         @endphp
                                         <a class="btn btn-primary" href="{{ $url_direct }}">
@@ -146,34 +163,48 @@ $filterQuery = http_build_query(request()->only([
                                         </a>
                                     </td>
 
-                                    <td><?= $row_data['BranchCode'] ?></td>
-                                    <td><?= $row_data['BranchName'] ?></td>
-                                    <td><?= $row_data['CollectionDate'] ?></td>
-                                    <td><?= $row_data['TransactionType'] ?></td>
+                                    <td><?= $row['Branch Code'] ?></td>
+                                    <td><?= $row['Branch Name'] ?></td>
+                                    <td><?= $row['Collection Date'] ?></td>
+                                    <td><?= $row['Transaction Type'] ?></td>
 
-                                    <td class="kolom_angka"><?= number_format($row_data['Outstanding_AR'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Collection'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Selisih_Payment'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Payment_Performance_Value'], 0, ',', '.') ?></td>
-                                    <td><?= $row_data['Flag_Selisih'] ?></td>
+                                    <td><?= number_format($row['Outstanding Amount Invoice'],0,',','.') ?></td>
+                                    <td><?= number_format($row['Nilai Input FSR / Driver'],0,',','.') ?></td>
+                                    <td><?= number_format($row['Total Confirm Collection'],0,',','.') ?></td>
+                                    <td><?= number_format($row['Diff (Cash, TF, BG) by Value'],0,',','.') ?></td>
+                                    <td><?= number_format($row['Unpaid Value'],0,',','.') ?></td>
+                                    <td><?= $row['Performa Coll by Value'] ?></td>
+                                    <td><?= $row['Diff Note (Cash, TF, BG)'] ?></td>
 
-                                    <td class="kolom_angka"><?= $row_data['Total_Doc_Invoice'] ?></td>
-                                    <td class="kolom_angka"><?= $row_data['Total_Collected_Doc'] ?></td>
-                                    <td class="kolom_angka"><?= $row_data['Payment_Performance_Document'] ?></td>
+                                    <td><?= $row['Total Doc Invoice'] ?></td>
+                                    <td><?= $row['Total Collected Doc Invoice'] ?></td>
+                                    <td><?= $row['Performa Coll by Inv'] ?></td>
 
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_TF'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Giro'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash_TF'], 0, ',', '.') ?></td>
+                                    <td><?= $row['Total Inv TOP OD by Value'] ?></td>
+                                    <td><?= $row['Total Paid Inv TOP OD by Value'] ?></td>
+                                    <td><?= $row['Performa Coll AR OD by Value'] ?? '-' ?></td>
+                                    <td><?= $row['Total Inv TOP OD by Doc'] ?></td>
+                                    <td><?= $row['Paid Inv TOP OD by Doc'] ?></td>
+                                    <td><?= $row['Performa Coll by Doc'] ?></td>
 
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_TOP_OD_Value'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Total_Paid_TOP_OD_Value'], 0, ',', '.') ?></td>
-                                    <td><?= $row_data['Payment_Performance_OD_Value'] ?? '-' ?></td>
+                                    <td><?= $row['COH'] ?></td>
+                                    <td><?= $row['Bank In'] ?></td>
+                                    <td><?= $row['Balance'] ?></td>
+                                    <td><?= $row['Reason'] ?></td>
+                                    <td><?= $row['Cash Bank Manual'] ?></td>
+                                    <td><?= $row['Payment_Performance_Document'] ?></td>
 
-                                    <td class="kolom_angka"><?= number_format($row_data['COH'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Bank In'], 0, ',', '.') ?></td>
-                                    <td class="kolom_angka"><?= number_format($row_data['Balance'], 0, ',', '.') ?></td>
-                                    <td><?= $row_data['Reason'] ?: '-' ?></td>
+                                    <td><?= number_format($row['Cash Value FSR/Driver'],0,',','.') ?></td>
+                                    <td><?= $row['Cash Confirm Kasir'] ?></td>
+                                    <td><?= $row['Diff Cash'] ?></td>
+
+                                    <td><?= $row['TF Value FSR/Driver'] ?></td>
+                                    <td><?= $row['TF Confirm Kasir'] ?></td>
+                                    <td><?= $row['Diff TF'] ?></td>
+
+                                    <td><?= $row['Giro Value FSR/Driver'] ?></td>
+                                    <td><?= $row['Giro Confirm Kasir'] ?></td>
+                                    <td><?= $row['Diff Giro'] ?></td>
                                 </tr>
                                 @endforeach
                             </tbody>

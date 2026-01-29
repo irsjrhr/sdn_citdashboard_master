@@ -617,34 +617,49 @@ $document_keys = [
                             <table class="table table-bordered table-striped align-middle small">
                                 <thead class="table-light">
                                     <tr>
+
                                         <th>Branch Code</th>
                                         <th>Branch Name</th>
                                         <th>Collection Date</th>
                                         <th>Transaction Type</th>
 
-                                        <th>Outstanding AR</th>
-                                        <th>Total Collection</th>
-                                        <th>Payment Difference</th>
-                                        <th>Payment Performance (Value)</th>
-                                        <th>Difference Flag</th>
+                                        <th>Outstanding Amount Invoice</th>
+                                        <th>Nilai Input FSR / Driver</th>
+                                        <th>Total Confirm Collection</th>
+                                        <th>Diff (Cash, TF, BG) by Value</th>
+                                        <th>Unpaid Value</th>
+                                        <th>Performa Coll by Value</th>
+                                        <th>Diff Note</th>
 
-                                        <th>Total Invoice</th>
-                                        <th>Total Collected Doc</th>
-                                        <th>Payment Performance (Doc)</th>
+                                        <th>Total Doc Invoice</th>
+                                        <th>Total Collected Doc Invoice</th>
+                                        <th>Performa Coll by Inv</th>
 
-                                        <th>Payment Cash</th>
-                                        <th>Payment Transfer</th>
-                                        <th>Payment Giro</th>
-                                        <th>Total Payment Cash + TF</th>
-
-                                        <th>Total TOP OD</th>
-                                        <th>Total Paid TOP OD</th>
-                                        <th>Payment Performance OD</th>
+                                        <th>Total Inv TOP OD by Value</th>
+                                        <th>Total Paid Inv TOP OD by Value</th>
+                                        <th>Performa Coll AR OD by Value</th>
+                                        <th>Total Inv TOP OD by Doc</th>
+                                        <th>Paid Inv TOP OD by Doc</th>
+                                        <th>Performa Coll by Doc</th>
 
                                         <th>COH</th>
                                         <th>Bank In</th>
                                         <th>Balance</th>
                                         <th>Reason</th>
+                                        <th>Cash Bank Manual</th>
+                                        <th>Payment Performance Document</th>
+
+                                        <th>Cash Value FSR</th>
+                                        <th>Cash Confirm Kasir</th>
+                                        <th>Diff Cash</th>
+
+                                        <th>TF Value FSR</th>
+                                        <th>TF Confirm Kasir</th>
+                                        <th>Diff TF</th>
+
+                                        <th>Giro Value FSR</th>
+                                        <th>Giro Confirm Kasir</th>
+                                        <th>Diff Giro</th>
                                     </tr>
 
                                 </thead>
@@ -653,34 +668,48 @@ $document_keys = [
                                     @foreach ($data_tabular_cohBankIn as $row_data)
                                     <tr>
 
-                                        <td><?= $row_data['BranchCode'] ?></td>
-                                        <td><?= $row_data['BranchName'] ?></td>
-                                        <td><?= $row_data['CollectionDate'] ?></td>
-                                        <td><?= $row_data['TransactionType'] ?></td>
+                                        <td><?= $row_data['Branch Code'] ?></td>
+                                        <td><?= $row_data['Branch Name'] ?></td>
+                                        <td><?= $row_data['Collection Date'] ?></td>
+                                        <td><?= $row_data['Transaction Type'] ?></td>
 
-                                        <td class="kolom_angka"><?= number_format($row_data['Outstanding_AR'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Collection'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Selisih_Payment'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Payment_Performance_Value'], 0, ',', '.') ?></td>
-                                        <td><?= $row_data['Flag_Selisih'] ?></td>
+                                        <td><?= number_format($row_data['Outstanding Amount Invoice'],0,',','.') ?></td>
+                                        <td><?= number_format($row_data['Nilai Input FSR / Driver'],0,',','.') ?></td>
+                                        <td><?= number_format($row_data['Total Confirm Collection'],0,',','.') ?></td>
+                                        <td><?= number_format($row_data['Diff (Cash, TF, BG) by Value'],0,',','.') ?></td>
+                                        <td><?= number_format($row_data['Unpaid Value'],0,',','.') ?></td>
+                                        <td><?= $row_data['Performa Coll by Value'] ?></td>
+                                        <td><?= $row_data['Diff Note (Cash, TF, BG)'] ?></td>
 
-                                        <td class="kolom_angka"><?= $row_data['Total_Doc_Invoice'] ?></td>
-                                        <td class="kolom_angka"><?= $row_data['Total_Collected_Doc'] ?></td>
-                                        <td class="kolom_angka"><?= $row_data['Payment_Performance_Document'] ?></td>
+                                        <td><?= $row_data['Total Doc Invoice'] ?></td>
+                                        <td><?= $row_data['Total Collected Doc Invoice'] ?></td>
+                                        <td><?= $row_data['Performa Coll by Inv'] ?></td>
 
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_TF'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Giro'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Payment_Cash_TF'], 0, ',', '.') ?></td>
+                                        <td><?= $row_data['Total Inv TOP OD by Value'] ?></td>
+                                        <td><?= $row_data['Total Paid Inv TOP OD by Value'] ?></td>
+                                        <td><?= $row_data['Performa Coll AR OD by Value'] ?? '-' ?></td>
+                                        <td><?= $row_data['Total Inv TOP OD by Doc'] ?></td>
+                                        <td><?= $row_data['Paid Inv TOP OD by Doc'] ?></td>
+                                        <td><?= $row_data['Performa Coll by Doc'] ?></td>
 
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_TOP_OD_Value'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Total_Paid_TOP_OD_Value'], 0, ',', '.') ?></td>
-                                        <td><?= $row_data['Payment_Performance_OD_Value'] ?? '-' ?></td>
+                                        <td><?= $row_data['COH'] ?></td>
+                                        <td><?= $row_data['Bank In'] ?></td>
+                                        <td><?= $row_data['Balance'] ?></td>
+                                        <td><?= $row_data['Reason'] ?></td>
+                                        <td><?= $row_data['Cash Bank Manual'] ?></td>
+                                        <td><?= $row_data['Payment_Performance_Document'] ?></td>
 
-                                        <td class="kolom_angka"><?= number_format($row_data['COH'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Bank In'], 0, ',', '.') ?></td>
-                                        <td class="kolom_angka"><?= number_format($row_data['Balance'], 0, ',', '.') ?></td>
-                                        <td><?= $row_data['Reason'] ?: '-' ?></td>
+                                        <td><?= number_format($row_data['Cash Value FSR/Driver'],0,',','.') ?></td>
+                                        <td><?= $row_data['Cash Confirm Kasir'] ?></td>
+                                        <td><?= $row_data['Diff Cash'] ?></td>
+
+                                        <td><?= $row_data['TF Value FSR/Driver'] ?></td>
+                                        <td><?= $row_data['TF Confirm Kasir'] ?></td>
+                                        <td><?= $row_data['Diff TF'] ?></td>
+
+                                        <td><?= $row_data['Giro Value FSR/Driver'] ?></td>
+                                        <td><?= $row_data['Giro Confirm Kasir'] ?></td>
+                                        <td><?= $row_data['Diff Giro'] ?></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

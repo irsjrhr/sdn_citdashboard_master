@@ -17,9 +17,9 @@ $(document).ready(function() {
 
 
 	//+++ Event menampilkan list branch berdasarkan region dan business unit yang dipilih +++ 
-	render_branchByRegionBU(); //By Default
+	render_branchByRegionBusinessUnit(); //By Default
 	$('select[name=region], select[name=businessUnit]').on('change', function(){
-		render_branchByRegionBU(); //By Event 
+		render_branchByRegionBusinessUnit(); //By Event 
 	});
 
 
@@ -39,15 +39,19 @@ $(document).ready(function() {
 var business_unit =  ""
 var region =  "";
 
-function render_branchByRegionBU(){
+function render_branchByRegionBusinessUnit(){
 
 
 	//======= TETAPKAN PATTERN FILTER METRIX ====================
 
-	//BusinessUnit Value Selected
+	console.group("======== DEBUG FILTER METRIX REGION & BRANCH RESULT ====== ");
+
+
+	//++++++ Tentukan Pattern BusinessUnit Value Selected
 	var option_businessUnit_selected = $('select[name=businessUnit] option:selected');
 	var valOption_businessUnit_selected = option_businessUnit_selected.val();
-	//Region Value Selected
+
+	//++++++ Tentukan Pattern Region Value Selected
 	var option_region_selected = $('select[name=region] option:selected');
 	var valOption_region_selected = option_region_selected.val();
 
@@ -69,7 +73,7 @@ function render_branchByRegionBU(){
 	var option_branch_metrixBusinessUnit = option_branch_metrix.filter( '[data-business-unit="'+valOption_businessUnit_selected+'"]' ); 
 
 
-	//======= LAKUKAN PENGKONDISIA BRANCH FILTER BY METRIX PATTERNNYA ====================
+	//======= LAKUKAN PENGKONDISIAN BRANCH FILTER BY METRIX PATTERNNYA ====================
 
 
 	//Tentukan branch target berdasarkan event dan logic
@@ -86,7 +90,7 @@ function render_branchByRegionBU(){
 	if ( option_businessUnit_selected.is('.option_all') && option_region_selected.is('.option_all') ) {
 
 		// Ketika filter BU All dan region All, maka semua branch di tampilkan
-		alert('Filter Business Unit dan Region All')
+		console.log('Filter Business Unit dan Region All')
 		OPTION_BRANCH_TARGET = option_branch_metrix;
 
 
@@ -96,7 +100,7 @@ function render_branchByRegionBU(){
 
 
 
-		alert('Filter Region All ( By Metrix Business Unit )')
+		console.log('Filter Region All ( By Metrix Business Unit )')
 		OPTION_BRANCH_TARGET = option_branch_metrixBusinessUnit;
 
 
@@ -105,15 +109,14 @@ function render_branchByRegionBU(){
 		// Ketika filter BU All dan region tidak all, maka menampilkan branch yang hanya punya atribut data-region atau filter branch berdasarkan region saja ( Business unit tidak dianggap )
 
 
-		alert('Filter Business Unit All ( By Metrix Region )')
+		console.log('Filter Business Unit All ( By Metrix Region )')
 		OPTION_BRANCH_TARGET = option_branch_metrixRegion;
 
 
 	}else{
 	// Ketika filter Region All dan BU tidak all, maka menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
 
-		alert('Filter Business Unit dan Region Tidak All ( By Metrix Keduanya ) ')
-
+		console.log('Filter Business Unit dan Region Tidak All ( By Metrix Keduanya ) ')
 
 		OPTION_BRANCH_TARGET = option_branch_metrixRegionBusinessUnit;
 
@@ -128,13 +131,6 @@ function render_branchByRegionBU(){
 	// console.log( OPTION_BRANCH_TARGET );
 
 	// return 1;
-
-
-
-
-	//================= DEBUG ===============
-	console.group("======== DEBUG FILTER METRIX RESULT ====== ");
-
 
 
 
@@ -157,13 +153,84 @@ function render_branchByRegionBU(){
 	console.log(option_branch_metrixRegionBusinessUnit);
 	console.groupEnd();
 
+
+	//============== TAMPILKAN LIST FILTER REGION BERDASARKAN BUSINESS UNIT YANG TERPILIH ============= : 
+	render_regionByBusinessUnit( option_businessUnit_selected, option_branch_metrixBusinessUnit );
+
 	console.groupEnd();
+
+
+
+}
+
+function render_regionByBusinessUnit( option_businessUnit_selected,option_branch_metrixBusinessUnit ){
+
+	/*
+	-> option_businessUnit_selected digunakan untuk mengetahui apakah filter business unit itu dipilih all atau bukan 
+	-> option_branch_metrixBusinessUnit digunakan untuk mengambil data region dari option branch yang terbuka dari atribut data-region
+	*/
+
+
+	//Lakukan pengkondisian jika filter option business unit yang dipilih itu all
+
+	var select_region = $('select[name=region]');
+	var option_region_metrix = select_region.find('.option_metrix');
+
+	if ( option_businessUnit_selected.is('.option_all') ) {
+
+		//Tampilkan semua region 
+		option_region_metrix.addClass('active');
+
+		return false;//Menghentikan laju fungsi
+	}
+
+
+	//Kumpulkan region yang punya branch yang memiliki business unit yang sedang terbuka. Atau region yang diambil dari branch yang sedang terbuka berdasarkan filter business unit
+
+	//Ambil option branch yang terfilter metrix hanya dari business unit dan ambil regionnya dari  data-region nya 
+
+	var list_region_active = [];
+	for (var i = 0; i < option_branch_metrixBusinessUnit.length; i++) {
+		var option_branch_metrix = $(option_branch_metrixBusinessUnit[i]);
+		var data_region = option_branch_metrix.attr('data-region');
+		list_region_active.push( data_region );
+
+	}
+
+	//Distict atau hilangkan data duplikat
+	console.log("Before Distinct", list_region_active);
+	list_region_active = [...new Set(list_region_active)];
+	console.log("=== List Region Active Yang Terbuka ( After Distinct)", list_region_active);
+
+	// return 1;
+
+
+	//Pilih option_metrix region dari data-region-trim karena itu yang udah bersih
+	console.log("+++++");
+	option_region_metrix.removeClass('active');
+
+	for (var i = 0; i < list_region_active.length; i++) {
+		var region_active = list_region_active[i];
+		var option_region_metrixTarget = option_region_metrix.filter('[data-region-trim="'+region_active+'"]');
+
+		//Jadikan active region yang punya branches berdasarkan business unitnya
+		console.log('Membuka filter region', region_active);
+		option_region_metrixTarget.addClass('active');
+	}
+	console.log("+++++");
+
+
+
+
+
 
 
 
 
 
 }
+
+
 
 
 

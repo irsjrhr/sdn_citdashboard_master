@@ -267,7 +267,10 @@ class CITDashboardController extends Controller{
         // ========== Data Summary dan Tabular Data COH VS Bank In By Branch ========== 
 
         //Build Data Grafik COH Bank In 
+        // dd( $datasets[9] );
         $data_grafik_cohBankIn = $this->build_dataGrafik_cohBankIn($datasets[9]);
+
+
 
         //Build Dataset COH Bank In 
         $build_datasetCOHBankIn = $this->build_datasetCOHBankIn( $filters );
@@ -387,6 +390,9 @@ class CITDashboardController extends Controller{
             "Bank In",
             "Balance",
         ];
+
+
+
 
 
 
@@ -615,8 +621,15 @@ class CITDashboardController extends Controller{
         //========== End Of Get Datasets From DB ==========
 
         //Data COH Primer
+
+
         $data_coh = $datasets[0]; //Data Pagination atau bagian
-        $total_all_data = (int) $data_coh[0]['TotalRows'];
+
+        if ( !empty($data_coh) ) {
+            $total_all_data = (int) $data_coh[0]['TotalRows'];
+        }else{
+            $total_all_data = 0;
+        }
 
         // dd( $datasets );
         // dd($data_coh);
@@ -656,6 +669,8 @@ class CITDashboardController extends Controller{
         $result['data_paginator'] = $data_paginator;
         $result['key_rupiah_data'] = $key_rupiah_data;
 
+
+        // dd( $result['data_tabular_cohBankIn'] );
         return $result;
     }   
 
@@ -671,8 +686,8 @@ class CITDashboardController extends Controller{
         ->orderBy('senddate', 'DESC')
         ->first();
 
-        $senddate = $query->senddate;
-
+        $query_db = (array) $query;
+        $senddate = $query_db['senddate'];
 
         return $senddate;
     }
