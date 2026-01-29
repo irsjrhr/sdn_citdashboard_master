@@ -2,7 +2,7 @@ $(document).ready(function() {
 
 
 	//+++ Event Method Click Tab Indicator Untuk Col Container Data +++
-	// tab_indicator_clickFirst();
+	tab_indicator_clickFirst();
 	$('.tab_indicator').on('click', function(e) {
 		open_container_data( $(this) );
 	});
@@ -329,20 +329,28 @@ function render_branchByRegion(){
 
 var 
 triger_open = true,
-COL_CONTAINER_DATA_ACTIVE; //DEBUG DOM YANG SEDANG ACTIVE
+COL_CONTAINER_DATA_ACTIVE, //DEBUG DOM YANG SEDANG ACTIVE
+DATA_COL_CONTAINER_DATA_ACTIVE;
 
 
 
 
 //Fungi untuk mengklik tab indicator berdasarkan COL_CONTAINER_DATA_ACTIVE yang tersimpan di local
-var tab_indicator_clickFirst(){
+var tab_indicator_clickFirst = () => {
 
-	var COL_CONTAINER_DATA_SAVED = localStorage.getItem('COL_CONTAINER_DATA_ACTIVE');
+
+	//Ambil dan cek yang tersimpan di local storage 
+	var DATA_COL_CONTAINER_DATA_SAVED = localStorage.getItem('DATA_COL_CONTAINER_DATA_ACTIVE');
+
 	var tab_indicator = $('.tab_indicator');	
-	var tab_indicator_target;
-	if ( COL_CONTAINER_DATA_SAVED ) {
 
-		tab_indicator_target = tab_indicator.filter(`.tab_indicator[data-target=${COL_CONTAINER_DATA_SAVED}]`);
+	
+	var tab_indicator_target;
+	if ( DATA_COL_CONTAINER_DATA_SAVED ) {
+
+		console.log( DATA_COL_CONTAINER_DATA_SAVED  )
+
+		tab_indicator_target = tab_indicator.filter(`.tab_indicator[data-target=${DATA_COL_CONTAINER_DATA_SAVED}]`);
 	}else{
 		tab_indicator_target = tab_indicator.eq(0);
 	}
@@ -374,7 +382,7 @@ var open_container_data = ( tab_indicator_click ) => {
 		col_container_data_target.addClass('active');
 
 		COL_CONTAINER_DATA_ACTIVE = col_container_data_target
-
+		DATA_COL_CONTAINER_DATA_ACTIVE = data_target;
 
 		//Memberikan efek ke button
 		tab_indicator.removeClass('active');
@@ -382,7 +390,7 @@ var open_container_data = ( tab_indicator_click ) => {
 
 
 		//Simpan ke localstorage untuk state 
-		localStorage.setItem('COL_CONTAINER_DATA_ACTIVE', COL_CONTAINER_DATA_ACTIVE);
+		localStorage.setItem('DATA_COL_CONTAINER_DATA_ACTIVE', DATA_COL_CONTAINER_DATA_ACTIVE);
 
 	}, 500);
 
