@@ -1,6 +1,6 @@
 
 <div class="title_type_data">
-    Summary Per Territory 
+    Tabular Territory
 </div>
 
 <div class="container-fluid">

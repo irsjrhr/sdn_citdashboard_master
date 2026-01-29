@@ -1,6 +1,6 @@
 
 <div class="title_type_data">
-    Sales/Driver Performance 
+    Tabular Sales/Driver 
 </div>
 
 <div class="container-fluid">

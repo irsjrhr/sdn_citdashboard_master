@@ -74,10 +74,11 @@ $filterQuery = http_build_query(request()->only([
     <div class="col-12 col_nav">
         <div class="nav_container">
             <div class="nav_tab">
-                <div class="tab_el tab_indicator" data-target="page_summary_ar"> Summary AR </div>
-                <div class="tab_el tab_indicator" data-target="page_data_teritory"> Teritory </div>
-                <div class="tab_el tab_indicator" data-target="page_data_driversales"> Driver/Sales </div>
-                <div class="tab_el tab_indicator" data-target="page_data_customer"> Customer </div>
+                <div class="tab_el tab_indicator" data-target="page_listOfChart"> List Of Chart </div>
+                <div class="tab_el tab_indicator" data-target="page_data_teritory"> Tabular Teritory </div>
+                <div class="tab_el tab_indicator" data-target="page_data_driversales"> Tabular Driver/Sales </div>
+                <div class="tab_el tab_indicator" data-target="page_data_customer"> Tabular Customer </div>
+                <div class="tab_el tab_indicator" data-target="page_data_COHBankIn"> Tabular COH VS Bank In </div>
             </div>
         </div>
         <div class="nav_container">
@@ -201,9 +202,9 @@ $filterQuery = http_build_query(request()->only([
 
 
     {{-- Col_container_data - Summary AR --}}
-    <div class="col-12 col_container_data type_data" id="page_summary_ar">
+    <div class="col-12 col_container_data type_data" id="page_listOfChart">
 
-        @include( 'cit.cit_index.page_summary' )
+        @include( 'cit.cit_index.page_listOfChart' )
 
     </div>
     {{-- End Of Col_container_data - Summary AR --}}
@@ -231,6 +232,15 @@ $filterQuery = http_build_query(request()->only([
 
     </div>
     {{-- End Of Col_container_data - page_data_customer --}}
+
+
+    {{-- Col_container_data - page_data_COHBankIn --}}
+    <div class="col-12 col_container_data type_data" id="page_data_COHBankIn">
+
+        @include( 'cit.cit_index.page_data_COHBankIn' )
+
+    </div>
+    {{-- End Of Col_container_data - page_data_COHBankIn --}}
 
 </div>
 

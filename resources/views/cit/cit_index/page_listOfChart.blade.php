@@ -14,7 +14,7 @@
 </style>
 
 <div class="title_type_data">
-    Summary AR
+    List Of Chart
 </div>
 
 
@@ -58,8 +58,8 @@ $document_keys = [
 
 @endphp
 
-{{-- Row Cashier Driver --}}
-<div class="container-fluid container_summary" id="row_cashier_driver">
+{{--  Container Summary Row Cashier Driver --}}
+<div class="container-fluid container_summary mb-3" id="row_cashier_driver">
     <div class="row row_title_summary">
         <div class="col-12">
             Summary AR CIT
@@ -84,6 +84,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Outstanding AR'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -95,6 +96,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Collected'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -106,6 +108,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Confirmed Payment'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -117,6 +120,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['% Confirm Payment'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
                         @endphp
                         {{ $value }}
@@ -126,14 +130,24 @@ $document_keys = [
                 <div class="kpi_card kpi_blue">
                     <div class="kpi_title">Total Invoice Document</div>
                     <div class="kpi_value">
-                        {{ $row_card_dashboard['Total Invoice Document'] }}
+
+                        @php
+                        $value = $row_card_dashboard['Total Invoice Document'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                        @endphp
+                        {{ $value }}
+
                     </div>
                 </div>
 
                 <div class="kpi_card kpi_blue">
                     <div class="kpi_title">Total Confirmed Invoice Paymen</div>
                     <div class="kpi_value">
-                        {{ $row_card_dashboard['Total Confirmed Invoice Document'] }}
+                        @php
+                        $value = $row_card_dashboard['Total Confirmed Invoice Document'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                        @endphp
+                        {{ $value }}
                     </div>
                 </div>
 
@@ -144,6 +158,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Outstanding AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -155,6 +170,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Collected AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -166,6 +182,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['Total Confirmed Payment AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = 'Rp ' . formatAbbreviatedNumber($value);
                         @endphp
                         {{ $value }}
@@ -177,6 +194,7 @@ $document_keys = [
                     <div class="kpi_value">
                         @php
                         $value = $row_card_dashboard['% Confirm Payment AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
                         $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
                         @endphp
                         {{ $value }}
@@ -186,14 +204,26 @@ $document_keys = [
                 <div class="kpi_card kpi_blue">
                     <div class="kpi_title">Total Invoice Document AR OD</div>
                     <div class="kpi_value">
-                        {{ $row_card_dashboard['Total Invoice Document AR OD'] }}
+
+                        @php
+                        $value = $row_card_dashboard['Total Invoice Document AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                        @endphp
+                        {{ $value }}
+
                     </div>
                 </div>
 
                 <div class="kpi_card kpi_blue">
                     <div class="kpi_title">Total Confirmed Invoice Document AR OD</div>
                     <div class="kpi_value">
-                        {{ $row_card_dashboard['Total Confirmed Invoice Document AR OD'] }}
+
+                        @php
+                        $value = $row_card_dashboard['Total Confirmed Invoice Document AR OD'];
+                        $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                        @endphp
+                        {{ $value }}
+
                     </div>
                 </div>
 
@@ -211,11 +241,11 @@ $document_keys = [
     {{-- End Of Row Box Dashboard --}}
 
 </div>
-{{-- End Of Row Cashier Driver --}}
+{{-- End Of Container Summary - Row Cashier Driver --}}
 
 
-{{-- Container Summary - Summary Payment Type --}}
-<div class="container-fluid container_summary" id="entities_branches">
+{{-- Container Summary - Payment Type --}}
+<div class="container-fluid container_summary mb-3" id="entities_branches">
 
     <div class="row row_main_summary">
 
@@ -299,14 +329,12 @@ $document_keys = [
 
 
 </div>
-
-{{-- Container Summary - Summary Payment Type --}}
-
+{{-- End Of Container Summary - Payment Type --}}
 
 
 
 {{-- Container Summary - Branches Success Rate Collection --}}
-<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp mb-3" id="entities_branches">
 
     <div class="row row_main_summary">
 
@@ -356,11 +384,12 @@ $document_keys = [
 
 
 </div>
-{{-- End Of Top Entities - Branches --}}
+{{-- End Of Container Summary - Branches Success Rate Collection --}}
+
 
 
 {{-- Container Summary - Branches Success Rate Collection Overdue By Branches --}}
-<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp mb-3" id="entities_branches">
 
     <div class="row row_main_summary">
 
@@ -408,14 +437,14 @@ $document_keys = [
 
 
 </div>
-{{-- End Of Top Entities - Branches Success Rate Collection Overdue By Branches --}}
+{{-- End Of Container Summary - Branches Success Rate Collection Overdue By Branches --}}
 
 
 
 
 
 {{-- Container Summary - Drivers --}}
-<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp mb-3" id="entities_branches">
 
     <div class="row row_main_summary row_tab_data">
 
@@ -505,12 +534,12 @@ $document_keys = [
 
 
 </div>
-{{-- End Of Top Entities - Drivers --}}
+{{-- End Of Container Summary - Drivers --}}
 
 
 
 {{-- Container Summary - Bad Colletion Customer --}}
-<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp mb-3" id="entities_branches">
 
     <div class="row row_main_summary">
 
@@ -559,7 +588,7 @@ $document_keys = [
 
 
 </div>
-{{-- End Of Top Entities - Bad Colletion Customer --}}
+{{-- End Of Container Summary - Bad Colletion Customer --}}
 
 
 
@@ -568,7 +597,7 @@ $document_keys = [
 
 
 {{-- Container Summary - COH VS BANK IN --}}
-<div class="container-fluid container_summary wow animate__animated animate__fadeInUp" id="entities_branches">
+<div class="container-fluid container_summary wow animate__animated animate__fadeInUp mb-3" id="entities_branches">
 
 
 
@@ -576,20 +605,36 @@ $document_keys = [
 
     <div class="row row_main_summary">
         {{-- Col Main Grafik - COH Bank In By Branch --}}
-        <div class="col-sm-12 col_main_grafik col_grafik_top col_section_data active" id="col_section_top" style="margin-bottom:50px;">
+        <div class="col-sm-12 col_main_grafik col_grafik_top col_section_data active" style="margin-bottom:50px;">
             <div class="container-fluid">
                 <div class="row row_title_summary">
                     <div class="col-12">
 
                         COH VS Bank In By Branch
+
+
+                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_COHBankIn"> View Detail Data </button>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-sm-12">
+
+                        @if ( isset($data_grafik_coh) && !empty( $data_grafik_cohBankIn ) )
+
                         <div class="chart-wrapper">
                             <canvas id="chart_cohBankIn"></canvas>
                         </div>
+
+                        @else
+
+                        <div class="alert alert-danger py-2 mb-3">
+                            <strong> Data Not Founded </strong> 
+                        </div>
+
+                        @endif
+
+
                     </div>
                 </div>
 
@@ -601,145 +646,6 @@ $document_keys = [
     </div>
     {{-- End Of Row Chart --}}
 
-    {{--  Row Tabular Data --}}
-    <div class="row">
-        <div class="col-12">
-            <div class="container-fluid">
-
-
-                {{-- Row Table --}}
-                <div class="row row_table">
-                    <div class="col-12">
-                        {{-- Table Responsive --}}
-                        <div class="table-responsive">
-                            @if (!empty($data_tabular_cohBankIn))
-
-                            <table class="table table-bordered table-striped align-middle small">
-                                <thead class="table-light">
-                                    <tr>
-
-                                        <th>Branch Code</th>
-                                        <th>Branch Name</th>
-                                        <th>Collection Date</th>
-                                        <th>Transaction Type</th>
-
-                                        <th>Outstanding Amount Invoice</th>
-                                        <th>Nilai Input FSR / Driver</th>
-                                        <th>Total Confirm Collection</th>
-                                        <th>Diff (Cash, TF, BG) by Value</th>
-                                        <th>Unpaid Value</th>
-                                        <th>Performa Coll by Value</th>
-                                        <th>Diff Note</th>
-
-                                        <th>Total Doc Invoice</th>
-                                        <th>Total Collected Doc Invoice</th>
-                                        <th>Performa Coll by Inv</th>
-
-                                        <th>Total Inv TOP OD by Value</th>
-                                        <th>Total Paid Inv TOP OD by Value</th>
-                                        <th>Performa Coll AR OD by Value</th>
-                                        <th>Total Inv TOP OD by Doc</th>
-                                        <th>Paid Inv TOP OD by Doc</th>
-                                        <th>Performa Coll by Doc</th>
-
-                                        <th>COH</th>
-                                        <th>Bank In</th>
-                                        <th>Balance</th>
-                                        <th>Reason</th>
-                                        <th>Cash Bank Manual</th>
-                                        <th>Payment Performance Document</th>
-
-                                        <th>Cash Value FSR</th>
-                                        <th>Cash Confirm Kasir</th>
-                                        <th>Diff Cash</th>
-
-                                        <th>TF Value FSR</th>
-                                        <th>TF Confirm Kasir</th>
-                                        <th>Diff TF</th>
-
-                                        <th>Giro Value FSR</th>
-                                        <th>Giro Confirm Kasir</th>
-                                        <th>Diff Giro</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-                                    @foreach ($data_tabular_cohBankIn as $row_data)
-                                    <tr>
-
-                                        <td><?= $row_data['Branch Code'] ?></td>
-                                        <td><?= $row_data['Branch Name'] ?></td>
-                                        <td><?= $row_data['Collection Date'] ?></td>
-                                        <td><?= $row_data['Transaction Type'] ?></td>
-
-                                        <td><?= number_format($row_data['Outstanding Amount Invoice'],0,',','.') ?></td>
-                                        <td><?= number_format($row_data['Nilai Input FSR / Driver'],0,',','.') ?></td>
-                                        <td><?= number_format($row_data['Total Confirm Collection'],0,',','.') ?></td>
-                                        <td><?= number_format($row_data['Diff (Cash, TF, BG) by Value'],0,',','.') ?></td>
-                                        <td><?= number_format($row_data['Unpaid Value'],0,',','.') ?></td>
-                                        <td><?= $row_data['Performa Coll by Value'] ?></td>
-                                        <td><?= $row_data['Diff Note (Cash, TF, BG)'] ?></td>
-
-                                        <td><?= $row_data['Total Doc Invoice'] ?></td>
-                                        <td><?= $row_data['Total Collected Doc Invoice'] ?></td>
-                                        <td><?= $row_data['Performa Coll by Inv'] ?></td>
-
-                                        <td><?= $row_data['Total Inv TOP OD by Value'] ?></td>
-                                        <td><?= $row_data['Total Paid Inv TOP OD by Value'] ?></td>
-                                        <td><?= $row_data['Performa Coll AR OD by Value'] ?? '-' ?></td>
-                                        <td><?= $row_data['Total Inv TOP OD by Doc'] ?></td>
-                                        <td><?= $row_data['Paid Inv TOP OD by Doc'] ?></td>
-                                        <td><?= $row_data['Performa Coll by Doc'] ?></td>
-
-                                        <td><?= $row_data['COH'] ?></td>
-                                        <td><?= $row_data['Bank In'] ?></td>
-                                        <td><?= $row_data['Balance'] ?></td>
-                                        <td><?= $row_data['Reason'] ?></td>
-                                        <td><?= $row_data['Cash Bank Manual'] ?></td>
-                                        <td><?= $row_data['Payment_Performance_Document'] ?></td>
-
-                                        <td><?= number_format($row_data['Cash Value FSR/Driver'],0,',','.') ?></td>
-                                        <td><?= $row_data['Cash Confirm Kasir'] ?></td>
-                                        <td><?= $row_data['Diff Cash'] ?></td>
-
-                                        <td><?= $row_data['TF Value FSR/Driver'] ?></td>
-                                        <td><?= $row_data['TF Confirm Kasir'] ?></td>
-                                        <td><?= $row_data['Diff TF'] ?></td>
-
-                                        <td><?= $row_data['Giro Value FSR/Driver'] ?></td>
-                                        <td><?= $row_data['Giro Confirm Kasir'] ?></td>
-                                        <td><?= $row_data['Diff Giro'] ?></td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-
-                            @else
-
-                            <div class="alert alert-danger py-2 mb-3">
-                                <strong> Data Not Founded </strong> 
-                            </div>
-
-                            @endif
-                        </div>
-                        {{-- End Of Table Responsive --}}
-
-                        @if ( !empty( $data_tabular_cohBankIn ) )
-
-                        <div class="float-end small">{{ $data_paginator_cohBankIn->links() }}</div>
-
-                        @endif
-
-                    </div>
-                </div>
-                {{-- End Of Row Table --}}
-
-            </div>
-
-        </div>
-    </div>
-    {{--  End Of Row Tabular Data --}}
 
 
 

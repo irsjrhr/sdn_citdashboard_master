@@ -1,6 +1,6 @@
 
 <div class="title_type_data">
-    Customer Report 
+    Tabular Customer Report 
 </div>
 
 <div class="container-fluid">

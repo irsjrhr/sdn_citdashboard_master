@@ -33,60 +33,14 @@ class CITDashboardController extends Controller{
         });
     }
 
+
+    //https://url_app/cit/dashboard
+    //Dashboard CIT
     public function index( Request $request ){
 
         //=========== Build Filter Data For SQL By Metric ===========
 
-        //++++++ Build Filter Date ++++++++
-        $filters =  $this->build_filterDate( $request );
-
-        //++++++ Build Filter Metrix ++++++++
-        $filters = array_merge($filters, [
-            'branch'   => $request->input('branch'),
-            'region'   => $request->input('region'),
-        ]);
-
-
-        $filters = UserMetricFilterService::applyUserDefaultFilters(
-            $filters,
-            $this->userTitle,
-            $this->userBranchCode,
-            $this->userRegion
-        );
-
-        //Build Filter Order Type dan Business Type
-        $filters = array_merge( $filters, [
-            "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 
-            "businessUnit" => $request->input('businessUnit') ?  $request->input('businessUnit') : NULL
-        ]);
-
-
-        //=========== Build Datasets - CIT ==============
-
-        // Prepare Datasets with filters
-        $pdo = $this->db->getPdo();
-        $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData_test
-            @startDate    = :startDate,
-            @endDate   = :endDate,
-            @branchCode = :branch,
-            @regionCode  = :regionCode,
-            @orderType = :orderType,
-            @businessType = :businessType
-            ");
-        $stmt->execute([
-            'startDate' => $filters['startDate'],
-            'endDate'  => $filters['endDate'],
-            'regionCode'   => $filters['region'],
-            'branch'   => $filters['branch'],
-            'orderType'   => $filters['orderType'],
-            'businessType'   => $filters['businessUnit']
-        ]);
-        //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
-        $datasets = [];
-        do {
-            $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } while ($stmt->nextRowset());
-
+        $datasets = $this->build_datasetsCIT( $request );
 
         //++++++ Card Dataset
         $row_card_dashboard = $datasets[0][0]; 
@@ -116,7 +70,7 @@ class CITDashboardController extends Controller{
 
 
         // ========== GET LAST UPDATE ======
-        $last_update = $this->get_last_updateCIT();
+        $last_update = $this->get_last_updateCIT( $request );
         // ==========  End Of GET LAST UPDATE ======
 
 
@@ -124,9 +78,6 @@ class CITDashboardController extends Controller{
         //=========== Build Filter Data For UI List Option By Metric ===========
         $build_filterData = $this->build_filterData( $request );
         //=========== End Of Build Filter Data For UI List Option By Metric ===========
-
-
-
 
 
 
@@ -265,18 +216,15 @@ class CITDashboardController extends Controller{
 
 
         // ========== Data Summary dan Tabular Data COH VS Bank In By Branch ========== 
-
-        //Build Data Grafik COH Bank In 
         // dd( $datasets[9] );
-        $data_grafik_cohBankIn = $this->build_dataGrafik_cohBankIn($datasets[9]);
+        //Build Data Grafik COH Bank In 
+        $data_grafik_cohBankIn = $this->build_dataGrafik_COHBankIn($datasets[9]);
 
 
-
-        //Build Dataset COH Bank In 
-        $build_datasetCOHBankIn = $this->build_datasetCOHBankIn( $filters );
-        $data_tabular_cohBankIn = $build_datasetCOHBankIn['data_tabular_cohBankIn'];
-        $key_rupiah_data = $build_datasetCOHBankIn['key_rupiah_data'];
-        $data_paginator_cohBankIn = $build_datasetCOHBankIn['data_paginator'];
+        //Build Dataset COH Bank In Untuk Tabular Data dan Paginationnya
+        $build_dataTabularCOH = $this->build_dataTabularCOH( $request );
+        $data_tabular_cohBankIn = $build_dataTabularCOH['data_tabular_cohBankIn'];
+        $data_paginator_cohBankIn = $build_dataTabularCOH['data_paginator'];
 
 
         return view('cit.index', array_merge($build_filterData), compact(
@@ -294,14 +242,12 @@ class CITDashboardController extends Controller{
             'data_grafik_cohBankIn',
             'data_tabular_cohBankIn',
             'data_paginator_cohBankIn',
-            'key_rupiah_data',
         ));
 
 
     }
 
-
-
+    //https://url_app/cit/coh_reason
     //COH Reason untuk table data header
     public function coh_reason(Request $request){
 
@@ -409,7 +355,8 @@ class CITDashboardController extends Controller{
         ));
     }
 
-    //COH Reason untuk table data detail dari header dengan detail COH dan CIT berdasarkan parameter branchCode yang dilempar
+    //https://url_app/cit/coh_reason_detail?branch=""&collectionDate
+    //COH Reason untuk table data header
     public function coh_reason_detail(Request $request){
 
 
@@ -545,11 +492,75 @@ class CITDashboardController extends Controller{
 
 
 
+
+
+
+
+
+
+
+
+
+
     //+++++++++++++++++++++++++++++++++++++ METHOD BUILDER +++++++++++++++++++++++++++++++++++
+    private function build_datasetsCIT( Request $request ){
 
-    //Method untuk membuat datasets dengan format bank in dan cash in di satu grafik yang sama
 
-    private function build_dataGrafik_cohBankIn( $data_grafik_cohBankIn = [] ) : array{
+        //=========== Build Filter For SQL ==============
+
+
+        //++++++ Build Filter Date ++++++++
+        $filters =  $this->build_filterDate( $request );
+
+        //++++++ Build Filter Metrix ++++++++
+        $filters = array_merge($filters, [
+            'branch'   => $request->input('branch'),
+            'region'   => $request->input('region'),
+        ]);
+        $filters = UserMetricFilterService::applyUserDefaultFilters(
+            $filters,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
+        //++++++ Build Filter Order Type dan Business Type ++++++
+        $filters = array_merge( $filters, [
+            "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 
+            "businessUnit" => $request->input('businessUnit') ?  $request->input('businessUnit') : NULL
+        ]);
+
+
+        //=========== Build Datasets - CIT ==============
+
+        // Prepare Datasets with filters
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare("EXEC sp_PortalSDN_GetCITSummaryData_test
+            @startDate    = :startDate,
+            @endDate   = :endDate,
+            @branchCode = :branch,
+            @regionCode  = :regionCode,
+            @orderType = :orderType,
+            @businessType = :businessType
+            ");
+        $stmt->execute([
+            'startDate' => $filters['startDate'],
+            'endDate'  => $filters['endDate'],
+            'regionCode'   => $filters['region'],
+            'branch'   => $filters['branch'],
+            'orderType'   => $filters['orderType'],
+            'businessType'   => $filters['businessUnit']
+        ]);
+        //Fetch Alll Data - Convert to array index multi dimensi [ [], [], [], ....... ]
+        $datasets = [];
+        do {
+            $datasets[] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } while ($stmt->nextRowset());
+
+
+        return $datasets;
+    }
+    //Method untuk membuat datasets dengan format bank in dan cash in di satu grafik yang sama untuk grafik COH
+    private function build_dataGrafik_COHBankIn( $data_grafik_cohBankIn = [] ) : array{
 
 
         $result = [];
@@ -579,10 +590,31 @@ class CITDashboardController extends Controller{
         // dd( $data_grafik_cohBankIn );
     }
 
+    //Method untuk membuat data COH BANK IN Berdasarkan filter untuk tabular data COH
+    private function build_dataTabularCOH( Request $request ) : array{
 
 
+        //=========== Build Filter For SQL ==============
 
-    private function build_datasetCOHBankIn( $filters ){
+        //++++++ Build Filter Date ++++++++
+        $filters =  $this->build_filterDate( $request );
+
+        //++++++ Build Filter Metrix ++++++++
+        $filters = array_merge($filters, [
+            'branch'   => $request->input('branch'),
+            'region'   => $request->input('region'),
+        ]);
+        $filters = UserMetricFilterService::applyUserDefaultFilters(
+            $filters,
+            $this->userTitle,
+            $this->userBranchCode,
+            $this->userRegion
+        );
+        //++++++ Build Filter Order Type dan Business Type ++++++
+        $filters = array_merge( $filters, [
+            "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 
+            "businessUnit" => $request->input('businessUnit') ?  $request->input('businessUnit') : NULL
+        ]);
 
 
         //++++++ Build Pagination Param ++++++++
@@ -648,37 +680,33 @@ class CITDashboardController extends Controller{
             'query'    => request()->query(),
         ]);
         //Mapping number formating view
-        $key_rupiah_data = [
-            "Outstanding_AR",
-            "Total_Collection",
-            "Selisih_Payment",
-            "Total_Payment_Cash",
-            "Total_Payment_TF",
-            "Total_Payment_Giro",
-            "Total_Payment_Cash_TF",
-            "Total_TOP_OD_Value",
-            "Total_Paid_TOP_OD_Value",
-            "COH",
-            "Bank In",
-            "Balance",
-        ];
+        // $key_rupiah_data = [
+        //     "Outstanding_AR",
+        //     "Total_Collection",
+        //     "Selisih_Payment",
+        //     "Total_Payment_Cash",
+        //     "Total_Payment_TF",
+        //     "Total_Payment_Giro",
+        //     "Total_Payment_Cash_TF",
+        //     "Total_TOP_OD_Value",
+        //     "Total_Paid_TOP_OD_Value",
+        //     "COH",
+        //     "Bank In",
+        //     "Balance",
+        // ];
 
 
         $result = [];
         $result['data_tabular_cohBankIn'] = $data_coh;
         $result['data_paginator'] = $data_paginator;
-        $result['key_rupiah_data'] = $key_rupiah_data;
 
 
         // dd( $result['data_tabular_cohBankIn'] );
         return $result;
     }   
 
-
-
-
-
-    private function get_last_updateCIT(){
+    //Method untuk mengambil last update data CIT berdasarkan send date terbaru
+    private function get_last_updateCIT( Request $request ) : string {
         $cit_table = $this->db->table('dbo.ZH_Collection_CIT_Dashboard');
         $query = $cit_table
         ->select('senddate')
@@ -691,7 +719,6 @@ class CITDashboardController extends Controller{
 
         return $senddate;
     }
-
 
     //Method untuk membangun filter date
     private function build_filterDate ( Request $request ) : array {
@@ -712,8 +739,6 @@ class CITDashboardController extends Controller{
 
         return $result;
     }
-
-
     //Method untuk membangun filter data keseluruhan 
     private function build_filterData( Request $request ) :array {
 
@@ -992,55 +1017,6 @@ class CITDashboardController extends Controller{
 
         // dd($result);
         return $result;
-    }
-
-
-    private function build_header_table( $data_teritory, $data_driversales, $data_customer ){
-        //INGAT!! Semua key header di semua data maps_header keynya harus sama denggan key dari row data aslinya 
-        //maps_header_teritory harus sama dengan key yang ada di data_teritory
-        //maps_header_driversales harus sama dengan key yang ada di data_driversales
-        //maps_header_customer harus sama dengan key yang ada di data_customer
-
-        $result = [];
-        $result['maps_header_teritory'] = [
-            "territoryid"        => "Territory ID",
-            "territoryname"      => "Territory Name",
-            "invoice_count"      => "Invoice Count",
-            "total_difference"   => "Total Difference",
-            "total_ar"           => "Total AR",
-            "collected_amount"   => "Collected Amount",
-            "confirmed_amount"   => "Confirmed Amount",
-            "unconfirmed_amount" => "Unconfirmed Amount",
-        ];
-
-        $result['maps_header_driversales'] = [
-            "territoryid"        => "Territory ID",
-            "salesnameordrivername" => "Sales / Driver Name",
-            "ordertype"             => "Order Type",
-            "total_ar"              => "Total AR",
-            "collected_amount"      => "Collected Amount",
-            "confirmed_amount"      => "Confirmed Amount",
-            "unconfirmed_amount"    => "Unconfirmed Amount",
-            "total_difference"      => "Total Difference",
-            "avg_days_late"         => "Average Days Late",
-        ];
-
-
-        $result['maps_header_customer'] = [
-            "territoryid"        => "Territory ID",
-            "customercode"       => "Customer Code",
-            "customername"       => "Customer Name",
-            "invoice_count"      => "Invoice Count",
-            "total_difference"   => "Total Difference",
-            "total_ar"           => "Total AR",
-            "collected_amount"   => "Collected Amount",
-            "confirmed_amount"   => "Confirmed Amount",
-            "unconfirmed_amount" => "Unconfirmed Amount",
-        ];
-
-
-        return $result;
-
     }
 
 
