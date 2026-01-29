@@ -13,6 +13,7 @@
                     <thead class="table-light">
                         <tr>
 
+                            {{-- <th>Region</th> --}}
                             <th>Branch Code</th>
                             <th>Branch Name</th>
                             <th>Collection Date</th>
@@ -63,6 +64,7 @@
                         @foreach ($data_tabular_cohBankIn as $row_data)
                         <tr>
 
+                            {{-- <td><?= $row_data['Region'] ?></td> --}}
                             <td><?= $row_data['Branch Code'] ?></td>
                             <td><?= $row_data['Branch Name'] ?></td>
                             <td><?= $row_data['Collection Date'] ?></td>

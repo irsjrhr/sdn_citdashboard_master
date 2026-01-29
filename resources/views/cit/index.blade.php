@@ -192,7 +192,7 @@ $filterQuery = http_build_query(request()->only([
 
             {{-- ====== PERIOD SUMMARY ====== --}}
             <div class="alert alert-primary py-2 mb-3">
-                <strong>Selected Period:</strong> {{ $startDate->format('d M Y') }} – {{ $endDate->format('d M Y') }}
+                <strong>Selected Collection Period:</strong> {{ $startDate->format('d M Y') }} – {{ $endDate->format('d M Y') }}
             </div>
         </div>
     </div>

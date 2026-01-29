@@ -32,7 +32,7 @@ class UserMetricFilterService{
                     ->get(),
 
                     'branches' => $branchQuery
-                    ->select('territory_code', 'branch_name', 'region')
+                    ->select('territory_code', 'branch_name', 'region', 'business_unit')
                     ->where('region', 'like', '%' . $userRegion . '%')
                     ->orderBy('branch_name')
                     ->get(),
@@ -57,7 +57,7 @@ class UserMetricFilterService{
                     ->get(),
 
                     'branches' => $branchQuery
-                    ->select('territory_code', 'branch_name', 'region')
+                    ->select('territory_code', 'branch_name', 'region', 'business_unit')
                     ->where('territory_code', $userBranchCode)
                     ->get(),
 

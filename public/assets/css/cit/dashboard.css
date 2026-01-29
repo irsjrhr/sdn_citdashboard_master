@@ -232,7 +232,6 @@ table .kolom_angka{
 
 
 
-
 .grafik{
 	display: flex;
 	flex-direction: row;
@@ -387,6 +386,7 @@ canvas {
 
 .chart-wrapper canvas {
 	min-width: 1200px; /* base width */
+	margin: auto;
 }
 
 /*  modal detail stackbar */

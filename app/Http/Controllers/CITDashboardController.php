@@ -226,6 +226,7 @@ class CITDashboardController extends Controller{
         $data_tabular_cohBankIn = $build_dataTabularCOH['data_tabular_cohBankIn'];
         $data_paginator_cohBankIn = $build_dataTabularCOH['data_paginator'];
 
+        // dd( $data_tabular_cohBankIn );
 
         return view('cit.index', array_merge($build_filterData), compact(
             'row_card_dashboard',
