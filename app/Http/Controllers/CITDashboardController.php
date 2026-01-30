@@ -528,6 +528,8 @@ class CITDashboardController extends Controller{
             $this->userBranchCode,
             $this->userRegion
         );
+
+
         //++++++ Build Filter Order Type dan Business Type ++++++
         $filters = array_merge( $filters, [
             "orderType" => $request->input('orderType') ?  $request->input('orderType') : NULL, 

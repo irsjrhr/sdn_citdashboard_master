@@ -22,14 +22,6 @@ $(document).ready(function() {
 	});
 
 
-
-
-
-
-
-
-
-
 });
 
 
@@ -216,17 +208,7 @@ function render_regionByBusinessUnit( option_businessUnit_selected,option_branch
 
 
 
-
-
-
-
-
-
-
 }
-
-
-
 
 
 
@@ -276,56 +258,6 @@ function render_branchByRegion(){
 	option_branch_metrixTarget.addClass('active');
 
 }
-
-
-// function render_ByRegion(){
-
-// 	console.log('+++++++++++++++');
-
-// 	var option_region_selected = $('select[name=region] option:selected');
-// 	var valOption_region_selected = option_region_selected.val();
-
-
-
-
-// 	var select_branch = $('select[name=branch]');
-// 	var option_branch_metrix = select_branch.find('.option_metrix');
-
-// 	//Buat pengkondisian jika option region yang terselect itu adalah option all, maka option metrix branch terbuka semua 
-// 	var option_branch_metrixTarget;
-// 	if ( option_region_selected.is('.option_all') ) {
-
-// 		//Jika region all
-// 		// alert('ALL');
-
-// 		option_branch_metrixTarget = option_branch_metrix;
-
-// 		console.log("Membuka branch dengan region All");
-
-
-// 	}else{
-
-// 		//Jika region bukan all
-// 		// alert('NOT ALL');
-
-// 		option_branch_metrixTarget = option_branch_metrix.filter( '[data-region="'+valOption_region_selected+'"]' );
-// 		valOption_region_selected
-
-// 		console.log("Membuka branch dengan region " + valOption_region_selected);
-// 	}
-
-
-// 	//++++ Membuka branch berdasarkan region yang terselect
-// 	console.log( "Banyak branch terbuka :", option_branch_metrixTarget.length );
-
-// 	//Hilangkan semua branch yang bukan target
-// 	option_branch_metrix.removeClass('active');
-// 	option_branch_metrixTarget.addClass('active');
-
-// }
-
-
-
 
 var 
 triger_open = true,

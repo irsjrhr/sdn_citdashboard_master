@@ -1,5 +1,5 @@
 <div class="title_type_data">
-   Tabular COH VS Bank In  
+ Tabular COH VS Bank In  
 </div>
 <div class="container-fluid">
     {{-- Row Table --}}
@@ -64,6 +64,8 @@
                         @foreach ($data_tabular_cohBankIn as $row_data)
                         <tr>
 
+
+
                             <td><?= $row_data['Region'] ?></td>
                             <td><?= $row_data['Branch Code'] ?></td>
                             <td><?= $row_data['Branch Name'] ?></td>
@@ -75,16 +77,41 @@
                             <td><?= number_format($row_data['Total Confirm Collection'],0,',','.') ?></td>
                             <td><?= number_format($row_data['Diff (Cash, TF, BG) by Value'],0,',','.') ?></td>
                             <td><?= number_format($row_data['Unpaid Value'],0,',','.') ?></td>
-                            <td><?= $row_data['Performa Coll by Value'] ?></td>
+                            <td>
+
+                                @php
+                                $value = $row_data['Performa Coll by Value'];
+                                $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                                $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
+                                @endphp
+                                {{ $value }}
+
+                            </td>
                             <td><?= $row_data['Diff Note (Cash, TF, BG)'] ?></td>
 
                             <td><?= $row_data['Total Doc Invoice'] ?></td>
                             <td><?= $row_data['Total Collected Doc Invoice'] ?></td>
-                            <td><?= $row_data['Performa Coll by Inv'] ?></td>
+                            <td>
+
+                                @php
+                                $value = $row_data['Performa Coll by Inv'];
+                                $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                                $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
+                                @endphp
+                                {{ $value }}
+
+                            </td>
 
                             <td><?= $row_data['Total Inv TOP OD by Value'] ?></td>
                             <td><?= $row_data['Total Paid Inv TOP OD by Value'] ?></td>
-                            <td><?= $row_data['Performa Coll AR OD by Value'] ?? '-' ?></td>
+                            <td>
+                                @php
+                                $value = $row_data['Performa Coll AR OD by Value'];
+                                $value = ( isset($value) && !empty( $value ) && $value != false ) ? $value : 0;
+                                $value = formatAbbreviatedNumber(number_format($value, 2, '.', '')) . '%';
+                                @endphp
+                                {{ $value }}
+                            </td>
                             <td><?= $row_data['Total Inv TOP OD by Doc'] ?></td>
                             <td><?= $row_data['Paid Inv TOP OD by Doc'] ?></td>
                             <td><?= $row_data['Performa Coll by Doc'] ?></td>
