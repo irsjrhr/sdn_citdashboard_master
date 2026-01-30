@@ -80,6 +80,13 @@ $filterQuery = http_build_query(request()->only([
                 <div class="tab_el tab_indicator" data-target="page_data_customer"> Tabular Customer </div>
             </div>
         </div>
+
+
+
+
+
+
+        {{-- Nav Container Filter Multiple Hirarki --}}
         <div class="nav_container">
             {{-- Filter --}}
             <form action="{{ route('cit.index') }}" method="GET" class="d-flex flex-wrap align-items-end gap-3 mb-4">
@@ -99,57 +106,97 @@ $filterQuery = http_build_query(request()->only([
                 </div>
 
                 {{-- BUSINESS FILTER --}}
-                <div>
-                    <label class="small text-muted fw-bold">Business Type</label>
-                    <select name="businessUnit" class="form-control form-control-sm" autosave>
-                        <option value="" class="option_all">All</option>
-                        <option value="MIX" {{ request('businessUnit') == "MIX" ? 'selected' : '' }}>MIX</option>
-                        <option value="JTI" {{ request('businessUnit') == "JTI" ? 'selected' : '' }}>JTI</option>
-                        <option value="ULI" {{ request('businessUnit') == "ULI" ? 'selected' : '' }}>ULI</option>
-                    </select>
+                <div class="dropdown_container" id="businessUnit_filter">
+                    By Business Type :
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Pilih Business Type
+                        </button>
+
+                        <ul class="dropdown-menu p-2">
+                            <li>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="option_metrix"  name="option_businessUnit[]" value="All"> All
+                                </label>
+                            </li>
+                            <li>
+                                <label class="dropdown-item"> 
+                                    <input type="checkbox" class="option_metrix"  name="option_businessUnit[]" value="MIX"> MIX
+                                </label>
+                            </li>
+                            <li>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="option_metrix"  name="option_businessUnit[]" value="JTI"> JTI
+                                </label>
+                            </li>
+                            <li>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="option_metrix"  name="option_businessUnit[]" value="ULI"> ULI
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+
                 {{-- REGION FILTER --}}
-                <div>
-                    <label class="small text-muted fw-bold">Region</label>
-                    <select name="region" class="form-control form-control-sm">
-                        <option value="" class="option_all" autosave>All</option>
-                        @foreach ($regions as $row_data)
+                <div class="dropdown_container" id="region_filter">
+                    By Region :
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Pilih Region
+                        </button>
 
-                        <option class="option_metrix option_region" data-region-trim="{{trim($row_data->region)}}" value="{{ $row_data->region }}"  
-                            {{ request('region') == trim($row_data->region) ? 'selected' : '' }}  >
-                            {{ $row_data->region }}
-                        </option>
-                        @endforeach
-                    </select>
+                        <ul class="dropdown-menu p-2">
+                            @foreach ($regions as $row_data)
+                            @php
+                            $region_name = trim($row_data->region);
+                            @endphp
+
+                            <li>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="option_metrix"  name="option_region[]" value="{{$region_name}}"> {{$region_name}}
+                                </label>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
+
+
                 {{-- BRANCH FILTER --}}
-                <div>
-                    <label class="small text-muted fw-bold">Branch</label>
-                    <select name="branch" class="form-control form-control-sm" autosave>
-                        <option value="" class="option_all">All</option>
-                        @foreach ($branches as $row_data)
+                <div class="dropdown_container" id="branch_filter">
+                    By Branch :
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Pilih Branch
+                        </button>
 
-                        @php
-                        // Lakukan Pengkondisian untuk row dengan kolom business_unit nya bernilai ada kata ULI nya, maka jadikan ULI saja 
-                        $business_unit = $row_data->business_unit;
-                        if (preg_match('/\bULI\b/', $business_unit, $match)) {
+                        <ul class="dropdown-menu p-2">
+
+                            @foreach ($branches as $row_data)
+                            @php
+                            // Lakukan Pengkondisian untuk row dengan kolom business_unit nya bernilai ada kata ULI nya, maka jadikan ULI saja 
+                            $business_unit = $row_data->business_unit;
+                            if (preg_match('/\bULI\b/', $business_unit, $match)) {
                             //Kalo ada kata ULI nya maka ambil nilai ULI nya saja 
-                            $business_unit = "ULI";
-                        } else {
+                                $business_unit = "ULI";
+                            } else {
                             //Kalo tidak ada kata ULI nya maka pake nilai asli
-                            $business_unit = $business_unit;
-                        }
-                        @endphp
-
-                        <option class="option_metrix option_branch" data-region="{{$row_data->region}}" data-business-unit="{{$business_unit}}" value="{{ $row_data->territory_code }}" 
-                            {{ request('branch') == $row_data->territory_code ? 'selected' : '' }}
-                            >
-
-                            {{ $row_data->branch_name }}
-                        </option>
-                        @endforeach
-                    </select>
+                                $business_unit = $business_unit;
+                            }
+                            @endphp
+                            <li>
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="option_metrix"  name="option_branch[]" data-region="{{trim($row_data->region)}}" data-business-unit="{{$business_unit}}" value="{{$row_data->territory_code}}"> {{$row_data->branch_name}}
+                                </label>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
+
+
+
                 {{-- ORDER TYPE FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Order Type</label>
@@ -159,6 +206,12 @@ $filterQuery = http_build_query(request()->only([
                         <option value="COD" {{ request('orderType') == "COD" ? 'selected' : '' }}>COD</option>
                     </select>
                 </div>
+
+
+
+
+
+
 
 
 
@@ -182,6 +235,12 @@ $filterQuery = http_build_query(request()->only([
                 <strong>Selected Collection Period:</strong> {{ $startDate->format('d M Y') }} – {{ $endDate->format('d M Y') }}
             </div>
         </div>
+        {{-- End Of Nav Container Filter Multiple Hirarki --}}
+
+
+
+
+
     </div>
 </div>
 

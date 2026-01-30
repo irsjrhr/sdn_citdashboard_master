@@ -8,6 +8,7 @@ $(document).ready(function() {
 	});
 
 
+
 	$('.tab_indicator_section').eq(0).click();
 	$('.tab_indicator_section').on('click', function(e) {
 		open_section( $(this) );
@@ -22,7 +23,28 @@ $(document).ready(function() {
 	});
 
 
+
+
+	$('#businessUnit_filter .option_metrix').on('change', function(){
+
+		render2_branchByRegionBusinessUnit();
+
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
 });
+
 
 
 
@@ -150,7 +172,6 @@ function render_branchByRegionBusinessUnit(){
 
 
 }
-
 function render_regionByBusinessUnit( option_businessUnit_selected,option_branch_metrixBusinessUnit ){
 
 	/*
@@ -378,6 +399,67 @@ var open_section = ( tab_indicator_section_click ) => {
 }
 
 
+//====================== FUNGSI EVENT UNTUK MULTIPLE SELECT ============
+
+
+
+function render2_branchByRegionBusinessUnit(){
+
+
+	//======= TETAPKAN PATTERN FILTER METRIX ====================
+
+	console.group("======== DEBUG FILTER MULTIPLE METRIX REGION & BRANCH RESULT ====== ");
+
+
+
+
+
+
+
+	var option_metrix_BU = $('#businessUnit_filter').find('.option_metrix');
+	var option_metrix_region = $('#region_filter').find('.option_metrix');
+	var option_metrix_branch = $('#branch_filter').find('.option_metrix');
+
+	//++++++ Munculkan List Filter Region Berdasarkan Business Unit Yang Terchecked  +++++
+
+	var LIST_BUSINESSUNIT_CHECKED = [];
+	var LIST_REGION_ACTIVE = [];
+
+	//Ambil region apa aja yang akan di tampilkan berdasarkan business unit yang terchecked diambil dari branch yang memiliki nilai data-business-unit yang di check kemudian tampung ke LIST_REGION_ACTIVE
+	var option_metrix_BUCheck = option_metrix_BU.filter(':checked');
+	for (var i = 0; i < option_metrix_BUCheck.length; i++) {
+
+		var option_metrixTarget = $(option_metrix_BUCheck[i]);
+		var value_businessUnitChecked = option_metrixTarget.val();
+
+		//Ambil dan kumpulkan business unit yang sedang di checked 
+		LIST_BUSINESSUNIT_CHECKED.push( value_businessUnitChecked );
+
+		//Ambil nilai region dari atribut data-region pada option metrix branch yang memiliki data-business-unit dengan nilai value_businessUnitChecked
+		var list_option_metrix_branchBU = option_metrix_branch.filter('[data-business-unit='+value_businessUnitChecked+']');	
+
+		console.log('+++ List Branch Yang Metrix ke Business Unit '+ value_businessUnitChecked + ' +++++++++++  ');
+		console.log( list_option_metrix_branchBU );
+
+		//Tampung data-region dari branch yang tertampung ke LIST_REGION_ACTIVE untuk dimunculkan input regionnya 
+		for (var i = 0; i < list_option_metrix_branchBU.length; i++) {
+
+			var option_metrixBranchBU = $( list_option_metrix_branchBU[i] );
+			var data_region = option_metrixBranchBU.attr('data-region');	
+			LIST_REGION_ACTIVE.push( data_region );
+		}
+
+		//Lakukan distinct LIST_REGION_ACTIVE agar datanya normal 
+
+
+	}
+
+	console.log( LIST_REGION_ACTIVE );
+	console.log( LIST_BUSINESSUNIT_CHECKED );
+
+
+
+}
 
 
 
