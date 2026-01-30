@@ -75,10 +75,9 @@ $filterQuery = http_build_query(request()->only([
         <div class="nav_container">
             <div class="nav_tab">
                 <div class="tab_el tab_indicator" data-target="page_listOfChart"> List Of Chart </div>
-                <div class="tab_el tab_indicator" data-target="page_data_teritory"> Tabular Teritory </div>
+                <div class="tab_el tab_indicator" data-target="page_data_COHBankIn"> Tabular COH VS Bank In </div>
                 <div class="tab_el tab_indicator" data-target="page_data_driversales"> Tabular Driver/Sales </div>
                 <div class="tab_el tab_indicator" data-target="page_data_customer"> Tabular Customer </div>
-                <div class="tab_el tab_indicator" data-target="page_data_COHBankIn"> Tabular COH VS Bank In </div>
             </div>
         </div>
         <div class="nav_container">
@@ -98,8 +97,6 @@ $filterQuery = http_build_query(request()->only([
                     <input type="date" name="endDate" value="{{ $endDate->format('Y-m-d') }}"
                     class="form-control form-control-sm">
                 </div>
-
-
 
                 {{-- BUSINESS FILTER --}}
                 <div>
@@ -125,8 +122,6 @@ $filterQuery = http_build_query(request()->only([
                         @endforeach
                     </select>
                 </div>
-
-
                 {{-- BRANCH FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Branch</label>
@@ -155,7 +150,6 @@ $filterQuery = http_build_query(request()->only([
                         @endforeach
                     </select>
                 </div>
-
                 {{-- ORDER TYPE FILTER --}}
                 <div>
                     <label class="small text-muted fw-bold">Order Type</label>
@@ -165,13 +159,6 @@ $filterQuery = http_build_query(request()->only([
                         <option value="COD" {{ request('orderType') == "COD" ? 'selected' : '' }}>COD</option>
                     </select>
                 </div>
-
-
-
-
-
-
-
 
 
 

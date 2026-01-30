@@ -52,11 +52,11 @@ function render_branchByRegionBusinessUnit(){
 	//+++ Deklarasi branch object by metrix
 	//Semua branch
 	var option_branch_metrix = select_branch.find('option.option_metrix');
-	 // Semua branch berdasarkan metrix business unit 
+	// Semua branch berdasarkan metrix region dan business unit 
 	var option_branch_metrixRegionBusinessUnit = option_branch_metrix.filter( '[data-region="'+valOption_region_selected+'"]' ).filter('[data-business-unit="'+valOption_businessUnit_selected+'"]');
 	// Semua branch berdasarkan metrix region
 	var option_branch_metrixRegion = option_branch_metrix.filter( '[data-region="'+valOption_region_selected+'"]' ); 
-	// Semua branch berdasarkan metrix region dan business unit
+	// Semua branch berdasarkan business unit
 	var option_branch_metrixBusinessUnit = option_branch_metrix.filter( '[data-business-unit="'+valOption_businessUnit_selected+'"]' ); 
 
 
@@ -66,34 +66,36 @@ function render_branchByRegionBusinessUnit(){
 	//Tentukan branch target berdasarkan event dan logic
 	/*
 	=> Membuat logic Ketika filter region dan business unitnya dipilih all
-	- Ketika filter BU All dan region All, maka semua branch di tampilkan
 
-	- Ketika filter BU All dan region tidak all, maka menampilkan branch yang hanya punya atribut data-region atau filter branch berdasarkan region saja ( Business unit tidak dianggap )
+	- Semua branch ditampilkan ketika filter BU All dan Region All
 
-	- Ketika filter Region All dan BU tidak all, maka menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
+	- Branch hanya berdasarkan business unit ketika filter Business Unit itu dipillih dan Region All, atau menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
 
+	- Branch hanya berdasarkan region ketika filter Region Dipilih dan Business Unit itu All, atau menampilkan branch yang hanya punya atribut data-region atau filter branch berdasarkan region saja ( Business unit tidak dianggap )
+
+	- Branch berdasarkan region dan business unit ketika filter region Dipilih dan Business Unit itu Dipilih, atau menampilkan branch yang punya atribut data-region dan data-business-unit.
 	*/
 	var OPTION_BRANCH_TARGET;
 	if ( option_businessUnit_selected.is('.option_all') && option_region_selected.is('.option_all') ) {
 
-		// Ketika filter BU All dan region All, maka semua branch di tampilkan
-		console.log('Filter Business Unit dan Region All')
+		// Semua branch ditampilkan ketika filter BU All dan Region All
+
+		console.log('Filter Business Unit dan Region All ( Branch All )')
 		OPTION_BRANCH_TARGET = option_branch_metrix;
 
 
 	}else if ( option_region_selected.is('.option_all') ) {
 
-		// Ketika filter Region All dan BU tidak all, maka menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
+		// Branch hanya berdasarkan business unit ketika filter Business Unit itu dipillih dan Region All, atau menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
 
-
-
-		console.log('Filter Region All ( By Metrix Business Unit )')
+		console.log('Filter Region All ( Branch By Metrix Business Unit )')
 		OPTION_BRANCH_TARGET = option_branch_metrixBusinessUnit;
 
 
 
 	}else if (  option_businessUnit_selected.is('.option_all')  ) {
-		// Ketika filter BU All dan region tidak all, maka menampilkan branch yang hanya punya atribut data-region atau filter branch berdasarkan region saja ( Business unit tidak dianggap )
+
+		// Branch hanya berdasarkan region ketika filter Region Dipilih dan Business Unit itu All, atau menampilkan branch yang hanya punya atribut data-region atau filter branch berdasarkan region saja ( Business unit tidak dianggap )
 
 
 		console.log('Filter Business Unit All ( By Metrix Region )')
@@ -101,23 +103,22 @@ function render_branchByRegionBusinessUnit(){
 
 
 	}else{
-	// Ketika filter Region All dan BU tidak all, maka menampilkan branch yang hanya punya atribut data-business-unit atau filter branch berdasarkan business unit saja ( Region tidak dianggap )
 
+		// Branch berdasarkan region dan business unit ketika filter region Dipilih dan Business Unit itu Dipilih, atau menampilkan branch yang punya atribut data-region dan data-business-unit.
 		console.log('Filter Business Unit dan Region Tidak All ( By Metrix Keduanya ) ')
 
 		OPTION_BRANCH_TARGET = option_branch_metrixRegionBusinessUnit;
 
 	}
 
+	// console.log( OPTION_BRANCH_TARGET );
+	// return 1;
 
 	//Hilangkan branch lain
 	option_branch_metrix.removeClass('active');
 	//Munculkan branch yang berelasi by pattern metrix
 	OPTION_BRANCH_TARGET.addClass('active');
 
-	// console.log( OPTION_BRANCH_TARGET );
-
-	// return 1;
 
 
 

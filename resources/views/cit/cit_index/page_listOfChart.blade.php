@@ -346,7 +346,7 @@ $document_keys = [
 
                         Success Rate Collection AR By Branch
 
-                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_teritory"> View Detail Data </button>
+                        <button class="btn btn-secondary btn_tab_indicator tab_indicator" data-target="page_data_COHBankIn"> View Detail Data </button>
                     </div>
                 </div>
 
